@@ -5,7 +5,7 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
-	"gitlab.ozon.dev/go/classroom-4/teachers/homework/cmd/bot/internal/model/messages"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/cmd/bot/internal/model/messages"
 )
 
 type TokenGetter interface {

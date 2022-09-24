@@ -5,8 +5,6 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	mock "gitlab.ozon.dev/go/classroom-4/teachers/homework/cmd/bot/internal/mocks/messages"
-	
 )
 
 func Test_OnStartCommand_ShouldAnswerWithIntroMessage(t *testing.T) {
