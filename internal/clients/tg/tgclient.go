@@ -5,19 +5,15 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/cmd/bot/internal/model/messages"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 )
-
-type TokenGetter interface {
-	Token() string
-}
 
 type Client struct {
 	client *tgbotapi.BotAPI
 }
 
-func New(tokenGetter TokenGetter) (*Client, error) {
-	client, err := tgbotapi.NewBotAPI(tokenGetter.Token())
+func New(tgClient Config) (*Client, error) {
+	client, err := tgbotapi.NewBotAPI(tgClient.Token)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewBotAPI")
 	}
@@ -44,12 +40,13 @@ func (c *Client) ListenUpdates(msgModel *messages.Model) {
 	log.Println("listening for messages")
 
 	for update := range updates {
-		if update.Message != nil { // If we got a message
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+		if update.Message != nil && update.Message.IsCommand() {
+			log.Printf("[%s] %s %s", update.Message.From.UserName, update.Message.Command(), update.Message.CommandArguments())
 
 			err := msgModel.IncomingMessage(messages.Message{
-				Text:   update.Message.Text,
-				UserID: update.Message.From.ID,
+				UserID:    update.Message.From.ID,
+				Command:   update.Message.Command(),
+				Arguments: update.Message.CommandArguments(),
 			})
 			if err != nil {
 				log.Println("error processing message:", err)

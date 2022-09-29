@@ -1,38 +1,29 @@
 package config
 
 import (
-	"os"
-
-	"github.com/pkg/errors"
-	"gopkg.in/yaml.v3"
+	"github.com/spf13/viper"
+	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
+	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
 )
 
-const configFile = "data/config.yaml"
+const configFile = "../../data"
 
 type Config struct {
-	Token string `yaml:"token"`
+	TgClient client.Config `mapstructure:"tgClient"`
+	TgServer server.Config `mapstructure:"tgServer"`
 }
 
-type Service struct {
-	config Config
-}
+func New() (cfg *Config, err error) {
 
-func New() (*Service, error) {
-	s := &Service{}
+	viper.AddConfigPath(configFile)
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
 
-	rawYAML, err := os.ReadFile(configFile)
-	if err != nil {
-		return nil, errors.Wrap(err, "reading config file")
+	if err := viper.ReadInConfig(); err != nil {
+		return &Config{}, err
 	}
 
-	err = yaml.Unmarshal(rawYAML, &s.config)
-	if err != nil {
-		return nil, errors.Wrap(err, "parsing yaml")
-	}
+	err = viper.Unmarshal(&cfg)
 
-	return s, nil
-}
-
-func (s *Service) Token() string {
-	return s.config.Token
+	return cfg, err
 }
