@@ -18,7 +18,7 @@ func Test_OnStartCommand(t *testing.T) {
 		Command: "start",
 		UserID:  123,
 	}
-	commander.EXPECT().СommandStart(&msg).Return("hello")
+	commander.EXPECT().CommandStart(&msg).Return("hello", nil)
 	sender.EXPECT().SendMessage("hello", int64(123))
 
 	model := messages.New(sender, commander)
@@ -36,7 +36,7 @@ func Test_OnSetNoteCommand(t *testing.T) {
 		Arguments: "29.09.2022 food 453.12",
 		UserID:    123,
 	}
-	commander.EXPECT().СommandSetNote(&msg).Return("Done")
+	commander.EXPECT().CommandSetNote(&msg).Return("Done", nil)
 	sender.EXPECT().SendMessage("Done", int64(123))
 
 	model := messages.New(sender, commander)
@@ -54,7 +54,7 @@ func Test_OnGetStatisticCommand(t *testing.T) {
 		Arguments: "week",
 		UserID:    123,
 	}
-	commander.EXPECT().СommandGetStatistic(&msg).Return("Statistic for the week")
+	commander.EXPECT().CommandGetStatistic(&msg).Return("Statistic for the week", nil)
 	sender.EXPECT().SendMessage("Statistic for the week", int64(123))
 
 	model := messages.New(sender, commander)
@@ -73,7 +73,7 @@ func Test_OnUnknownCommand(t *testing.T) {
 		UserID: 123,
 	}
 
-	commander.EXPECT().СommandDefault(&msg).Return("What you mean?")
+	commander.EXPECT().CommandDefault(&msg).Return("What you mean?", nil)
 	sender.EXPECT().SendMessage("What you mean?", int64(123))
 
 	model := messages.New(sender, commander)
@@ -94,7 +94,7 @@ func Test_OnRightStatic(t *testing.T) {
 			Arguments: arguments,
 			UserID:    userID,
 		}
-		commander.EXPECT().СommandSetNote(&msg).Return("Done")
+		commander.EXPECT().CommandSetNote(&msg).Return("Done", nil)
 		sender.EXPECT().SendMessage("Done", int64(123))
 
 		err := model.IncomingMessage(msg)
@@ -115,7 +115,7 @@ func Test_OnRightStatic(t *testing.T) {
 		Arguments: "week",
 		UserID:    123,
 	}
-	commander.EXPECT().СommandGetStatistic(&msg).Return("Statistic for the week: \nfood: 45.12\nschool: 85.01")
+	commander.EXPECT().CommandGetStatistic(&msg).Return("Statistic for the week: \nfood: 45.12\nschool: 85.01", nil)
 	sender.EXPECT().SendMessage("Statistic for the week: \nfood: 45.12\nschool: 85.01", int64(123))
 
 	err := model.IncomingMessage(msg)
@@ -124,7 +124,7 @@ func Test_OnRightStatic(t *testing.T) {
 	}
 
 	msg.Arguments = "month"
-	commander.EXPECT().СommandGetStatistic(&msg).Return("Statistic for the week: \nfood: 145.12\nschool: 85.01")
+	commander.EXPECT().CommandGetStatistic(&msg).Return("Statistic for the week: \nfood: 145.12\nschool: 85.01", nil)
 	sender.EXPECT().SendMessage("Statistic for the week: \nfood: 145.12\nschool: 85.01", int64(123))
 
 	err = model.IncomingMessage(msg)
@@ -133,7 +133,7 @@ func Test_OnRightStatic(t *testing.T) {
 	}
 
 	msg.Arguments = "year"
-	commander.EXPECT().СommandGetStatistic(&msg).Return("Statistic for the week: \nfood: 245.12\nschool: 85.01")
+	commander.EXPECT().CommandGetStatistic(&msg).Return("Statistic for the week: \nfood: 245.12\nschool: 85.01", nil)
 	sender.EXPECT().SendMessage("Statistic for the week: \nfood: 245.12\nschool: 85.01", int64(123))
 
 	err = model.IncomingMessage(msg)

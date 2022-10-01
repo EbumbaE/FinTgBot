@@ -71,12 +71,43 @@ func (m *MockCommander) EXPECT() *MockCommanderMockRecorder {
 	return m.recorder
 }
 
+// CommandDefault mocks base method.
+func (m *MockCommander) CommandDefault(msg *messages.Message) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CommandDefault", msg)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CommandDefault indicates an expected call of CommandDefault.
+func (mr *MockCommanderMockRecorder) CommandDefault(msg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandDefault", reflect.TypeOf((*MockCommander)(nil).CommandDefault), msg)
+}
+
+// CommandGetStatistic mocks base method.
+func (m *MockCommander) CommandGetStatistic(msg *messages.Message) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CommandGetStatistic", msg)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CommandGetStatistic indicates an expected call of CommandGetStatistic.
+func (mr *MockCommanderMockRecorder) CommandGetStatistic(msg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetStatistic", reflect.TypeOf((*MockCommander)(nil).CommandGetStatistic), msg)
+}
+
 // CommandHelp mocks base method.
-func (m *MockCommander) CommandHelp(msg *messages.Message) string {
+func (m *MockCommander) CommandHelp(msg *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CommandHelp", msg)
 	ret0, _ := ret[0].(string)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CommandHelp indicates an expected call of CommandHelp.
@@ -85,58 +116,32 @@ func (mr *MockCommanderMockRecorder) CommandHelp(msg interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandHelp", reflect.TypeOf((*MockCommander)(nil).CommandHelp), msg)
 }
 
-// СommandDefault mocks base method.
-func (m *MockCommander) СommandDefault(msg *messages.Message) string {
+// CommandSetNote mocks base method.
+func (m *MockCommander) CommandSetNote(msg *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "СommandDefault", msg)
+	ret := m.ctrl.Call(m, "CommandSetNote", msg)
 	ret0, _ := ret[0].(string)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// СommandDefault indicates an expected call of СommandDefault.
-func (mr *MockCommanderMockRecorder) СommandDefault(msg interface{}) *gomock.Call {
+// CommandSetNote indicates an expected call of CommandSetNote.
+func (mr *MockCommanderMockRecorder) CommandSetNote(msg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "СommandDefault", reflect.TypeOf((*MockCommander)(nil).СommandDefault), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetNote", reflect.TypeOf((*MockCommander)(nil).CommandSetNote), msg)
 }
 
-// СommandGetStatistic mocks base method.
-func (m *MockCommander) СommandGetStatistic(msg *messages.Message) string {
+// CommandStart mocks base method.
+func (m *MockCommander) CommandStart(msg *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "СommandGetStatistic", msg)
+	ret := m.ctrl.Call(m, "CommandStart", msg)
 	ret0, _ := ret[0].(string)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// СommandGetStatistic indicates an expected call of СommandGetStatistic.
-func (mr *MockCommanderMockRecorder) СommandGetStatistic(msg interface{}) *gomock.Call {
+// CommandStart indicates an expected call of CommandStart.
+func (mr *MockCommanderMockRecorder) CommandStart(msg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "СommandGetStatistic", reflect.TypeOf((*MockCommander)(nil).СommandGetStatistic), msg)
-}
-
-// СommandSetNote mocks base method.
-func (m *MockCommander) СommandSetNote(msg *messages.Message) string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "СommandSetNote", msg)
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// СommandSetNote indicates an expected call of СommandSetNote.
-func (mr *MockCommanderMockRecorder) СommandSetNote(msg interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "СommandSetNote", reflect.TypeOf((*MockCommander)(nil).СommandSetNote), msg)
-}
-
-// СommandStart mocks base method.
-func (m *MockCommander) СommandStart(msg *messages.Message) string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "СommandStart", msg)
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// СommandStart indicates an expected call of СommandStart.
-func (mr *MockCommanderMockRecorder) СommandStart(msg interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "СommandStart", reflect.TypeOf((*MockCommander)(nil).СommandStart), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandStart", reflect.TypeOf((*MockCommander)(nil).CommandStart), msg)
 }
