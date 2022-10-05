@@ -8,10 +8,10 @@ import (
 )
 
 type Storage interface {
-	Get(id int64, date string) []diary.Note
+	Get(id int64, date string) ([]diary.Note, error)
 }
 
-type Formater interface {
+type Formatter interface {
 	FormatDate(date time.Time) string
 }
 
@@ -39,46 +39,42 @@ func getYearPeriod(now time.Time) (beginPeriod, endPeriod time.Time) {
 	return
 }
 
-func getPeriod(period string) (beginPeriod, endPeriod time.Time, ok bool) {
+func getPeriod(period string) (beginPeriod, endPeriod time.Time, err error) {
 
+	err = nil
 	tn := time.Now()
 	switch period {
 	case "week":
 		beginPeriod, endPeriod = getWeekPeriod(tn)
-		ok = true
 		return
 	case "month":
 		beginPeriod, endPeriod = getMonthPeriod(tn)
-		ok = true
 		return
 	case "year":
 		beginPeriod, endPeriod = getYearPeriod(tn)
-		ok = true
 		return
 	}
-	return tn, tn, false
+	return tn, tn, fmt.Errorf("Error in period")
 }
 
-func addNoteToTotalSum(notes []diary.Note, totalSum *map[string]float64) {
-	for _, note := range notes {
-		(*totalSum)[note.Category] += note.Sum
-	}
-	return
-}
-
-func CountStatistic(userID int64, period string, db Storage, formater Formater) (answer string, err error) {
+func CountStatistic(userID int64, period string, db Storage, formatter Formatter) (answer string, err error) {
 
 	answer = fmt.Sprintf("Statistic for the %s:\n", period)
 
-	beginPeriod, endPeriod, ok := getPeriod(period)
-	if !ok {
-		return "", fmt.Errorf("error in period")
+	beginPeriod, endPeriod, err := getPeriod(period)
+	if err != nil {
+		return "", err
 	}
 
 	totalSum := map[string]float64{}
 	for date := beginPeriod; date != endPeriod; date = date.AddDate(0, 0, 1) {
-		notes := db.Get(userID, formater.FormatDate((date)))
-		addNoteToTotalSum(notes, &totalSum)
+		notes, err := db.Get(userID, formatter.FormatDate(date))
+		if err != nil {
+			return "Error in storage: get note", err
+		}
+		for _, note := range notes {
+			totalSum[note.Category] += note.Sum
+		}
 	}
 
 	for category, sum := range totalSum {

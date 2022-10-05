@@ -1,17 +1,15 @@
 package messages
 
-import "fmt"
-
 type MessageSender interface {
 	SendMessage(text string, userID int64) error
 }
 
 type Commander interface {
-	СommandStart(msg *Message) (answer string)
-	CommandHelp(msg *Message) (answer string)
-	СommandSetNote(msg *Message) (answer string)
-	СommandGetStatistic(msg *Message) (answer string)
-	СommandDefault(msg *Message) (answer string)
+	CommandStart(msg *Message) (answer string, err error)
+	CommandHelp(msg *Message) (answer string, err error)
+	CommandSetNote(msg *Message) (answer string, err error)
+	CommandGetStatistic(msg *Message) (answer string, err error)
+	CommandDefault(msg *Message) (answer string, err error)
 }
 
 type Model struct {
@@ -35,21 +33,22 @@ type Message struct {
 
 func (m *Model) IncomingMessage(msg Message) error {
 
+	var err error = nil
 	switch msg.Command {
 	case "start":
-		msg.Text = m.tgServer.СommandStart(&msg)
+		msg.Text, err = m.tgServer.CommandStart(&msg)
 	case "help":
-		msg.Text = m.tgServer.CommandHelp(&msg)
+		msg.Text, err = m.tgServer.CommandHelp(&msg)
 	case "setNote":
-		msg.Text = m.tgServer.СommandSetNote(&msg)
+		msg.Text, err = m.tgServer.CommandSetNote(&msg)
 	case "getStatistic":
-		msg.Text = m.tgServer.СommandGetStatistic(&msg)
+		msg.Text, err = m.tgServer.CommandGetStatistic(&msg)
 	default:
-		msg.Text = m.tgServer.СommandDefault(&msg)
+		msg.Text, err = m.tgServer.CommandDefault(&msg)
 	}
 
-	if msg.Text != "" {
-		return m.tgClient.SendMessage(msg.Text, msg.UserID)
+	if err != nil {
+		msg.Text = err.Error()
 	}
-	return fmt.Errorf("null msg.Text")
+	return m.tgClient.SendMessage(msg.Text, msg.UserID)
 }

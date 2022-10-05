@@ -18,12 +18,11 @@ func parseArguments(lineArgs string, amount int) ([]string, error) {
 	return args, nil
 }
 
-func (t *TgServer) СommandStart(msg *messages.Message) (answer string) {
-	answer = "hello"
-	return
+func (t *TgServer) CommandStart(msg *messages.Message) (answer string, err error) {
+	return "hello", nil
 }
 
-func (t *TgServer) CommandHelp(msg *messages.Message) (answer string) {
+func (t *TgServer) CommandHelp(msg *messages.Message) (answer string, err error) {
 	answer =
 		`hellow, some commands:
 	/setNote date category sum
@@ -33,7 +32,7 @@ func (t *TgServer) CommandHelp(msg *messages.Message) (answer string) {
 	return
 }
 
-func (t *TgServer) СommandSetNote(msg *messages.Message) (answer string) {
+func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err error) {
 
 	args, err := parseArguments(msg.Arguments, 3)
 	if err != nil {
@@ -58,11 +57,14 @@ func (t *TgServer) СommandSetNote(msg *messages.Message) (answer string) {
 		Category: args[1],
 		Sum:      sum,
 	}
-	t.storage.Set(msg.UserID, date, note)
+	err = t.storage.Set(msg.UserID, date, note)
+	if err != nil {
+		answer = "error in storage: set note"
+	}
 	return
 }
 
-func (t *TgServer) СommandGetStatistic(msg *messages.Message) (answer string) {
+func (t *TgServer) CommandGetStatistic(msg *messages.Message) (answer string, err error) {
 	args, err := parseArguments(msg.Arguments, 1)
 	if err != nil {
 		answer = "error in arguments"
@@ -79,7 +81,6 @@ func (t *TgServer) СommandGetStatistic(msg *messages.Message) (answer string) {
 	return
 }
 
-func (t *TgServer) СommandDefault(msg *messages.Message) (answer string) {
-	answer = "What you mean?"
-	return
+func (t *TgServer) CommandDefault(msg *messages.Message) (answer string, err error) {
+	return "What you mean?", nil
 }

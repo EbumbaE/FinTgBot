@@ -1,5 +1,5 @@
-default:
-  image: golang:latest
+#default:
+image: golang:latest
 
 stages:
   - build
@@ -14,8 +14,3 @@ test:
   stage: test
   script:
     - make test
-
-lint:
-  stage: test
-  script:
-    - make lint

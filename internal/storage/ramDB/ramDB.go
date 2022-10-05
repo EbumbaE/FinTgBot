@@ -17,14 +17,14 @@ func New() (*Database, error) {
 	}, nil
 }
 
-func (d *Database) Get(id int64, date string) []diary.Note {
+func (d *Database) Get(id int64, date string) ([]diary.Note, error) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	answer := d.db[id][date]
-	return answer
+	return answer, nil
 }
 
-func (d *Database) Set(id int64, date string, note diary.Note) {
+func (d *Database) Set(id int64, date string, note diary.Note) error {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
@@ -35,4 +35,6 @@ func (d *Database) Set(id int64, date string, note diary.Note) {
 		d.db[id][date] = []diary.Note{}
 	}
 	d.db[id][date] = append(d.db[id][date], note)
+
+	return nil
 }
