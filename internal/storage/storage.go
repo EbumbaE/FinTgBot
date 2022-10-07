@@ -11,8 +11,10 @@ type DiaryDB interface {
 }
 
 type CurrencyDB interface {
-	GetCurrency(abbreviation string) (currency.Valute, error)
-	SetCurrency(valute currency.Valute) error
+	GetValute(abbreviation string) (currency.Valute, error)
+	SetValute(valute currency.Valute) error
+	GetUserAbbValute(userID int64) (string, error)
+	SetUserAbbValute(userID int64, abbreviation string) error
 }
 
 type Storage interface {

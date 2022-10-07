@@ -5,9 +5,11 @@ import (
 	"strconv"
 	"strings"
 
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 )
 
 func parseArguments(lineArgs string, amount int) ([]string, error) {
@@ -64,14 +66,33 @@ func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err err
 	return
 }
 
+func getCurrencyFromDB(db storage.Storage, userID int64) (currency.Valute, error) {
+	abb, err := db.GetUserAbbValute(userID)
+	if err != nil {
+		abb = "RUB"
+	}
+	valute, err := db.GetValute(abb)
+	if err != nil {
+		return currency.Valute{}, err
+	}
+	return valute, nil
+}
+
 func (t *TgServer) CommandGetStatistic(msg *messages.Message) (answer string, err error) {
 	args, err := parseArguments(msg.Arguments, 1)
 	if err != nil {
-		answer = "error in arguments"
+		answer = err.Error()
+		return
+	}
+	period := args[0]
+
+	valute, err := getCurrencyFromDB(t.storage, msg.UserID)
+	if err != nil {
+		answer = err.Error()
 		return
 	}
 
-	answer, err = report.CountStatistic(msg.UserID, args[0], t.storage, &t.dateFormater)
+	answer, err = report.CountStatistic(msg.UserID, period, t.storage, &t.dateFormater, valute)
 	if err != nil {
 		answer = "not done"
 		fmt.Printf("[%d] %s", msg.UserID, err)

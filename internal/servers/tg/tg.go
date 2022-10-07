@@ -24,10 +24,21 @@ func New(storage storage.Storage, config Config) (*TgServer, error) {
 	}, nil
 }
 
+func setDefaultCurrancy(db storage.Storage) {
+	db.SetValute(currency.Valute{
+		Abbreviation: "RUB",
+		Name:         "Российский рубль",
+		Value:        1,
+	})
+}
+
 func (t *TgServer) InitCurrancies(currancies chan currency.Valute) {
+
+	setDefaultCurrancy(t.storage)
+
 	go func() {
 		for valute := range currancies {
-			if err := t.storage.SetCurrency(valute); err != nil {
+			if err := t.storage.SetValute(valute); err != nil {
 				fmt.Printf("Error in set currency: %s", valute.Abbreviation)
 			}
 		}

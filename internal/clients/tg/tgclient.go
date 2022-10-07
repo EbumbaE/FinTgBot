@@ -66,7 +66,8 @@ func (c *Client) ListenUpdates(msgModel *messages.Model) {
 				}
 			} else {
 				err := msgModel.IncomingMessage(messages.Message{
-					Text: update.Message.Text,
+					UserID: update.Message.From.ID,
+					Text:   update.Message.Text,
 				})
 				if err != nil {
 					log.Println("error in incomming message:", err)

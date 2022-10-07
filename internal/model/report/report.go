@@ -15,6 +15,11 @@ type Formatter interface {
 	FormatDate(date time.Time) string
 }
 
+type Valute interface {
+	GetAbbreviation() string
+	GetValue() float64
+}
+
 func getWeekPeriod(now time.Time) (beginPeriod, endPeriod time.Time) {
 	nowWeekday := now.Weekday()
 	if nowWeekday == 0 {
@@ -57,10 +62,12 @@ func getPeriod(period string) (beginPeriod, endPeriod time.Time, err error) {
 	return tn, tn, fmt.Errorf("Error in period")
 }
 
-func CountStatistic(userID int64, period string, db Storage, formatter Formatter) (answer string, err error) {
+func CountStatistic(userID int64, period string, db Storage, formatter Formatter, currency Valute) (answer string, err error) {
 
-	currency := "RUB"
-	answer = fmt.Sprintf("Statistic for the %s in %s:\n", period, currency)
+	currencyAbb := currency.GetAbbreviation()
+	answer = fmt.Sprintf("Statistic for the %s in %s:\n", period, currencyAbb)
+
+	delta := 1.0 / currency.GetValue()
 
 	beginPeriod, endPeriod, err := getPeriod(period)
 	if err != nil {
@@ -74,7 +81,7 @@ func CountStatistic(userID int64, period string, db Storage, formatter Formatter
 			return "Error in storage: get note", err
 		}
 		for _, note := range notes {
-			totalSum[note.Category] += note.Sum
+			totalSum[note.Category] += note.Sum * delta
 		}
 	}
 

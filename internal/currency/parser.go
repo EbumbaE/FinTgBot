@@ -12,12 +12,6 @@ type Parser struct {
 	abbreviations []string
 }
 
-type Valute struct {
-	Abbreviation string  `json:"CharCode"`
-	Name         string  `json:"Name"`
-	Value        float64 `json:"Value"`
-}
-
 type Responce struct {
 	Valute map[string]Valute `json:"Valute"`
 }
@@ -65,7 +59,16 @@ func (p *Parser) ParseCurrencies() (chan Valute, error) {
 
 	returnChan := make(chan Valute)
 	go func() (err error) {
-		for range time.Tick(time.Hour * 24) {
+
+		timeTicker := time.NewTicker(time.Microsecond)
+
+		defer close(returnChan)
+		defer timeTicker.Stop()
+
+		select {
+		case <-timeTicker.C:
+			timeTicker = time.NewTicker(time.Hour * 24)
+
 			jsonBytes, err := requestJsonCurrency()
 			if err != nil {
 				break
@@ -77,12 +80,12 @@ func (p *Parser) ParseCurrencies() (chan Valute, error) {
 			for _, abb := range p.abbreviations {
 				if v, ok := valCurs.Valute[abb]; ok {
 					if err = checkOnEmptyValues(v); err == nil {
+						fmt.Println("ping")
 						returnChan <- v
 					}
 				}
 			}
 		}
-		close(returnChan)
 		return err
 	}()
 

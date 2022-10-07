@@ -21,7 +21,7 @@ func (m *Model) IncomingCommand(msg Message) error {
 		msg.Text, err = m.tgServer.CommandGetStatistic(&msg)
 	case "selectCurrency":
 		m.tgClient.SetupCurrencyKeyboard(&msg)
-		msg.Text = "Setup value"
+		msg.Text = "Setup value:"
 	default:
 		msg.Text, err = m.tgServer.CommandDefault(&msg)
 	}
