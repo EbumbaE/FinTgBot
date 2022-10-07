@@ -57,7 +57,7 @@ func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err err
 		Category: args[1],
 		Sum:      sum,
 	}
-	err = t.storage.Set(msg.UserID, date, note)
+	err = t.storage.SetNote(msg.UserID, date, note)
 	if err != nil {
 		answer = "error in storage: set note"
 	}
@@ -79,6 +79,10 @@ func (t *TgServer) CommandGetStatistic(msg *messages.Message) (answer string, er
 	}
 
 	return
+}
+
+func (t *TgServer) CommandSelectCurrency() {
+
 }
 
 func (t *TgServer) CommandDefault(msg *messages.Message) (answer string, err error) {

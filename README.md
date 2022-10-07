@@ -12,6 +12,9 @@ example: **/getStatistic week**\
 food: 245.12\
 school: 85.01**
 
+**/selectCurrency**\
+дает выбор валюты, в которой будет отображаться отчет
+
 **/start**\
 просто выводит *hellow*
 

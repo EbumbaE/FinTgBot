@@ -1,7 +1,8 @@
 package messages
 
-type MessageSender interface {
-	SendMessage(text string, userID int64) error
+type Client interface {
+	SendMessage(msg Message) error
+	SetupCurrencyKeyboard(msg *Message)
 }
 
 type Commander interface {
@@ -13,11 +14,11 @@ type Commander interface {
 }
 
 type Model struct {
-	tgClient MessageSender
+	tgClient Client
 	tgServer Commander
 }
 
-func New(tgClient MessageSender, tgServer Commander) *Model {
+func New(tgClient Client, tgServer Commander) *Model {
 	return &Model{
 		tgClient: tgClient,
 		tgServer: tgServer,
@@ -29,6 +30,7 @@ type Message struct {
 	Arguments string
 	UserID    int64
 	Command   string
+	Keyboard  any
 }
 
 func (m *Model) IncomingMessage(msg Message) error {
@@ -43,6 +45,9 @@ func (m *Model) IncomingMessage(msg Message) error {
 		msg.Text, err = m.tgServer.CommandSetNote(&msg)
 	case "getStatistic":
 		msg.Text, err = m.tgServer.CommandGetStatistic(&msg)
+	case "selectCurrency":
+		m.tgClient.SetupCurrencyKeyboard(&msg)
+		msg.Text = "Setup value"
 	default:
 		msg.Text, err = m.tgServer.CommandDefault(&msg)
 	}
@@ -50,5 +55,5 @@ func (m *Model) IncomingMessage(msg Message) error {
 	if err != nil {
 		msg.Text = err.Error()
 	}
-	return m.tgClient.SendMessage(msg.Text, msg.UserID)
+	return m.tgClient.SendMessage(msg)
 }

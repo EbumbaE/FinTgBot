@@ -56,7 +56,7 @@ var yearTestsPair = []Testpair{
 	},
 }
 
-func Test_GetWeekPeriod(t *testing.T) {
+func TestGetWeekPeriod(t *testing.T) {
 
 	for _, pair := range weekTestsPair {
 		for _, value := range pair.values {
@@ -69,7 +69,7 @@ func Test_GetWeekPeriod(t *testing.T) {
 	}
 }
 
-func Test_GetMonthPeriod(t *testing.T) {
+func TestGetMonthPeriod(t *testing.T) {
 	for _, pair := range monthTestsPair {
 		for _, value := range pair.values {
 			testNowTime := time.Date(value.year, time.Month(value.month), value.day, 0, 0, 0, 0, time.Now().Location())
@@ -81,7 +81,7 @@ func Test_GetMonthPeriod(t *testing.T) {
 	}
 }
 
-func Test_GetYearPeriod(t *testing.T) {
+func TestGetYearPeriod(t *testing.T) {
 	for _, pair := range yearTestsPair {
 		for _, value := range pair.values {
 			testNowTime := time.Date(value.year, time.Month(value.month), value.day, 0, 0, 0, 0, time.Now().Location())

@@ -3,14 +3,16 @@ package config
 import (
 	"github.com/spf13/viper"
 	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currancy"
 	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
 )
 
 const configFile = "../../data"
 
 type Config struct {
-	TgClient client.Config `mapstructure:"tgClient"`
-	TgServer server.Config `mapstructure:"tgServer"`
+	TgClient client.Config   `mapstructure:"tgClient"`
+	TgServer server.Config   `mapstructure:"tgServer"`
+	Currency currancy.Config `mapstructure:"currency"`
 }
 
 func New() (cfg *Config, err error) {

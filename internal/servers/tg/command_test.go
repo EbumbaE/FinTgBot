@@ -22,7 +22,7 @@ var parseTestsPair = []Testpair{
 	{Argument{"aasd 34,1 what", 3}, []string{"aasd", "34,1", "what"}},
 }
 
-func Test_ParseArguments(t *testing.T) {
+func TestParseArguments(t *testing.T) {
 	for _, pair := range parseTestsPair {
 		result, err := parseArguments(pair.values.lineArgs, int(pair.values.amount))
 		if err != nil {

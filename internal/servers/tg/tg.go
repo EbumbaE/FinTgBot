@@ -1,8 +1,10 @@
 package tgServer
 
 import (
+	"fmt"
 	"time"
 
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currancy"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 )
 
@@ -13,6 +15,16 @@ type TgServer struct {
 
 type DateFormater struct {
 	format string
+}
+
+func (t *TgServer) InitCurrancies(currancies chan currancy.Valute) {
+	go func() {
+		for valute := range currancies {
+			if err := t.storage.SetCurrancy(valute); err != nil {
+				fmt.Printf("Error in set currancy: %s", valute.Abbreviation)
+			}
+		}
+	}()
 }
 
 func (d *DateFormater) FormatDate(date time.Time) string {

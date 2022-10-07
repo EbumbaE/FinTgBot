@@ -11,41 +11,53 @@ import (
 	messages "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 )
 
-// MockMessageSender is a mock of MessageSender interface.
-type MockMessageSender struct {
+// MockClient is a mock of Client interface.
+type MockClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockMessageSenderMockRecorder
+	recorder *MockClientMockRecorder
 }
 
-// MockMessageSenderMockRecorder is the mock recorder for MockMessageSender.
-type MockMessageSenderMockRecorder struct {
-	mock *MockMessageSender
+// MockClientMockRecorder is the mock recorder for MockClient.
+type MockClientMockRecorder struct {
+	mock *MockClient
 }
 
-// NewMockMessageSender creates a new mock instance.
-func NewMockMessageSender(ctrl *gomock.Controller) *MockMessageSender {
-	mock := &MockMessageSender{ctrl: ctrl}
-	mock.recorder = &MockMessageSenderMockRecorder{mock}
+// NewMockClient creates a new mock instance.
+func NewMockClient(ctrl *gomock.Controller) *MockClient {
+	mock := &MockClient{ctrl: ctrl}
+	mock.recorder = &MockClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockMessageSender) EXPECT() *MockMessageSenderMockRecorder {
+func (m *MockClient) EXPECT() *MockClientMockRecorder {
 	return m.recorder
 }
 
 // SendMessage mocks base method.
-func (m *MockMessageSender) SendMessage(text string, userID int64) error {
+func (m *MockClient) SendMessage(msg messages.Message) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendMessage", text, userID)
+	ret := m.ctrl.Call(m, "SendMessage", msg)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // SendMessage indicates an expected call of SendMessage.
-func (mr *MockMessageSenderMockRecorder) SendMessage(text, userID interface{}) *gomock.Call {
+func (mr *MockClientMockRecorder) SendMessage(msg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMessage", reflect.TypeOf((*MockMessageSender)(nil).SendMessage), text, userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMessage", reflect.TypeOf((*MockClient)(nil).SendMessage), msg)
+}
+
+// SetupCurrencyKeyboard mocks base method.
+func (m *MockClient) SetupCurrencyKeyboard(msg *messages.Message) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetupCurrencyKeyboard", msg)
+}
+
+// SetupCurrencyKeyboard indicates an expected call of SetupCurrencyKeyboard.
+func (mr *MockClientMockRecorder) SetupCurrencyKeyboard(msg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetupCurrencyKeyboard", reflect.TypeOf((*MockClient)(nil).SetupCurrencyKeyboard), msg)
 }
 
 // MockCommander is a mock of Commander interface.

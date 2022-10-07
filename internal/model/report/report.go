@@ -8,7 +8,7 @@ import (
 )
 
 type Storage interface {
-	Get(id int64, date string) ([]diary.Note, error)
+	GetNote(id int64, date string) ([]diary.Note, error)
 }
 
 type Formatter interface {
@@ -59,7 +59,8 @@ func getPeriod(period string) (beginPeriod, endPeriod time.Time, err error) {
 
 func CountStatistic(userID int64, period string, db Storage, formatter Formatter) (answer string, err error) {
 
-	answer = fmt.Sprintf("Statistic for the %s:\n", period)
+	currency := "RUB"
+	answer = fmt.Sprintf("Statistic for the %s in %s:\n", period, currency)
 
 	beginPeriod, endPeriod, err := getPeriod(period)
 	if err != nil {
@@ -68,7 +69,7 @@ func CountStatistic(userID int64, period string, db Storage, formatter Formatter
 
 	totalSum := map[string]float64{}
 	for date := beginPeriod; date != endPeriod; date = date.AddDate(0, 0, 1) {
-		notes, err := db.Get(userID, formatter.FormatDate(date))
+		notes, err := db.GetNote(userID, formatter.FormatDate(date))
 		if err != nil {
 			return "Error in storage: get note", err
 		}
