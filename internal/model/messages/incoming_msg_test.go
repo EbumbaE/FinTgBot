@@ -13,7 +13,7 @@ import (
 func Test_OnStartCommand(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	client := mocks.NewMockClient(ctrl)
-	commander := mocks.NewMockCommander(ctrl)
+	server := mocks.NewMockServer(ctrl)
 	msg := messages.Message{
 		Command: "start",
 		UserID:  123,

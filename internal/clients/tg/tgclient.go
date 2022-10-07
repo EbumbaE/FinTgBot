@@ -5,7 +5,7 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currancy"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 )
 
@@ -13,7 +13,7 @@ type Client struct {
 	client *tgbotapi.BotAPI
 }
 
-func New(tgClient Config, parser *currancy.Parser) (*Client, error) {
+func New(tgClient Config, parser *currency.Parser) (*Client, error) {
 	currencies := parser.GetAbbreviations()
 	initKeyboards(currencies)
 
@@ -51,17 +51,26 @@ func (c *Client) ListenUpdates(msgModel *messages.Model) {
 	log.Println("listening for messages")
 
 	for update := range updates {
-		if update.Message != nil && update.Message.IsCommand() {
+		if update.Message != nil {
+
 			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-			err := msgModel.IncomingMessage(messages.Message{
-				UserID:    update.Message.From.ID,
-				Command:   update.Message.Command(),
-				Arguments: update.Message.CommandArguments(),
-				Text:      update.Message.Text,
-			})
-			if err != nil {
-				log.Println("error processing message:", err)
+			if update.Message.IsCommand() {
+				err := msgModel.IncomingCommand(messages.Message{
+					UserID:    update.Message.From.ID,
+					Command:   update.Message.Command(),
+					Arguments: update.Message.CommandArguments(),
+				})
+				if err != nil {
+					log.Println("error in incomming command:", err)
+				}
+			} else {
+				err := msgModel.IncomingMessage(messages.Message{
+					Text: update.Message.Text,
+				})
+				if err != nil {
+					log.Println("error in incomming message:", err)
+				}
 			}
 		}
 	}

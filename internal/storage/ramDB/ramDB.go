@@ -1,12 +1,12 @@
 package ramDB
 
 import (
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currancy"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 )
 
 type Database struct {
-	Currancy CurrancyDatabase
+	Currency CurrencyDatabase
 	Note     NoteDatabase
 }
 
@@ -15,8 +15,8 @@ func New() (*Database, error) {
 		Note: NoteDatabase{
 			db: map[int64]map[string][]diary.Note{},
 		},
-		Currancy: CurrancyDatabase{
-			db: map[string]currancy.Valute{},
+		Currency: CurrencyDatabase{
+			db: map[string]currency.Valute{},
 		},
 	}, nil
 }

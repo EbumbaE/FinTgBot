@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currancy"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 )
 
@@ -10,12 +10,12 @@ type DiaryDB interface {
 	SetNote(id int64, date string, note diary.Note) error
 }
 
-type CurrancyDB interface {
-	GetCurrancy(abbreviation string) (currancy.Valute, error)
-	SetCurrancy(valute currancy.Valute) error
+type CurrencyDB interface {
+	GetCurrency(abbreviation string) (currency.Valute, error)
+	SetCurrency(valute currency.Valute) error
 }
 
 type Storage interface {
 	DiaryDB
-	CurrancyDB
+	CurrencyDB
 }

@@ -81,10 +81,6 @@ func (t *TgServer) CommandGetStatistic(msg *messages.Message) (answer string, er
 	return
 }
 
-func (t *TgServer) CommandSelectCurrency() {
-
-}
-
 func (t *TgServer) CommandDefault(msg *messages.Message) (answer string, err error) {
-	return "What you mean?", nil
+	return "Unknown command", nil
 }

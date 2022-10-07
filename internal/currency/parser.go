@@ -1,4 +1,4 @@
-package currancy
+package currency
 
 import (
 	"encoding/json"
@@ -64,25 +64,26 @@ func checkOnEmptyValues(v Valute) error {
 func (p *Parser) ParseCurrencies() (chan Valute, error) {
 
 	returnChan := make(chan Valute)
-	go func() error {
-		jsonBytes, err := requestJsonCurrency()
-		if err != nil {
-			return err
-		}
+	go func() (err error) {
+		for range time.Tick(time.Hour * 24) {
+			jsonBytes, err := requestJsonCurrency()
+			if err != nil {
+				break
+			}
 
-		valCurs := Responce{}
-		json.Unmarshal(jsonBytes, &valCurs)
+			valCurs := Responce{}
+			json.Unmarshal(jsonBytes, &valCurs)
 
-		for _, abb := range p.abbreviations {
-			if v, ok := valCurs.Valute[abb]; ok {
-				if err = checkOnEmptyValues(v); err == nil {
-					returnChan <- v
+			for _, abb := range p.abbreviations {
+				if v, ok := valCurs.Valute[abb]; ok {
+					if err = checkOnEmptyValues(v); err == nil {
+						returnChan <- v
+					}
 				}
 			}
 		}
-
 		close(returnChan)
-		return nil
+		return err
 	}()
 
 	return returnChan, nil
