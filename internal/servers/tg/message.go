@@ -3,7 +3,15 @@ package tgServer
 import "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 
 func (t *TgServer) MessageSetCurrency(msg *messages.Message) (answer string, err error) {
-	err = t.storage.SetUserAbbValute(msg.UserID, msg.Text)
+
+	abbCurrency := msg.Text
+	valute, err := t.storage.GetValute(abbCurrency)
+	if err != nil {
+		answer = err.Error()
+		return
+	}
+
+	err = t.storage.SetUserValute(msg.UserID, valute)
 	if err != nil {
 		return err.Error(), err
 	}

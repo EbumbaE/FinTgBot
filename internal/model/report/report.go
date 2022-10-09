@@ -81,7 +81,7 @@ func CountStatistic(userID int64, period string, db Storage, formatter Formatter
 			return "Error in storage: get note", err
 		}
 		for _, note := range notes {
-			totalSum[note.Category] += note.Sum * delta
+			totalSum[note.Category] += note.Sum * delta * note.Valute.Value
 		}
 	}
 

@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 )
 
 type Parser struct {
@@ -13,7 +15,7 @@ type Parser struct {
 }
 
 type Responce struct {
-	Valute map[string]Valute `json:"Valute"`
+	Valute map[string]diary.Valute `json:"Valute"`
 }
 
 func New(config Config) (*Parser, error) {
@@ -48,16 +50,16 @@ func requestJsonCurrency() ([]byte, error) {
 	return jsonBytes, nil
 }
 
-func checkOnEmptyValues(v Valute) error {
+func checkOnEmptyValues(v diary.Valute) error {
 	if v.Abbreviation == "" || v.Name == "" || v.Value == 0 {
 		return fmt.Errorf("Empty values")
 	}
 	return nil
 }
 
-func (p *Parser) ParseCurrencies() (chan Valute, error) {
+func (p *Parser) ParseCurrencies() (chan diary.Valute, error) {
 
-	returnChan := make(chan Valute)
+	returnChan := make(chan diary.Valute)
 	go func() (err error) {
 
 		timeTicker := time.NewTicker(time.Microsecond)
@@ -80,7 +82,6 @@ func (p *Parser) ParseCurrencies() (chan Valute, error) {
 			for _, abb := range p.abbreviations {
 				if v, ok := valCurs.Valute[abb]; ok {
 					if err = checkOnEmptyValues(v); err == nil {
-						fmt.Println("ping")
 						returnChan <- v
 					}
 				}

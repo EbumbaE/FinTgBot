@@ -5,11 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 )
 
 func parseArguments(lineArgs string, amount int) ([]string, error) {
@@ -30,7 +28,8 @@ func (t *TgServer) CommandHelp(msg *messages.Message) (answer string, err error)
 	/setNote date category sum
 	example: /setNote 27.09.2022 food 453.12 
 	/getStatistic period (week, month or year)
-	example: /getStatistic week`
+	example: /getStatistic week
+	/selectCurrency`
 	return
 }
 
@@ -54,28 +53,23 @@ func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err err
 		return
 	}
 
+	userValute, err := t.storage.GetUserValute(msg.UserID)
+	if err != nil {
+		answer = err.Error()
+		return
+	}
+
 	answer = "Done"
 	note := diary.Note{
 		Category: args[1],
 		Sum:      sum,
+		Valute:   userValute,
 	}
 	err = t.storage.SetNote(msg.UserID, date, note)
 	if err != nil {
 		answer = "error in storage: set note"
 	}
 	return
-}
-
-func getCurrencyFromDB(db storage.Storage, userID int64) (currency.Valute, error) {
-	abb, err := db.GetUserAbbValute(userID)
-	if err != nil {
-		abb = "RUB"
-	}
-	valute, err := db.GetValute(abb)
-	if err != nil {
-		return currency.Valute{}, err
-	}
-	return valute, nil
 }
 
 func (t *TgServer) CommandGetStatistic(msg *messages.Message) (answer string, err error) {
@@ -86,7 +80,7 @@ func (t *TgServer) CommandGetStatistic(msg *messages.Message) (answer string, er
 	}
 	period := args[0]
 
-	valute, err := getCurrencyFromDB(t.storage, msg.UserID)
+	valute, err := t.storage.GetUserValute(msg.UserID)
 	if err != nil {
 		answer = err.Error()
 		return

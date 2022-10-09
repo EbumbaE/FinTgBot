@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 )
 
 type CurrencyDatabase struct {
@@ -12,28 +12,28 @@ type CurrencyDatabase struct {
 	userValute sync.Map
 }
 
-func (d *Database) GetValute(abbreviation string) (currency.Valute, error) {
+func (d *Database) GetValute(abbreviation string) (diary.Valute, error) {
 	answer, ok := d.Currency.valutes.Load(abbreviation)
 	if !ok {
-		return currency.Valute{}, fmt.Errorf("No such currency")
+		return diary.Valute{}, fmt.Errorf("No such currency")
 	}
-	return answer.(currency.Valute), nil
+	return answer.(diary.Valute), nil
 }
 
-func (d *Database) SetValute(valute currency.Valute) error {
+func (d *Database) SetValute(valute diary.Valute) error {
 	d.Currency.valutes.Store(valute.Abbreviation, valute)
 	return nil
 }
 
-func (d *Database) GetUserAbbValute(userID int64) (string, error) {
+func (d *Database) GetUserValute(userID int64) (diary.Valute, error) {
 	answer, ok := d.Currency.userValute.Load(userID)
 	if !ok {
-		return "", fmt.Errorf("No such user")
+		return diary.Valute{}, fmt.Errorf("Need to select currency")
 	}
-	return answer.(string), nil
+	return answer.(diary.Valute), nil
 }
 
-func (d *Database) SetUserAbbValute(userID int64, abbreviation string) error {
-	d.Currency.userValute.Store(userID, abbreviation)
+func (d *Database) SetUserValute(userID int64, valute diary.Valute) error {
+	d.Currency.userValute.Store(userID, valute)
 	return nil
 }

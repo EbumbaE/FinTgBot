@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 )
 
@@ -25,14 +25,14 @@ func New(storage storage.Storage, config Config) (*TgServer, error) {
 }
 
 func setDefaultCurrancy(db storage.Storage) {
-	db.SetValute(currency.Valute{
+	db.SetValute(diary.Valute{
 		Abbreviation: "RUB",
 		Name:         "Российский рубль",
 		Value:        1,
 	})
 }
 
-func (t *TgServer) InitCurrancies(currancies chan currency.Valute) {
+func (t *TgServer) InitCurrancies(currancies chan diary.Valute) {
 
 	setDefaultCurrancy(t.storage)
 
