@@ -12,7 +12,7 @@ type CurrencyDatabase struct {
 	userValute sync.Map
 }
 
-func (d *Database) GetValute(abbreviation string) (diary.Valute, error) {
+func (d *Database) GetRate(abbreviation string) (diary.Valute, error) {
 	answer, ok := d.Currency.valutes.Load(abbreviation)
 	if !ok {
 		return diary.Valute{}, fmt.Errorf("No such currency")
@@ -20,20 +20,20 @@ func (d *Database) GetValute(abbreviation string) (diary.Valute, error) {
 	return answer.(diary.Valute), nil
 }
 
-func (d *Database) SetValute(valute diary.Valute) error {
+func (d *Database) SetRate(valute diary.Valute) error {
 	d.Currency.valutes.Store(valute.Abbreviation, valute)
 	return nil
 }
 
-func (d *Database) GetUserValute(userID int64) (diary.Valute, error) {
+func (d *Database) GetUserAbbValute(userID int64) (string, error) {
 	answer, ok := d.Currency.userValute.Load(userID)
 	if !ok {
-		return diary.Valute{}, fmt.Errorf("Need to select currency")
+		return "", fmt.Errorf("Not have user valute")
 	}
-	return answer.(diary.Valute), nil
+	return answer.(string), nil
 }
 
-func (d *Database) SetUserValute(userID int64, valute diary.Valute) error {
-	d.Currency.userValute.Store(userID, valute)
+func (d *Database) SetUserAbbValute(userID int64, abbreviation string) error {
+	d.Currency.userValute.Store(userID, abbreviation)
 	return nil
 }

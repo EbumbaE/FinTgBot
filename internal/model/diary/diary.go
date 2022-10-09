@@ -3,7 +3,7 @@ package diary
 type Note struct {
 	Category string
 	Sum      float64
-	Valute   Valute
+	Currency string
 }
 
 type Valute struct {

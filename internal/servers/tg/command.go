@@ -8,6 +8,7 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 )
 
 func parseArguments(lineArgs string, amount int) ([]string, error) {
@@ -33,6 +34,21 @@ func (t *TgServer) CommandHelp(msg *messages.Message) (answer string, err error)
 	return
 }
 
+func deltaUserValuteToDefault(db storage.Storage, userID int64) (delta float64, err error) {
+
+	userAbbValute, err := db.GetUserAbbValute(userID)
+	if err != nil {
+		return 1, err
+	}
+
+	userRateValute, err := db.GetRate(userAbbValute)
+	if err != nil {
+		return 1, err
+	}
+
+	return userRateValute.Value, nil
+}
+
 func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err error) {
 
 	args, err := parseArguments(msg.Arguments, 3)
@@ -53,7 +69,7 @@ func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err err
 		return
 	}
 
-	userValute, err := t.storage.GetUserValute(msg.UserID)
+	delta, err := deltaUserValuteToDefault(t.storage, msg.UserID)
 	if err != nil {
 		answer = err.Error()
 		return
@@ -62,8 +78,8 @@ func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err err
 	answer = "Done"
 	note := diary.Note{
 		Category: args[1],
-		Sum:      sum,
-		Valute:   userValute,
+		Sum:      sum * delta,
+		Currency: "RUB",
 	}
 	err = t.storage.SetNote(msg.UserID, date, note)
 	if err != nil {
@@ -80,13 +96,18 @@ func (t *TgServer) CommandGetStatistic(msg *messages.Message) (answer string, er
 	}
 	period := args[0]
 
-	valute, err := t.storage.GetUserValute(msg.UserID)
+	userAbbCurrency, err := t.storage.GetUserAbbValute(msg.UserID)
+	if err != nil {
+		answer = err.Error()
+		return
+	}
+	userRateCurrency, err := t.storage.GetRate(userAbbCurrency)
 	if err != nil {
 		answer = err.Error()
 		return
 	}
 
-	answer, err = report.CountStatistic(msg.UserID, period, t.storage, &t.dateFormater, valute)
+	answer, err = report.CountStatistic(msg.UserID, period, t.storage, &t.dateFormater, userRateCurrency)
 	if err != nil {
 		answer = "not done"
 		fmt.Printf("[%d] %s", msg.UserID, err)
