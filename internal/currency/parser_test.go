@@ -36,16 +36,19 @@ func TestParseCurrency(t *testing.T) {
 	r, err := p.ParseCurrencies(ctx)
 	assert.NoError(t, err)
 
-	countAbb := make(map[string]struct{})
+	mapAbb := make(map[string]struct{})
+	countAbb := 0
 	var emp struct{}
 	for valute := range r {
-		countAbb[valute.Abbreviation] = emp
+		mapAbb[valute.Abbreviation] = emp
+		countAbb++
+		if countAbb == len(abbreviations) {
+			cancel()
+		}
 	}
 
 	for _, x := range abbreviations {
-		_, ok := countAbb[x]
+		_, ok := mapAbb[x]
 		assert.Equal(t, ok, true)
 	}
-
-	cancel()
 }

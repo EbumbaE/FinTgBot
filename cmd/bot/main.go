@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/config"
@@ -66,5 +65,4 @@ func main() {
 			break
 		}
 	}
-	time.Sleep(time.Second * 5)
 }

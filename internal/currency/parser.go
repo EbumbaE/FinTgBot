@@ -72,7 +72,7 @@ func (p *Parser) ParseCurrencies(ctx context.Context) (chan diary.Valute, error)
 		for {
 			select {
 			case <-timeTicker.C:
-				timeTicker = time.NewTicker(time.Second * 3)
+				timeTicker = time.NewTicker(time.Hour * 24)
 
 				jsonBytes, err := requestJsonCurrency()
 				if err != nil {
