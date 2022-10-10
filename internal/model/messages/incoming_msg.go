@@ -1,11 +1,5 @@
 package messages
 
-type Messanger interface {
-	IsCurrency(text string) bool
-	MessageDefault(msg *Message) (answer string, err error)
-	MessageSetCurrency(msg *Message) (answer string, err error)
-}
-
 func (m *Model) IncomingMessage(msg Message) error {
 
 	var err error = nil

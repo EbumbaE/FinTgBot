@@ -1,19 +1,23 @@
 package tg
 
 import (
+	"context"
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 )
+
+type Parser interface {
+	GetAbbreviations() []string
+}
 
 type Client struct {
 	client *tgbotapi.BotAPI
 }
 
-func New(tgClient Config, parser *currency.Parser) (*Client, error) {
+func New(tgClient Config, parser Parser) (*Client, error) {
 	currencies := parser.GetAbbreviations()
 	initKeyboards(currencies)
 
@@ -42,7 +46,7 @@ func (c *Client) SetupCurrencyKeyboard(msg *messages.Message) {
 	msg.Keyboard = oneTimeCurrencyKeyboard
 }
 
-func (c *Client) ListenUpdates(msgModel *messages.Model) {
+func (c *Client) ListenUpdates(ctx context.Context, msgModel *messages.Model) {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
@@ -50,29 +54,38 @@ func (c *Client) ListenUpdates(msgModel *messages.Model) {
 
 	log.Println("listening for messages")
 
-	for update := range updates {
-		if update.Message != nil {
+	go func() {
+		for {
+			select {
+			case update := <-updates:
+				if update.Message != nil {
 
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+					log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-			if update.Message.IsCommand() {
-				err := msgModel.IncomingCommand(messages.Message{
-					UserID:    update.Message.From.ID,
-					Command:   update.Message.Command(),
-					Arguments: update.Message.CommandArguments(),
-				})
-				if err != nil {
-					log.Println("error in incomming command:", err)
+					if update.Message.IsCommand() {
+						err := msgModel.IncomingCommand(messages.Message{
+							UserID:    update.Message.From.ID,
+							Command:   update.Message.Command(),
+							Arguments: update.Message.CommandArguments(),
+						})
+						if err != nil {
+							log.Println("error in incomming command:", err)
+						}
+					} else {
+						err := msgModel.IncomingMessage(messages.Message{
+							UserID: update.Message.From.ID,
+							Text:   update.Message.Text,
+						})
+						if err != nil {
+							log.Println("error in incomming message:", err)
+						}
+					}
 				}
-			} else {
-				err := msgModel.IncomingMessage(messages.Message{
-					UserID: update.Message.From.ID,
-					Text:   update.Message.Text,
-				})
-				if err != nil {
-					log.Println("error in incomming message:", err)
-				}
+			case <-ctx.Done():
+				defer updates.Clear()
+				defer log.Println("listening messages is off")
+				return
 			}
 		}
-	}
+	}()
 }

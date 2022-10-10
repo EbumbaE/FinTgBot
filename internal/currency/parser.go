@@ -1,9 +1,11 @@
 package currency
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"time"
 
@@ -57,37 +59,41 @@ func checkOnEmptyValues(v diary.Valute) error {
 	return nil
 }
 
-func (p *Parser) ParseCurrencies() (chan diary.Valute, error) {
+func (p *Parser) ParseCurrencies(ctx context.Context) (chan diary.Valute, error) {
 
 	returnChan := make(chan diary.Valute)
-	go func() (err error) {
+	go func() {
 
 		timeTicker := time.NewTicker(time.Microsecond)
 
-		defer close(returnChan)
 		defer timeTicker.Stop()
+		defer close(returnChan)
 
-		select {
-		case <-timeTicker.C:
-			timeTicker = time.NewTicker(time.Hour * 24)
+		for {
+			select {
+			case <-timeTicker.C:
+				timeTicker = time.NewTicker(time.Second * 3)
 
-			jsonBytes, err := requestJsonCurrency()
-			if err != nil {
-				break
-			}
+				jsonBytes, err := requestJsonCurrency()
+				if err != nil {
+					break
+				}
 
-			valCurs := Responce{}
-			json.Unmarshal(jsonBytes, &valCurs)
+				valCurs := Responce{}
+				json.Unmarshal(jsonBytes, &valCurs)
 
-			for _, abb := range p.abbreviations {
-				if v, ok := valCurs.Valute[abb]; ok {
-					if err = checkOnEmptyValues(v); err == nil {
-						returnChan <- v
+				for _, abb := range p.abbreviations {
+					if v, ok := valCurs.Valute[abb]; ok {
+						if err = checkOnEmptyValues(v); err == nil {
+							returnChan <- v
+						}
 					}
 				}
+			case <-ctx.Done():
+				log.Println("parser is off")
+				return
 			}
 		}
-		return err
 	}()
 
 	return returnChan, nil

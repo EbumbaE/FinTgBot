@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"log"
+	"os"
+	"time"
 
 	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/config"
@@ -12,6 +16,15 @@ import (
 )
 
 func main() {
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	file, err := os.OpenFile("l.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.SetOutput(file)
+
 	config, err := config.New()
 	if err != nil {
 		log.Fatal("config init failed:", err)
@@ -26,7 +39,7 @@ func main() {
 	if err != nil {
 		log.Fatal("parser init failed:", err)
 	}
-	valuteChannel, err := parser.ParseCurrencies()
+	rateCurrencyChan, err := parser.ParseCurrencies(ctx)
 	if err != nil {
 		log.Fatal("valute channel return error:", err)
 	}
@@ -35,7 +48,7 @@ func main() {
 	if err != nil {
 		log.Fatal("tg server init failed:", err)
 	}
-	tgServer.InitCurrancies(valuteChannel)
+	tgServer.InitCurrancies(ctx, rateCurrencyChan)
 
 	tgClient, err := client.New(config.TgClient, parser)
 	if err != nil {
@@ -43,6 +56,15 @@ func main() {
 	}
 
 	msgModel := messages.New(tgClient, tgServer)
+	tgClient.ListenUpdates(ctx, msgModel)
 
-	tgClient.ListenUpdates(msgModel)
+	var command string
+	for {
+		fmt.Scanln(&command)
+		if command == "shutdown" {
+			cancel()
+			break
+		}
+	}
+	time.Sleep(time.Second * 5)
 }

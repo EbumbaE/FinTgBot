@@ -5,6 +5,20 @@ type Client interface {
 	SetupCurrencyKeyboard(msg *Message)
 }
 
+type Messanger interface {
+	IsCurrency(text string) bool
+	MessageDefault(msg *Message) (answer string, err error)
+	MessageSetCurrency(msg *Message) (answer string, err error)
+}
+
+type Commander interface {
+	CommandStart(msg *Message) (answer string, err error)
+	CommandHelp(msg *Message) (answer string, err error)
+	CommandSetNote(msg *Message) (answer string, err error)
+	CommandGetStatistic(msg *Message) (answer string, err error)
+	CommandDefault(msg *Message) (answer string, err error)
+}
+
 type Server interface {
 	Messanger
 	Commander

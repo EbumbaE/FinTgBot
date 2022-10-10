@@ -19,21 +19,6 @@ func parseArguments(lineArgs string, amount int) ([]string, error) {
 	return args, nil
 }
 
-func (t *TgServer) CommandStart(msg *messages.Message) (answer string, err error) {
-	return "hello", nil
-}
-
-func (t *TgServer) CommandHelp(msg *messages.Message) (answer string, err error) {
-	answer =
-		`hellow, some commands:
-	/setNote date category sum
-	example: /setNote 27.09.2022 food 453.12 
-	/getStatistic period (week, month or year)
-	example: /getStatistic week
-	/selectCurrency`
-	return
-}
-
 func deltaUserValuteToDefault(db storage.Storage, userID int64) (delta float64, err error) {
 
 	userAbbValute, err := db.GetUserAbbValute(userID)
@@ -114,6 +99,21 @@ func (t *TgServer) CommandGetStatistic(msg *messages.Message) (answer string, er
 		return
 	}
 
+	return
+}
+
+func (t *TgServer) CommandStart(msg *messages.Message) (answer string, err error) {
+	return "Hello", nil
+}
+
+func (t *TgServer) CommandHelp(msg *messages.Message) (answer string, err error) {
+	answer =
+		`hellow, some commands:
+	/setNote date category sum
+	example: /setNote 27.09.2022 food 453.12 
+	/getStatistic period (week, month or year)
+	example: /getStatistic week
+	/selectCurrency`
 	return
 }
 

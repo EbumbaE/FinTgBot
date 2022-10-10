@@ -1,7 +1,8 @@
 package tgServer
 
 import (
-	"fmt"
+	"context"
+	"log"
 	"time"
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
@@ -32,14 +33,20 @@ func setDefaultCurrancy(db storage.Storage) {
 	})
 }
 
-func (t *TgServer) InitCurrancies(currancies chan diary.Valute) {
+func (t *TgServer) InitCurrancies(ctx context.Context, currencies chan diary.Valute) {
 
 	setDefaultCurrancy(t.storage)
 
 	go func() {
-		for valute := range currancies {
-			if err := t.storage.SetRate(valute); err != nil {
-				fmt.Printf("Error in set currency: %s", valute.Abbreviation)
+		for {
+			select {
+			case valute := <-currencies:
+				if err := t.storage.SetRate(valute); err != nil {
+					log.Printf("[Error in set currency %s] %v\n", valute.Abbreviation, err)
+				}
+			case <-ctx.Done():
+				log.Println("accepting currencies from the parser is off")
+				return
 			}
 		}
 	}()

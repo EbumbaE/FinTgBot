@@ -1,13 +1,5 @@
 package messages
 
-type Commander interface {
-	CommandStart(msg *Message) (answer string, err error)
-	CommandHelp(msg *Message) (answer string, err error)
-	CommandSetNote(msg *Message) (answer string, err error)
-	CommandGetStatistic(msg *Message) (answer string, err error)
-	CommandDefault(msg *Message) (answer string, err error)
-}
-
 func (m *Model) IncomingCommand(msg Message) error {
 	var err error = nil
 	switch msg.Command {
