@@ -66,7 +66,7 @@ func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err err
 		Sum:      sum * delta,
 		Currency: "RUB",
 	}
-	err = t.storage.SetNote(msg.UserID, date, note)
+	err = t.storage.AddNote(msg.UserID, date, note)
 	if err != nil {
 		answer = "error in storage: set note"
 	}

@@ -2,21 +2,28 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 
 	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/config"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/ramDB"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
 )
 
 func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		exit := make(chan os.Signal, 1)
+		signal.Notify(exit, os.Interrupt, syscall.SIGTERM)
+		<-exit
+		cancel()
+	}()
 
 	file, err := os.OpenFile("l.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
@@ -26,19 +33,22 @@ func main() {
 
 	config, err := config.New()
 	if err != nil {
-		log.Fatal("config init failed:", err)
+		log.Fatal("config init failed: ", err)
 	}
 
-	db, err := ramDB.New()
+	db, err := psql.New(config.PsqlDatabase)
 	if err != nil {
-		log.Fatal("db err", err)
+		log.Fatal("db init: ", err)
+	}
+	if err := db.CheckHealth(); err != nil {
+		log.Fatal("db check health: ", err)
 	}
 
 	parser, err := currency.New(config.Currency)
 	if err != nil {
 		log.Fatal("parser init failed:", err)
 	}
-	rateCurrencyChan, err := parser.ParseCurrencies(ctx)
+	err = parser.ParseCurrencies(ctx, db)
 	if err != nil {
 		log.Fatal("valute channel return error:", err)
 	}
@@ -47,7 +57,6 @@ func main() {
 	if err != nil {
 		log.Fatal("tg server init failed:", err)
 	}
-	tgServer.InitCurrancies(ctx, rateCurrencyChan)
 
 	tgClient, err := client.New(config.TgClient, parser)
 	if err != nil {
@@ -56,13 +65,4 @@ func main() {
 
 	msgModel := messages.New(tgClient, tgServer)
 	tgClient.ListenUpdates(ctx, msgModel)
-
-	var command string
-	for {
-		fmt.Scanln(&command)
-		if command == "shutdown" {
-			cancel()
-			break
-		}
-	}
 }

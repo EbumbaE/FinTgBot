@@ -1,11 +1,8 @@
 package tgServer
 
 import (
-	"context"
-	"log"
 	"time"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 )
 
@@ -23,33 +20,6 @@ func New(storage storage.Storage, config Config) (*TgServer, error) {
 		storage:      storage,
 		dateFormater: DateFormater{format: config.FormatDate},
 	}, nil
-}
-
-func setDefaultCurrancy(db storage.Storage) {
-	db.SetRate(diary.Valute{
-		Abbreviation: "RUB",
-		Name:         "Российский рубль",
-		Value:        1,
-	})
-}
-
-func (t *TgServer) InitCurrancies(ctx context.Context, currencies chan diary.Valute) {
-
-	setDefaultCurrancy(t.storage)
-
-	go func() {
-		for {
-			select {
-			case valute := <-currencies:
-				if err := t.storage.SetRate(valute); err != nil {
-					log.Printf("[Error in set currency %s] %v\n", valute.Abbreviation, err)
-				}
-			case <-ctx.Done():
-				log.Println("accepting currencies from the parser is off")
-				return
-			}
-		}
-	}()
 }
 
 func (d *DateFormater) FormatDate(date time.Time) string {

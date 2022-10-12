@@ -5,14 +5,16 @@ import (
 	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
 )
 
 const configFile = "../../data"
 
 type Config struct {
-	TgClient client.Config   `mapstructure:"tgClient"`
-	TgServer server.Config   `mapstructure:"tgServer"`
-	Currency currency.Config `mapstructure:"currency"`
+	TgClient     client.Config   `mapstructure:"TgClient"`
+	TgServer     server.Config   `mapstructure:"TgServer"`
+	Currency     currency.Config `mapstructure:"Currency"`
+	PsqlDatabase psql.Config     `mapstructure:"Psql"`
 }
 
 func New() (cfg *Config, err error) {

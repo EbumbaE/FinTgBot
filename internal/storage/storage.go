@@ -4,19 +4,24 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 )
 
-type DiaryDB interface {
+type NotesDB interface {
 	GetNote(id int64, date string) ([]diary.Note, error)
-	SetNote(id int64, date string, note diary.Note) error
+	AddNote(id int64, date string, note diary.Note) error
 }
 
-type CurrencyDB interface {
-	GetRate(abbreviation string) (diary.Valute, error)
-	SetRate(valute diary.Valute) error
+type RatesDB interface {
+	GetRate(abbreviation string) (*diary.Valute, error)
+	AddRate(valute diary.Valute) error
+	SetDefaultCurrency() error
+}
+
+type UsersDB interface {
 	GetUserAbbValute(userID int64) (string, error)
-	SetUserAbbValute(userID int64, abbreviation string) error
+	AddUserAbbValute(userID int64, abbreviation string) error
 }
 
 type Storage interface {
-	DiaryDB
-	CurrencyDB
+	NotesDB
+	UsersDB
+	RatesDB
 }

@@ -14,12 +14,12 @@ type Parser interface {
 }
 
 type Client struct {
-	client *tgbotapi.BotAPI
+	client    *tgbotapi.BotAPI
+	Keyboards *Keyboards
 }
 
 func New(tgClient Config, parser Parser) (*Client, error) {
 	currencies := parser.GetAbbreviations()
-	initKeyboards(currencies)
 
 	client, err := tgbotapi.NewBotAPI(tgClient.Token)
 	if err != nil {
@@ -27,7 +27,8 @@ func New(tgClient Config, parser Parser) (*Client, error) {
 	}
 
 	return &Client{
-		client: client,
+		client:    client,
+		Keyboards: NewKeyboards(currencies),
 	}, nil
 }
 
@@ -43,7 +44,7 @@ func (c *Client) SendMessage(msg messages.Message) error {
 }
 
 func (c *Client) SetupCurrencyKeyboard(msg *messages.Message) {
-	msg.Keyboard = oneTimeCurrencyKeyboard
+	msg.Keyboard = c.Keyboards.GetCurrencyKeyboard()
 }
 
 func (c *Client) ListenUpdates(ctx context.Context, msgModel *messages.Model) {
@@ -69,7 +70,7 @@ func (c *Client) ListenUpdates(ctx context.Context, msgModel *messages.Model) {
 							Arguments: update.Message.CommandArguments(),
 						})
 						if err != nil {
-							log.Println("error in incomming command:", err)
+							log.Println("error in incoming command:", err)
 						}
 					} else {
 						err := msgModel.IncomingMessage(messages.Message{
@@ -77,13 +78,13 @@ func (c *Client) ListenUpdates(ctx context.Context, msgModel *messages.Model) {
 							Text:   update.Message.Text,
 						})
 						if err != nil {
-							log.Println("error in incomming message:", err)
+							log.Println("error in incoming message:", err)
 						}
 					}
 				}
 			case <-ctx.Done():
-				defer updates.Clear()
-				defer log.Println("listening messages is off")
+				updates.Clear()
+				log.Println("listening messages is off")
 				return
 			}
 		}

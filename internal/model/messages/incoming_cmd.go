@@ -1,7 +1,6 @@
 package messages
 
-func (m *Model) IncomingCommand(msg Message) error {
-	var err error = nil
+func (m *Model) IncomingCommand(msg Message) (err error) {
 	switch msg.Command {
 	case "start":
 		msg.Text, err = m.tgServer.CommandStart(&msg)

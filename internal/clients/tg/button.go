@@ -4,9 +4,15 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-var oneTimeCurrencyKeyboard = tgbotapi.ReplyKeyboardMarkup{}
+type Keyboards struct {
+	oneTimeCurrencyKeyboard tgbotapi.ReplyKeyboardMarkup
+}
 
-func intitOneTimeCurrencyKeyboard(currency []string) {
+func (k *Keyboards) GetCurrencyKeyboard() tgbotapi.ReplyKeyboardMarkup {
+	return k.oneTimeCurrencyKeyboard
+}
+
+func newOneTimeCurrencyKeyboard(currency []string) tgbotapi.ReplyKeyboardMarkup {
 	rowCount := -1
 	lenRow := 3
 	lenRowCount := -1
@@ -22,9 +28,11 @@ func intitOneTimeCurrencyKeyboard(currency []string) {
 		rows[rowCount] = append(rows[rowCount], tgbotapi.NewKeyboardButton(abb))
 	}
 
-	oneTimeCurrencyKeyboard = tgbotapi.NewOneTimeReplyKeyboard(rows...)
+	return tgbotapi.NewOneTimeReplyKeyboard(rows...)
 }
 
-func initKeyboards(currency []string) {
-	intitOneTimeCurrencyKeyboard(currency)
+func NewKeyboards(currency []string) *Keyboards {
+	return &Keyboards{
+		oneTimeCurrencyKeyboard: newOneTimeCurrencyKeyboard(currency),
+	}
 }
