@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
@@ -110,6 +111,7 @@ func (p *Parser) ParseCurrencies(ctx context.Context, storage rateDB) error {
 				}
 
 			case <-ctx.Done():
+				defer ctx.Value("allDoneWG").(*sync.WaitGroup).Done()
 				log.Println("parser is off")
 				return
 			}

@@ -22,14 +22,13 @@ func NewRatesDB(driverName, dataSourceName string) *RatesDB {
 
 func (d *Database) AddRate(currency diary.Valute) error {
 	const query = `
-		insert into raets(
+		insert into rates(
 			created_at,
 			abbreviation,
 			name,
-			value,
-			ts
+			value
 		) values (
-			now(), $1, $2, $3, $4
+			now(), $1, $2, $3
 		);
 	`
 
@@ -37,7 +36,6 @@ func (d *Database) AddRate(currency diary.Valute) error {
 		currency.Abbreviation,
 		currency.Name,
 		currency.Value,
-		currency.TimeStep,
 	)
 
 	return err

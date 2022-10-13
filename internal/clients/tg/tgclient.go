@@ -3,6 +3,7 @@ package tg
 import (
 	"context"
 	"log"
+	"sync"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
@@ -83,7 +84,7 @@ func (c *Client) ListenUpdates(ctx context.Context, msgModel *messages.Model) {
 					}
 				}
 			case <-ctx.Done():
-				updates.Clear()
+				defer ctx.Value("allDoneWG").(*sync.WaitGroup).Done()
 				log.Println("listening messages is off")
 				return
 			}

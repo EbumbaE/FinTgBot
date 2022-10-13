@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 
 	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
@@ -18,6 +19,7 @@ import (
 func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
+	ctx = context.WithValue(ctx, "allDoneWG", &sync.WaitGroup{})
 	go func() {
 		exit := make(chan os.Signal, 1)
 		signal.Notify(exit, os.Interrupt, syscall.SIGTERM)
@@ -48,6 +50,7 @@ func main() {
 	if err != nil {
 		log.Fatal("parser init failed:", err)
 	}
+	ctx = context.WithValue(ctx, "parserDone", make(chan int))
 	err = parser.ParseCurrencies(ctx, db)
 	if err != nil {
 		log.Fatal("valute channel return error:", err)
@@ -64,5 +67,9 @@ func main() {
 	}
 
 	msgModel := messages.New(tgClient, tgServer)
+	ctx = context.WithValue(ctx, "tgClientDone", make(chan int))
 	tgClient.ListenUpdates(ctx, msgModel)
+
+	ctx.Value("allDoneWG").(*sync.WaitGroup).Wait()
+	log.Println("All is shutdown")
 }

@@ -1,7 +1,5 @@
 package diary
 
-import "time"
-
 type Note struct {
 	Category string
 	Sum      float64
@@ -12,7 +10,6 @@ type Valute struct {
 	Abbreviation string  `json:"CharCode"`
 	Name         string  `json:"Name"`
 	Value        float64 `json:"Value"`
-	TimeStep     time.Time
 }
 
 func (v Valute) GetAbbreviation() string {
