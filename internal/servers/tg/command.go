@@ -34,7 +34,7 @@ func deltaUserValuteToDefault(db storage.Storage, userID int64) (delta float64, 
 	return userRateValute.Value, nil
 }
 
-func (t *TgServer) checkBudget(userID int64, date string, sum, delta float64) (answer string, err error) {
+func (t *TgServer) CheckBudget(userID int64, date string, sum, delta float64) (answer string, err error) {
 	budget, err := t.storage.GetMonthlyBudget(userID, date)
 	if err != nil {
 		budget = &diary.Budget{
@@ -105,7 +105,7 @@ func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err err
 	}
 
 	monthYear := date[3:]
-	answer, err = t.checkBudget(msg.UserID, monthYear, sum, 1.0/delta)
+	answer, err = t.CheckBudget(msg.UserID, monthYear, sum, 1.0/delta)
 	if err != nil {
 		return
 	}
