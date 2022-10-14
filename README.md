@@ -12,8 +12,16 @@ example: **/getStatistic week**\
 food: 245.12\
 school: 85.01**
 
-**/selectCurrency**\
-дает выбор валюты для команд getStatistic и setNote
+**/selectReportCurrency**\
+дает выбор валюты для команд getStatistic, setNote, getMonthlyBudget
+
+**/setBudget** дата сумма валюта\
+example: **/setBudget 10.2022 254 USD**\
+устанавливает бюджет на месяц
+
+**/getBudget** дата\
+example: **/getBudget 10.2022**\
+выводит расход за месяц рабочей валюте
 
 **/start**\
 просто выводит *hellow*

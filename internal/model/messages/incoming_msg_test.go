@@ -51,7 +51,7 @@ func TestIsCurrencyAndSetCurrency(t *testing.T) {
 		}
 
 		server.EXPECT().IsCurrency(msg.Text).Return(true)
-		server.EXPECT().MessageSetCurrency(&msg).Return("Done", nil)
+		server.EXPECT().MessageSetReportCurrency(&msg).Return("Done", nil)
 		client.EXPECT().SendMessage(sendMsg)
 
 		err := model.IncomingMessage(msg)

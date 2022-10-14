@@ -112,19 +112,19 @@ func (mr *MockMessangerMockRecorder) MessageDefault(msg interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageDefault", reflect.TypeOf((*MockMessanger)(nil).MessageDefault), msg)
 }
 
-// MessageSetCurrency mocks base method.
-func (m *MockMessanger) MessageSetCurrency(msg *messages.Message) (string, error) {
+// MessageSetReportCurrency mocks base method.
+func (m *MockMessanger) MessageSetReportCurrency(msg *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MessageSetCurrency", msg)
+	ret := m.ctrl.Call(m, "MessageSetReportCurrency", msg)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// MessageSetCurrency indicates an expected call of MessageSetCurrency.
-func (mr *MockMessangerMockRecorder) MessageSetCurrency(msg interface{}) *gomock.Call {
+// MessageSetReportCurrency indicates an expected call of MessageSetReportCurrency.
+func (mr *MockMessangerMockRecorder) MessageSetReportCurrency(msg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageSetCurrency", reflect.TypeOf((*MockMessanger)(nil).MessageSetCurrency), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageSetReportCurrency", reflect.TypeOf((*MockMessanger)(nil).MessageSetReportCurrency), msg)
 }
 
 // MockCommander is a mock of Commander interface.
@@ -165,6 +165,21 @@ func (mr *MockCommanderMockRecorder) CommandDefault(msg interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandDefault", reflect.TypeOf((*MockCommander)(nil).CommandDefault), msg)
 }
 
+// CommandGetBudget mocks base method.
+func (m *MockCommander) CommandGetBudget(msg *messages.Message) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CommandGetBudget", msg)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CommandGetBudget indicates an expected call of CommandGetBudget.
+func (mr *MockCommanderMockRecorder) CommandGetBudget(msg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetBudget", reflect.TypeOf((*MockCommander)(nil).CommandGetBudget), msg)
+}
+
 // CommandGetStatistic mocks base method.
 func (m *MockCommander) CommandGetStatistic(msg *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
@@ -193,6 +208,21 @@ func (m *MockCommander) CommandHelp(msg *messages.Message) (string, error) {
 func (mr *MockCommanderMockRecorder) CommandHelp(msg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandHelp", reflect.TypeOf((*MockCommander)(nil).CommandHelp), msg)
+}
+
+// CommandSetBudget mocks base method.
+func (m *MockCommander) CommandSetBudget(msg *messages.Message) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CommandSetBudget", msg)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CommandSetBudget indicates an expected call of CommandSetBudget.
+func (mr *MockCommanderMockRecorder) CommandSetBudget(msg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetBudget", reflect.TypeOf((*MockCommander)(nil).CommandSetBudget), msg)
 }
 
 // CommandSetNote mocks base method.
@@ -263,6 +293,21 @@ func (mr *MockServerMockRecorder) CommandDefault(msg interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandDefault", reflect.TypeOf((*MockServer)(nil).CommandDefault), msg)
 }
 
+// CommandGetBudget mocks base method.
+func (m *MockServer) CommandGetBudget(msg *messages.Message) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CommandGetBudget", msg)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CommandGetBudget indicates an expected call of CommandGetBudget.
+func (mr *MockServerMockRecorder) CommandGetBudget(msg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetBudget", reflect.TypeOf((*MockServer)(nil).CommandGetBudget), msg)
+}
+
 // CommandGetStatistic mocks base method.
 func (m *MockServer) CommandGetStatistic(msg *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
@@ -291,6 +336,21 @@ func (m *MockServer) CommandHelp(msg *messages.Message) (string, error) {
 func (mr *MockServerMockRecorder) CommandHelp(msg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandHelp", reflect.TypeOf((*MockServer)(nil).CommandHelp), msg)
+}
+
+// CommandSetBudget mocks base method.
+func (m *MockServer) CommandSetBudget(msg *messages.Message) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CommandSetBudget", msg)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CommandSetBudget indicates an expected call of CommandSetBudget.
+func (mr *MockServerMockRecorder) CommandSetBudget(msg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetBudget", reflect.TypeOf((*MockServer)(nil).CommandSetBudget), msg)
 }
 
 // CommandSetNote mocks base method.
@@ -352,17 +412,17 @@ func (mr *MockServerMockRecorder) MessageDefault(msg interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageDefault", reflect.TypeOf((*MockServer)(nil).MessageDefault), msg)
 }
 
-// MessageSetCurrency mocks base method.
-func (m *MockServer) MessageSetCurrency(msg *messages.Message) (string, error) {
+// MessageSetReportCurrency mocks base method.
+func (m *MockServer) MessageSetReportCurrency(msg *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MessageSetCurrency", msg)
+	ret := m.ctrl.Call(m, "MessageSetReportCurrency", msg)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// MessageSetCurrency indicates an expected call of MessageSetCurrency.
-func (mr *MockServerMockRecorder) MessageSetCurrency(msg interface{}) *gomock.Call {
+// MessageSetReportCurrency indicates an expected call of MessageSetReportCurrency.
+func (mr *MockServerMockRecorder) MessageSetReportCurrency(msg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageSetCurrency", reflect.TypeOf((*MockServer)(nil).MessageSetCurrency), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageSetReportCurrency", reflect.TypeOf((*MockServer)(nil).MessageSetReportCurrency), msg)
 }

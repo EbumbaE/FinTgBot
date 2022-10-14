@@ -10,6 +10,10 @@ func (m *Model) IncomingCommand(msg Message) (err error) {
 		msg.Text, err = m.tgServer.CommandSetNote(&msg)
 	case "getStatistic":
 		msg.Text, err = m.tgServer.CommandGetStatistic(&msg)
+	case "setBudget":
+		msg.Text, err = m.tgServer.CommandSetBudget(&msg)
+	case "getBudget":
+		msg.Text, err = m.tgServer.CommandGetBudget(&msg)
 	case "selectCurrency":
 		m.tgClient.SetupCurrencyKeyboard(&msg)
 		msg.Text = "Setup value:"

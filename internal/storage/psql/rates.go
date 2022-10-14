@@ -11,23 +11,24 @@ type RatesDB struct {
 	db *sql.DB
 }
 
-func NewRatesDB(driverName, dataSourceName string) *RatesDB {
+func NewRatesDB(driverName, dataSourceName string) (*RatesDB, error) {
 	rateDB, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		log.Println("rate database open: ", err)
+		return nil, err
 	}
 
-	return &RatesDB{rateDB}
+	return &RatesDB{rateDB}, nil
 }
 
 func (d *Database) AddRate(currency diary.Valute) error {
 	const query = `
-		insert into rates(
+		INSERT INTO rates(
 			created_at,
 			abbreviation,
 			name,
 			value
-		) values (
+		) VALUES (
 			now(), $1, $2, $3
 		);
 	`
@@ -43,17 +44,24 @@ func (d *Database) AddRate(currency diary.Valute) error {
 
 func (d *Database) GetRate(abbreviation string) (*diary.Valute, error) {
 	const query = `
-		select abbreviation
+		SELECT  created_at,
+				abbreviation,
 				name,
-				value,
-				time_step
-		from rates
-		where abbreviation = $1
+				value
+		FROM rates
+		WHERE abbreviation = $1
+		ORDER BY created_at DESC
 	`
 
-	var rate diary.Valute
-	err := d.Rates.db.QueryRow(query, abbreviation).Scan(&rate)
-	return &rate, err
+	var getCreatedAt, getAbbreviation, getName string
+	var getValue float64
+	err := d.Rates.db.QueryRow(query, abbreviation).Scan(&getCreatedAt, &getAbbreviation, &getName, &getValue)
+
+	return &diary.Valute{
+		Abbreviation: getAbbreviation,
+		Name:         getName,
+		Value:        getValue,
+	}, err
 }
 
 func (d *Database) SetDefaultCurrency() error {

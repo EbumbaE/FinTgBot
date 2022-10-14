@@ -50,7 +50,7 @@ func main() {
 	if err != nil {
 		log.Fatal("parser init failed:", err)
 	}
-	ctx = context.WithValue(ctx, "parserDone", make(chan int))
+	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
 	err = parser.ParseCurrencies(ctx, db)
 	if err != nil {
 		log.Fatal("valute channel return error:", err)
@@ -67,7 +67,7 @@ func main() {
 	}
 
 	msgModel := messages.New(tgClient, tgServer)
-	ctx = context.WithValue(ctx, "tgClientDone", make(chan int))
+	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
 	tgClient.ListenUpdates(ctx, msgModel)
 
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Wait()

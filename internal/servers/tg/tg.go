@@ -7,29 +7,46 @@ import (
 )
 
 type TgServer struct {
-	storage      storage.Storage
-	dateFormater DateFormater
+	storage       storage.Storage
+	dateFormatter DateFormatter
 }
 
-type DateFormater struct {
-	format string
+type DateFormatter struct {
+	format       string
+	budgetFormat string
 }
 
 func New(storage storage.Storage, config Config) (*TgServer, error) {
 	return &TgServer{
-		storage:      storage,
-		dateFormater: DateFormater{format: config.FormatDate},
+		storage: storage,
+		dateFormatter: DateFormatter{
+			format:       config.FormatDate,
+			budgetFormat: config.BudgetFormatDate,
+		},
 	}, nil
 }
 
-func (d *DateFormater) FormatDate(date time.Time) string {
+func (d *DateFormatter) FormatDateTimeToString(date time.Time) string {
 	return date.Format(d.format)
 }
 
-func (t *TgServer) correctDate(date string) (string, error) {
-	parseDate, err := time.Parse(t.dateFormater.format, date)
+func (d *DateFormatter) FormatDateStringToTime(date string) (t time.Time, err error) {
+	t, err = time.Parse(d.format, date)
+	return
+}
+
+func (df *DateFormatter) CorrectDate(date string) (string, error) {
+	parseDate, err := time.Parse(df.format, date)
 	if err != nil {
 		return "", err
 	}
-	return t.dateFormater.FormatDate(parseDate), nil
+	return df.FormatDateTimeToString(parseDate), nil
+}
+
+func (df *DateFormatter) CorrectMonthYear(date string) (string, error) {
+	parseDate, err := time.Parse(df.budgetFormat, date)
+	if err != nil {
+		return "", err
+	}
+	return df.FormatDateTimeToString(parseDate), nil
 }

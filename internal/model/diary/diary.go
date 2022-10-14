@@ -6,6 +6,20 @@ type Note struct {
 	Currency string
 }
 
+type Budget struct {
+	Value        float64
+	Abbreviation string
+	Date         string
+}
+
+func (b Budget) GetAbbreviation() string {
+	return b.Abbreviation
+}
+
+func (b Budget) GetSum() float64 {
+	return b.Value
+}
+
 type Valute struct {
 	Abbreviation string  `json:"CharCode"`
 	Name         string  `json:"Name"`

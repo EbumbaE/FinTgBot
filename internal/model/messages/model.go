@@ -8,7 +8,7 @@ type Client interface {
 type Messanger interface {
 	IsCurrency(text string) bool
 	MessageDefault(msg *Message) (answer string, err error)
-	MessageSetCurrency(msg *Message) (answer string, err error)
+	MessageSetReportCurrency(msg *Message) (answer string, err error)
 }
 
 type Commander interface {
@@ -17,6 +17,8 @@ type Commander interface {
 	CommandSetNote(msg *Message) (answer string, err error)
 	CommandGetStatistic(msg *Message) (answer string, err error)
 	CommandDefault(msg *Message) (answer string, err error)
+	CommandSetBudget(msg *Message) (answer string, err error)
+	CommandGetBudget(msg *Message) (answer string, err error)
 }
 
 type Server interface {

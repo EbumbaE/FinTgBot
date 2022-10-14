@@ -8,16 +8,25 @@ import (
 )
 
 type Storage interface {
+	GetRate(abbreviation string) (*diary.Valute, error)
 	GetNote(id int64, date string) ([]diary.Note, error)
+	GetMonthlyBudget(userID int64, date string) (*diary.Budget, error)
 }
 
 type Formatter interface {
-	FormatDate(date time.Time) string
+	FormatDateTimeToString(date time.Time) string
+	FormatDateStringToTime(date string) (time.Time, error)
+	CorrectMonthYear(date string) (string, error)
 }
 
 type Valute interface {
 	GetAbbreviation() string
 	GetValue() float64
+}
+
+type Budget interface {
+	GetAbbreviation() string
+	GetSum() float64
 }
 
 func getWeekPeriod(now time.Time) (beginPeriod, endPeriod time.Time) {
@@ -62,10 +71,18 @@ func getPeriod(period string) (beginPeriod, endPeriod time.Time, err error) {
 	return tn, tn, fmt.Errorf("Error in period")
 }
 
+func addReportHeader(period, currencyAbb string) string {
+	return fmt.Sprintf("Statistic for the %s in %s:\n", period, currencyAbb)
+}
+
+func addCategory(category string, sum float64) string {
+	return fmt.Sprintf("%s: %.2f\n", category, sum)
+}
+
 func CountStatistic(userID int64, period string, db Storage, formatter Formatter, currency Valute) (answer string, err error) {
 
 	currencyAbb := currency.GetAbbreviation()
-	answer = fmt.Sprintf("Statistic for the %s in %s:\n", period, currencyAbb)
+	answer = addReportHeader(period, currencyAbb)
 
 	delta := 1.0 / currency.GetValue()
 
@@ -74,20 +91,79 @@ func CountStatistic(userID int64, period string, db Storage, formatter Formatter
 		return "", err
 	}
 
-	totalSum := map[string]float64{}
+	totalCategorySum := map[string]float64{}
 	for date := beginPeriod; date != endPeriod; date = date.AddDate(0, 0, 1) {
-		notes, err := db.GetNote(userID, formatter.FormatDate(date))
+		notes, err := db.GetNote(userID, formatter.FormatDateTimeToString(date))
 		if err != nil {
 			return "Error in storage: get note", err
 		}
 		for _, note := range notes {
-			totalSum[note.Category] += note.Sum * delta
+			totalCategorySum[note.Category] += note.Sum * delta
 		}
 	}
 
-	for category, sum := range totalSum {
-		answer += fmt.Sprintf("%s: %.2f\n", category, sum)
+	for category, sum := range totalCategorySum {
+		answer += addCategory(category, sum)
 	}
 
 	return answer, nil
+}
+
+func addBudgetHeader(period, currencyAbb string) string {
+	return fmt.Sprintf("Budget for the %s in %s:\n", period, currencyAbb)
+}
+
+func addBudget(totalSum, budgetSum float64, currencyAbb string) string {
+	return fmt.Sprintf("%.2f/%.2f %s\n", totalSum, budgetSum, currencyAbb)
+}
+
+func CountMonthSumInDBCurrency(userID int64, db Storage, formatter Formatter, timeBudget time.Time) (float64, error) {
+
+	beginPeriod, endPeriod := getMonthPeriod(timeBudget)
+
+	var totalSum float64 = 0
+	for date := beginPeriod; date != endPeriod; date = date.AddDate(0, 0, 1) {
+		notes, err := db.GetNote(userID, formatter.FormatDateTimeToString(date))
+		if err != nil {
+			return 0, err
+		}
+		for _, note := range notes {
+			totalSum += note.Sum
+		}
+	}
+	return totalSum, nil
+}
+
+func GetBudgetReport(userID int64, db Storage, formatter Formatter, userRate Valute, monthYear string) (answer string, err error) {
+
+	answer = addBudgetHeader("month", userRate.GetAbbreviation())
+
+	date, err := formatter.CorrectMonthYear(monthYear)
+	if err != nil {
+		return err.Error(), err
+	}
+	timeBudget, err := formatter.FormatDateStringToTime(date)
+	if err != nil {
+		return err.Error(), err
+	}
+
+	budget, err := db.GetMonthlyBudget(userID, monthYear)
+	if err != nil {
+		return err.Error(), err
+	}
+
+	budgetRate, err := db.GetRate(budget.GetAbbreviation())
+	if err != nil {
+		return err.Error(), err
+	}
+
+	totalSum, err := CountMonthSumInDBCurrency(userID, db, formatter, timeBudget)
+	if err != nil {
+		return err.Error(), err
+	}
+
+	delta := budgetRate.GetValue() / userRate.GetValue()
+	answer += addBudget(totalSum/userRate.GetValue(), budget.GetSum()*delta, userRate.GetAbbreviation())
+
+	return answer, err
 }

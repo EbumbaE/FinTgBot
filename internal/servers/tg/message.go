@@ -2,7 +2,7 @@ package tgServer
 
 import "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 
-func (t *TgServer) MessageSetCurrency(msg *messages.Message) (answer string, err error) {
+func (t *TgServer) MessageSetReportCurrency(msg *messages.Message) (answer string, err error) {
 
 	valute, err := t.storage.GetRate(msg.Text)
 	if err != nil {
@@ -10,7 +10,7 @@ func (t *TgServer) MessageSetCurrency(msg *messages.Message) (answer string, err
 		return
 	}
 
-	err = t.storage.AddUserAbbValute(msg.UserID, valute.Abbreviation)
+	err = t.storage.SetUserAbbValute(msg.UserID, valute.Abbreviation)
 	if err != nil {
 		return err.Error(), err
 	}

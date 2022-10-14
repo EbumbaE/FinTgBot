@@ -5,7 +5,7 @@ func (m *Model) IncomingMessage(msg Message) error {
 	var err error = nil
 
 	if isCurrency := m.tgServer.IsCurrency(msg.Text); isCurrency {
-		msg.Text, err = m.tgServer.MessageSetCurrency(&msg)
+		msg.Text, err = m.tgServer.MessageSetReportCurrency(&msg)
 	} else {
 		switch msg.Text {
 		default:

@@ -7,31 +7,32 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 )
 
-type NotesDB struct {
+type DiaryDB struct {
 	db *sql.DB
 }
 
-func NewNotesDB(driverName, dataSourceName string) *NotesDB {
-	notesDB, err := sql.Open(driverName, dataSourceName)
+func NewDiaryDB(driverName, dataSourceName string) (*DiaryDB, error) {
+	diaryDB, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		log.Println("notes database open: ", err)
+		return nil, err
 	}
 
-	return &NotesDB{notesDB}
+	return &DiaryDB{diaryDB}, nil
 }
 
 func (d *Database) GetNote(userID int64, date string) (notes []diary.Note, err error) {
 	const query = `
 		SELECT
-			user_id
-			date
+			user_id,
+			date,
 			note_category,
 			note_currency,
 			note_sum
-		FROM users
-		WHERE user_id = $1 AND date = $1
+		FROM diary
+		WHERE user_id = $1 AND date = $2
 	`
-	rows, err := d.Notes.db.Query(query, userID, date)
+	rows, err := d.Diary.db.Query(query, userID, date)
 	if err != nil {
 		return nil, err
 	}
@@ -56,19 +57,19 @@ func (d *Database) GetNote(userID int64, date string) (notes []diary.Note, err e
 
 func (d *Database) AddNote(userID int64, date string, note diary.Note) error {
 	const query = `
-		insert into notes(
-			created_at
-			user_id
-			date
+		INSERT INTO diary(
+			created_at,
+			user_id,
+			date,
 			note_category,
 			note_currency,
 			note_sum
-		) values (
+		) VALUES (
 			now(), $1, $2, $3, $4, $5
 		);
 	`
 
-	_, err := d.Rates.db.Exec(query,
+	_, err := d.Diary.db.Exec(query,
 		userID,
 		date,
 		note.Category,
