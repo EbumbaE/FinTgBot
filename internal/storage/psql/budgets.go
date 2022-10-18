@@ -2,6 +2,7 @@ package psql
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
@@ -44,37 +45,39 @@ func (d *Database) GetMonthlyBudget(userID int64, date string) (*diary.Budget, e
 func (d *Database) AddMonthlyBudget(userID int64, monthlyBudget diary.Budget) error {
 	const queryInsert = `
 		INSERT INTO budgets (
-			created_at,
 			user_id,
 			date,
 			value,
 			abbreviation
 		) VALUES (
-			now(), $1, $2, $3, $4
+			$1, $2, $3, $4
 		);
 	`
 	const queryUpdate = `
 		UPDATE budgets
-		SET created_at = now(),
+		SET updated_at = now(),
 			value = $3,
 			abbreviation = $4
 		WHERE user_id = $1 AND date = $2; 
 	`
 
-	_, err := d.Budgets.db.Exec(queryInsert,
+	_, err1 := d.Budgets.db.Exec(queryInsert,
 		userID,
 		monthlyBudget.Date,
 		monthlyBudget.Value,
 		monthlyBudget.Abbreviation,
 	)
-	if err != nil {
-		_, err = d.Budgets.db.Exec(queryUpdate,
+	if err1 != nil {
+		_, err2 := d.Budgets.db.Exec(queryUpdate,
 			userID,
 			monthlyBudget.Date,
 			monthlyBudget.Value,
 			monthlyBudget.Abbreviation,
 		)
+		if err2 != nil {
+			return fmt.Errorf("Insert and Update budgets: %v, %v", err1, err2)
+		}
 	}
 
-	return err
+	return nil
 }

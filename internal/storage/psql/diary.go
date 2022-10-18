@@ -36,6 +36,7 @@ func (d *Database) GetNote(userID int64, date string) (notes []diary.Note, err e
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var getUserID int64
 	var getDate, getNoteCategory, getNoteCurrency string
@@ -52,20 +53,19 @@ func (d *Database) GetNote(userID int64, date string) (notes []diary.Note, err e
 		})
 	}
 
-	return notes, err
+	return notes, rows.Err()
 }
 
 func (d *Database) AddNote(userID int64, date string, note diary.Note) error {
 	const query = `
 		INSERT INTO diary(
-			created_at,
 			user_id,
 			date,
 			note_category,
 			note_currency,
 			note_sum
 		) VALUES (
-			now(), $1, $2, $3, $4, $5
+			$1, $2, $3, $4, $5
 		);
 	`
 

@@ -2,6 +2,7 @@ package psql
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
@@ -22,24 +23,44 @@ func NewRatesDB(driverName, dataSourceName string) (*RatesDB, error) {
 }
 
 func (d *Database) AddRate(currency diary.Valute) error {
-	const query = `
+	const queryInsert = `
 		INSERT INTO rates(
-			created_at,
+			id,
 			abbreviation,
 			name,
 			value
 		) VALUES (
-			now(), $1, $2, $3
+			$1, $2, $3, $4
 		);
 	`
+	const queryUpdate = `
+		UPDATE rates
+		SET updated_at = now(),
+			abbreviation = $2,
+			name = $3,
+			value = $4
+		WHERE id = $1; 
+	`
 
-	_, err := d.Rates.db.Exec(query,
+	_, err1 := d.Rates.db.Exec(queryInsert,
+		currency.ID,
 		currency.Abbreviation,
 		currency.Name,
 		currency.Value,
 	)
+	if err1 != nil {
+		_, err2 := d.Rates.db.Exec(queryUpdate,
+			currency.ID,
+			currency.Abbreviation,
+			currency.Name,
+			currency.Value,
+		)
+		if err2 != nil {
+			return fmt.Errorf("Insert and Update rates: %v, %v", err1, err2)
+		}
+	}
 
-	return err
+	return nil
 }
 
 func (d *Database) GetRate(abbreviation string) (*diary.Valute, error) {

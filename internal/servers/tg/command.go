@@ -44,38 +44,36 @@ func (t *TgServer) CheckBudget(userID int64, date string, sum, delta float64) (a
 
 	if budget.Value == 0 {
 		return "Done", nil
-	} else {
-
-		dateBudget, err := t.dateFormatter.CorrectMonthYear(date)
-		if err != nil {
-			return err.Error(), err
-		}
-		timeBudget, err := t.dateFormatter.FormatDateStringToTime(dateBudget)
-		if err != nil {
-			return err.Error(), err
-		}
-
-		monthSum, err := report.CountMonthSumInDBCurrency(userID, t.storage, &t.dateFormatter, timeBudget)
-		if err != nil {
-			return err.Error(), err
-		}
-		budgetRate, err := t.storage.GetRate(budget.Abbreviation)
-		if err != nil {
-			return err.Error(), err
-		}
-		userAbbValute, err := t.storage.GetUserAbbValute(userID)
-		if err != nil {
-			return err.Error(), err
-		}
-
-		differ := budget.Value*budgetRate.Value*delta - (monthSum*delta + sum)
-		if differ >= 0 {
-			answer = "Done"
-		} else {
-			answer = fmt.Sprintf("Over budget by %0.2f %s", -1*differ, userAbbValute)
-		}
 	}
-	return answer, err
+
+	dateBudget, err := t.dateFormatter.CorrectMonthYear(date)
+	if err != nil {
+		return err.Error(), err
+	}
+	timeBudget, err := t.dateFormatter.FormatDateStringToTime(dateBudget)
+	if err != nil {
+		return err.Error(), err
+	}
+
+	monthSum, err := report.CountMonthSumInDBCurrency(userID, t.storage, &t.dateFormatter, timeBudget)
+	if err != nil {
+		return err.Error(), err
+	}
+	budgetRate, err := t.storage.GetRate(budget.Abbreviation)
+	if err != nil {
+		return err.Error(), err
+	}
+	userAbbValute, err := t.storage.GetUserAbbValute(userID)
+	if err != nil {
+		return err.Error(), err
+	}
+
+	differ := budget.Value*budgetRate.Value*delta - (monthSum*delta + sum)
+	if differ < 0 {
+		return fmt.Sprintf("Over budget by %0.2f %s", -1*differ, userAbbValute), nil
+	}
+
+	return "Done", nil
 }
 
 func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err error) {

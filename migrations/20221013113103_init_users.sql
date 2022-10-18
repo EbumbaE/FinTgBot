@@ -3,9 +3,10 @@
 
 CREATE TABLE users
 (
-    created_at              TIMESTAMP NOT NULL,
     user_id                 BIGINT PRIMARY KEY,
-    report_abbreviation     TEXT NOT NULL
+    created_at              TIMESTAMP DEFAULT now(),
+    updated_at              TIMESTAMP,
+    report_abbreviation     TEXT
 );
 
 CREATE INDEX users_userid_idx ON users(user_id);

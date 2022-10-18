@@ -3,12 +3,13 @@
 
 CREATE TABLE diary
 (
-    created_at      TIMESTAMP NOT NULL,
     user_id         BIGSERIAL,
-    date            TEXT NOT NULL,
-    note_category   TEXT NOT NULL,
-    note_currency   TEXT NOT NULL,
-    note_sum        FLOAT NOT NULL
+    created_at      TIMESTAMP DEFAULT now(),
+    updated_at      TIMESTAMP,
+    date            TEXT,
+    note_category   TEXT,
+    note_currency   TEXT,
+    note_sum        FLOAT
 );
 
 CREATE INDEX diary_userid_date_idx ON diary(user_id, date);

@@ -3,11 +3,12 @@
 
 CREATE TABLE budgets
 (
-    created_at      TIMESTAMP NOT NULL,
-    user_id         BIGINT,
-    date            TEXT PRIMARY KEY,
-    value           FLOAT NOT NULL,
-    abbreviation    TEXT NOT NULL
+    user_id         BIGINT PRIMARY KEY,
+    created_at      TIMESTAMP DEFAULT now(),
+    updated_at      TIMESTAMP,
+    date            TEXT,
+    value           FLOAT,
+    abbreviation    TEXT
 );
 
 CREATE INDEX budgets_userid_date_idx ON budgets(user_id, date);

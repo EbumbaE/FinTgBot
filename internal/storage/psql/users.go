@@ -2,6 +2,7 @@ package psql
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 )
 
@@ -22,7 +23,7 @@ func NewUsersDB(driverName, dataSourceName string) (*UsersDB, error) {
 func (d *Database) SetUserAbbValute(userID int64, abbreviation string) error {
 	const queryInsert = `
 		INSERT INTO users (
-			created_at,
+			updated_at,
 			user_id,
 			report_abbreviation
 		) VALUES (
@@ -31,26 +32,26 @@ func (d *Database) SetUserAbbValute(userID int64, abbreviation string) error {
 	`
 	const queryUpdate = `
 		UPDATE users
-		SET created_at = now(),
+		SET updated_at = now(),
 			report_abbreviation = $2
 		WHERE user_id = $1; 
 	`
 
-	_, err := d.Users.db.Exec(queryInsert,
+	_, err1 := d.Users.db.Exec(queryInsert,
 		userID,
 		abbreviation,
 	)
-	if err != nil {
-		_, err = d.Users.db.Exec(queryUpdate,
+	if err1 != nil {
+		_, err2 := d.Users.db.Exec(queryUpdate,
 			userID,
 			abbreviation,
 		)
-		if err != nil {
-			return err
+		if err2 != nil {
+			return fmt.Errorf("Insert and Update users: %v, %v", err1, err2)
 		}
 	}
 
-	return err
+	return nil
 }
 
 func (d *Database) GetUserAbbValute(userID int64) (string, error) {

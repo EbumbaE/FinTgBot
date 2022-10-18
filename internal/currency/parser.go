@@ -14,6 +14,7 @@ import (
 )
 
 const parserTimeOut = time.Second * 10
+const parserTimer = time.Hour * 24
 
 type rateDB interface {
 	AddRate(valute diary.Valute) error
@@ -23,6 +24,7 @@ type rateDB interface {
 type Parser struct {
 	abbreviations []string
 	urlCBR        string
+	client        *http.Client
 }
 
 type Response struct {
@@ -33,6 +35,7 @@ func New(config Config) (*Parser, error) {
 	return &Parser{
 		abbreviations: config.Abbreviations,
 		urlCBR:        config.UrlCBR,
+		client:        &http.Client{Timeout: parserTimeOut},
 	}, nil
 }
 
@@ -40,9 +43,7 @@ func (p *Parser) GetAbbreviations() []string {
 	return p.abbreviations
 }
 
-func requestJsonCurrency(url string) ([]byte, error) {
-
-	client := &http.Client{Timeout: parserTimeOut}
+func requestJsonCurrency(url string, client *http.Client) ([]byte, error) {
 
 	resp, err := client.Get(url)
 	if err != nil {
@@ -69,7 +70,7 @@ func checkOnEmptyValues(v diary.Valute) error {
 }
 
 func (p *Parser) parseAndSendRates(storage rateDB) error {
-	jsonBytes, err := requestJsonCurrency(p.urlCBR)
+	jsonBytes, err := requestJsonCurrency(p.urlCBR, p.client)
 	if err != nil {
 		return err
 	}
@@ -79,10 +80,13 @@ func (p *Parser) parseAndSendRates(storage rateDB) error {
 
 	for _, abb := range p.abbreviations {
 		if v, ok := valCurs.Valute[abb]; ok {
-			if err = checkOnEmptyValues(v); err == nil {
-				if err := storage.AddRate(v); err != nil {
-					return err
-				}
+			err = checkOnEmptyValues(v)
+			if err != nil {
+				return err
+			}
+			err = storage.AddRate(v)
+			if err != nil {
+				return err
 			}
 		}
 	}
@@ -103,7 +107,7 @@ func (p *Parser) ParseCurrencies(ctx context.Context, storage rateDB) error {
 		for {
 			select {
 			case <-timeTicker.C:
-				timeTicker = time.NewTicker(time.Hour * 24)
+				timeTicker = time.NewTicker(parserTimer)
 
 				if err := p.parseAndSendRates(storage); err != nil {
 					log.Println("parse and send rates: ", err)

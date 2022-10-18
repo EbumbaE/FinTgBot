@@ -21,6 +21,7 @@ func (b Budget) GetSum() float64 {
 }
 
 type Valute struct {
+	ID           string  `jsonL"ID"`
 	Abbreviation string  `json:"CharCode"`
 	Name         string  `json:"Name"`
 	Value        float64 `json:"Value"`

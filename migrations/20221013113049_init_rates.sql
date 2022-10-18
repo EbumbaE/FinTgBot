@@ -3,9 +3,11 @@
 
 CREATE TABLE rates
 (
-    created_at      TIMESTAMP NOT NULL,
+    id              TEXT PRIMARY KEY,
+    created_at      TIMESTAMP DEFAULT now(),
+    updated_at      TIMESTAMP,
     abbreviation    TEXT NOT NULL,
-    name            TEXT NOT NULL,
+    name            TEXT,
     value           FLOAT NOT NULL
 );
 
