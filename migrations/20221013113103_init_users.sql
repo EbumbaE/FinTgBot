@@ -3,13 +3,13 @@
 
 CREATE TABLE users
 (
-    user_id                 BIGINT PRIMARY KEY,
+    id                      BIGINT PRIMARY KEY,
     created_at              TIMESTAMP DEFAULT now(),
     updated_at              TIMESTAMP,
     report_abbreviation     TEXT
 );
 
-CREATE INDEX users_userid_idx ON users(user_id);
+CREATE INDEX users_id_idx ON users(id);
 
 -- +goose StatementEnd
 

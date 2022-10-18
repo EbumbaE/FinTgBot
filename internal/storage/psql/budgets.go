@@ -2,7 +2,6 @@ package psql
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
@@ -24,26 +23,24 @@ func NewBudgetsDB(driverName, dataSourceName string) (*BudgetsDB, error) {
 
 func (d *Database) GetMonthlyBudget(userID int64, date string) (*diary.Budget, error) {
 	const query = `
-		SELECT	user_id,
-				date,
-				value,
+		SELECT	value,
 				abbreviation
 		FROM budgets
 		WHERE user_id = $1 AND date = $2
 	`
 
-	var getUserID, getDate, getAbbreviation string
+	var getAbbreviation string
 	var getMonthlyBudget float64
-	err := d.Budgets.db.QueryRow(query, userID, date).Scan(&getUserID, &getDate, &getMonthlyBudget, &getAbbreviation)
+	err := d.Budgets.db.QueryRow(query, userID, date).Scan(&getMonthlyBudget, &getAbbreviation)
 	return &diary.Budget{
 		Abbreviation: getAbbreviation,
 		Value:        getMonthlyBudget,
-		Date:         getDate,
+		Date:         date,
 	}, err
 }
 
 func (d *Database) AddMonthlyBudget(userID int64, monthlyBudget diary.Budget) error {
-	const queryInsert = `
+	const query = `
 		INSERT INTO budgets (
 			user_id,
 			date,
@@ -51,33 +48,19 @@ func (d *Database) AddMonthlyBudget(userID int64, monthlyBudget diary.Budget) er
 			abbreviation
 		) VALUES (
 			$1, $2, $3, $4
-		);
-	`
-	const queryUpdate = `
-		UPDATE budgets
+		)
+		ON CONFLICT (user_id, date) DO UPDATE
 		SET updated_at = now(),
 			value = $3,
 			abbreviation = $4
-		WHERE user_id = $1 AND date = $2; 
 	`
 
-	_, err1 := d.Budgets.db.Exec(queryInsert,
+	_, err := d.Budgets.db.Exec(query,
 		userID,
 		monthlyBudget.Date,
 		monthlyBudget.Value,
 		monthlyBudget.Abbreviation,
 	)
-	if err1 != nil {
-		_, err2 := d.Budgets.db.Exec(queryUpdate,
-			userID,
-			monthlyBudget.Date,
-			monthlyBudget.Value,
-			monthlyBudget.Abbreviation,
-		)
-		if err2 != nil {
-			return fmt.Errorf("Insert and Update budgets: %v, %v", err1, err2)
-		}
-	}
 
-	return nil
+	return err
 }

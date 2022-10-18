@@ -3,7 +3,7 @@
 
 CREATE TABLE budgets
 (
-    user_id         BIGINT PRIMARY KEY,
+    user_id         BIGINT,
     created_at      TIMESTAMP DEFAULT now(),
     updated_at      TIMESTAMP,
     date            TEXT,
@@ -11,7 +11,7 @@ CREATE TABLE budgets
     abbreviation    TEXT
 );
 
-CREATE INDEX budgets_userid_date_idx ON budgets(user_id, date);
+CREATE UNIQUE INDEX budgets_userid_date_idx ON budgets(user_id, date);
 
 -- +goose StatementEnd
 

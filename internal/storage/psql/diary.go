@@ -24,8 +24,6 @@ func NewDiaryDB(driverName, dataSourceName string) (*DiaryDB, error) {
 func (d *Database) GetNote(userID int64, date string) (notes []diary.Note, err error) {
 	const query = `
 		SELECT
-			user_id,
-			date,
 			note_category,
 			note_currency,
 			note_sum
@@ -38,12 +36,11 @@ func (d *Database) GetNote(userID int64, date string) (notes []diary.Note, err e
 	}
 	defer rows.Close()
 
-	var getUserID int64
-	var getDate, getNoteCategory, getNoteCurrency string
+	var getNoteCategory, getNoteCurrency string
 	var getNoteSum float64
 
 	for rows.Next() {
-		if err := rows.Scan(&getUserID, &getDate, &getNoteCategory, &getNoteCurrency, &getNoteSum); err != nil {
+		if err := rows.Scan(&getNoteCategory, &getNoteCurrency, &getNoteSum); err != nil {
 			return nil, err
 		}
 		notes = append(notes, diary.Note{

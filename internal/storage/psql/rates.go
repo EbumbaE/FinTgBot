@@ -2,7 +2,6 @@ package psql
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
@@ -23,7 +22,7 @@ func NewRatesDB(driverName, dataSourceName string) (*RatesDB, error) {
 }
 
 func (d *Database) AddRate(currency diary.Valute) error {
-	const queryInsert = `
+	const query = `
 		INSERT INTO rates(
 			id,
 			abbreviation,
@@ -31,42 +30,27 @@ func (d *Database) AddRate(currency diary.Valute) error {
 			value
 		) VALUES (
 			$1, $2, $3, $4
-		);
-	`
-	const queryUpdate = `
-		UPDATE rates
+		)
+		ON CONFLICT (id) DO UPDATE
 		SET updated_at = now(),
 			abbreviation = $2,
 			name = $3,
-			value = $4
-		WHERE id = $1; 
+			value = $4;
 	`
 
-	_, err1 := d.Rates.db.Exec(queryInsert,
+	_, err := d.Rates.db.Exec(query,
 		currency.ID,
 		currency.Abbreviation,
 		currency.Name,
 		currency.Value,
 	)
-	if err1 != nil {
-		_, err2 := d.Rates.db.Exec(queryUpdate,
-			currency.ID,
-			currency.Abbreviation,
-			currency.Name,
-			currency.Value,
-		)
-		if err2 != nil {
-			return fmt.Errorf("Insert and Update rates: %v, %v", err1, err2)
-		}
-	}
 
-	return nil
+	return err
 }
 
 func (d *Database) GetRate(abbreviation string) (*diary.Valute, error) {
 	const query = `
-		SELECT  created_at,
-				abbreviation,
+		SELECT  abbreviation,
 				name,
 				value
 		FROM rates
@@ -74,9 +58,9 @@ func (d *Database) GetRate(abbreviation string) (*diary.Valute, error) {
 		ORDER BY created_at DESC
 	`
 
-	var getCreatedAt, getAbbreviation, getName string
+	var getAbbreviation, getName string
 	var getValue float64
-	err := d.Rates.db.QueryRow(query, abbreviation).Scan(&getCreatedAt, &getAbbreviation, &getName, &getValue)
+	err := d.Rates.db.QueryRow(query, abbreviation).Scan(&getAbbreviation, &getName, &getValue)
 
 	return &diary.Valute{
 		Abbreviation: getAbbreviation,
