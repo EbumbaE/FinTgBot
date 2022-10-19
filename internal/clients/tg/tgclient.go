@@ -1,37 +1,54 @@
 package tg
 
 import (
+	"context"
 	"log"
+	"sync"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 )
 
-type Client struct {
-	client *tgbotapi.BotAPI
+type Parser interface {
+	GetAbbreviations() []string
 }
 
-func New(tgClient Config) (*Client, error) {
+type Client struct {
+	client    *tgbotapi.BotAPI
+	Keyboards *Keyboards
+}
+
+func New(tgClient Config, parser Parser) (*Client, error) {
+	currencies := parser.GetAbbreviations()
+
 	client, err := tgbotapi.NewBotAPI(tgClient.Token)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewBotAPI")
 	}
 
 	return &Client{
-		client: client,
+		client:    client,
+		Keyboards: NewKeyboards(currencies),
 	}, nil
 }
 
-func (c *Client) SendMessage(text string, userID int64) error {
-	_, err := c.client.Send(tgbotapi.NewMessage(userID, text))
+func (c *Client) SendMessage(msg messages.Message) error {
+	tgMsg := tgbotapi.NewMessage(msg.UserID, msg.Text)
+	tgMsg.ReplyMarkup = msg.Keyboard
+
+	_, err := c.client.Send(tgMsg)
 	if err != nil {
 		return errors.Wrap(err, "client.Send")
 	}
 	return nil
 }
 
-func (c *Client) ListenUpdates(msgModel *messages.Model) {
+func (c *Client) SetupCurrencyKeyboard(msg *messages.Message) {
+	msg.Keyboard = c.Keyboards.GetCurrencyKeyboard()
+}
+
+func (c *Client) ListenUpdates(ctx context.Context, msgModel *messages.Model) {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
@@ -39,18 +56,38 @@ func (c *Client) ListenUpdates(msgModel *messages.Model) {
 
 	log.Println("listening for messages")
 
-	for update := range updates {
-		if update.Message != nil && update.Message.IsCommand() {
-			log.Printf("[%s] %s %s", update.Message.From.UserName, update.Message.Command(), update.Message.CommandArguments())
+	go func() {
+		for {
+			select {
+			case update := <-updates:
+				if update.Message != nil {
 
-			err := msgModel.IncomingMessage(messages.Message{
-				UserID:    update.Message.From.ID,
-				Command:   update.Message.Command(),
-				Arguments: update.Message.CommandArguments(),
-			})
-			if err != nil {
-				log.Println("error processing message:", err)
+					log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+
+					if update.Message.IsCommand() {
+						err := msgModel.IncomingCommand(messages.Message{
+							UserID:    update.Message.From.ID,
+							Command:   update.Message.Command(),
+							Arguments: update.Message.CommandArguments(),
+						})
+						if err != nil {
+							log.Println("error in incoming command:", err)
+						}
+					} else {
+						err := msgModel.IncomingMessage(messages.Message{
+							UserID: update.Message.From.ID,
+							Text:   update.Message.Text,
+						})
+						if err != nil {
+							log.Println("error in incoming message:", err)
+						}
+					}
+				}
+			case <-ctx.Done():
+				defer ctx.Value("allDoneWG").(*sync.WaitGroup).Done()
+				log.Println("listening messages is off")
+				return
 			}
 		}
-	}
+	}()
 }

@@ -10,136 +10,73 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 )
 
-func Test_OnStartCommand(t *testing.T) {
+func TestMessageDefault(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	sender := mocks.NewMockMessageSender(ctrl)
-	commander := mocks.NewMockCommander(ctrl)
-	msg := messages.Message{
-		Command: "start",
-		UserID:  123,
-	}
-	commander.EXPECT().CommandStart(&msg).Return("hello", nil)
-	sender.EXPECT().SendMessage("hello", int64(123))
-
-	model := messages.New(sender, commander)
-	err := model.IncomingMessage(msg)
-
-	assert.NoError(t, err)
-}
-
-func Test_OnSetNoteCommand(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	sender := mocks.NewMockMessageSender(ctrl)
-	commander := mocks.NewMockCommander(ctrl)
-	msg := messages.Message{
-		Command:   "setNote",
-		Arguments: "29.09.2022 food 453.12",
-		UserID:    123,
-	}
-	commander.EXPECT().CommandSetNote(&msg).Return("Done", nil)
-	sender.EXPECT().SendMessage("Done", int64(123))
-
-	model := messages.New(sender, commander)
-	err := model.IncomingMessage(msg)
-
-	assert.NoError(t, err)
-}
-
-func Test_OnGetStatisticCommand(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	sender := mocks.NewMockMessageSender(ctrl)
-	commander := mocks.NewMockCommander(ctrl)
-	msg := messages.Message{
-		Command:   "getStatistic",
-		Arguments: "week",
-		UserID:    123,
-	}
-	commander.EXPECT().CommandGetStatistic(&msg).Return("Statistic for the week", nil)
-	sender.EXPECT().SendMessage("Statistic for the week", int64(123))
-
-	model := messages.New(sender, commander)
-	err := model.IncomingMessage(msg)
-
-	assert.NoError(t, err)
-}
-
-func Test_OnUnknownCommand(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	sender := mocks.NewMockMessageSender(ctrl)
-	commander := mocks.NewMockCommander(ctrl)
+	client := mocks.NewMockClient(ctrl)
+	server := mocks.NewMockServer(ctrl)
+	model := messages.New(client, server)
 
 	msg := messages.Message{
-		Text:   "some text",
+		Text:   "Random text",
 		UserID: 123,
 	}
 
-	commander.EXPECT().CommandDefault(&msg).Return("What you mean?", nil)
-	sender.EXPECT().SendMessage("What you mean?", int64(123))
+	sendMsg := messages.Message{
+		Text:   "What you mean?",
+		UserID: 123,
+	}
 
-	model := messages.New(sender, commander)
+	server.EXPECT().IsCurrency(msg.Text).Return(false)
+	server.EXPECT().MessageDefault(&msg).Return("What you mean?", nil)
+	client.EXPECT().SendMessage(sendMsg)
+
 	err := model.IncomingMessage(msg)
-
 	assert.NoError(t, err)
 }
 
-func Test_OnRightStatic(t *testing.T) {
+func TestIsCurrencyAndSetCurrency(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	sender := mocks.NewMockMessageSender(ctrl)
-	commander := mocks.NewMockCommander(ctrl)
-	model := messages.New(sender, commander)
+	client := mocks.NewMockClient(ctrl)
+	server := mocks.NewMockServer(ctrl)
+	model := messages.New(client, server)
 
-	sendSetNoteComand := func(arguments string, userID int64) {
+	rightCurr := func(currency string) {
 		msg := messages.Message{
-			Command:   "setNote",
-			Arguments: arguments,
-			UserID:    userID,
+			Text:   currency,
+			UserID: 123,
 		}
-		commander.EXPECT().CommandSetNote(&msg).Return("Done", nil)
-		sender.EXPECT().SendMessage("Done", int64(123))
+		sendMsg := messages.Message{
+			Text:   "Done",
+			UserID: 123,
+		}
+
+		server.EXPECT().IsCurrency(msg.Text).Return(true)
+		server.EXPECT().MessageSetReportCurrency(&msg).Return("Done", nil)
+		client.EXPECT().SendMessage(sendMsg)
 
 		err := model.IncomingMessage(msg)
+		assert.NoError(t, err)
+	}
 
-		if err != nil {
-			assert.Error(t, err)
+	notCurr := func(currency string) {
+		msg := messages.Message{
+			Text:   currency,
+			UserID: 123,
 		}
+		sendMsg := messages.Message{
+			Text:   "What you mean?",
+			UserID: 123,
+		}
+
+		server.EXPECT().IsCurrency(msg.Text).Return(false)
+		server.EXPECT().MessageDefault(&msg).Return(sendMsg.Text, nil)
+		client.EXPECT().SendMessage(sendMsg)
+
+		err := model.IncomingMessage(msg)
+		assert.NoError(t, err)
 	}
 
-	sendSetNoteComand("29.09.2022 food 45.12", 123)
-	sendSetNoteComand("01.09.2022 food 100", 123)
-	sendSetNoteComand("01.08.2022 food 100", 123)
-	sendSetNoteComand("28.09.2022 school 45.01", 123)
-	sendSetNoteComand("26.09.2022 school 40.1", 123)
-
-	msg := messages.Message{
-		Command:   "getStatistic",
-		Arguments: "week",
-		UserID:    123,
-	}
-	commander.EXPECT().CommandGetStatistic(&msg).Return("Statistic for the week: \nfood: 45.12\nschool: 85.01", nil)
-	sender.EXPECT().SendMessage("Statistic for the week: \nfood: 45.12\nschool: 85.01", int64(123))
-
-	err := model.IncomingMessage(msg)
-	if err != nil {
-		assert.Error(t, err)
-	}
-
-	msg.Arguments = "month"
-	commander.EXPECT().CommandGetStatistic(&msg).Return("Statistic for the week: \nfood: 145.12\nschool: 85.01", nil)
-	sender.EXPECT().SendMessage("Statistic for the week: \nfood: 145.12\nschool: 85.01", int64(123))
-
-	err = model.IncomingMessage(msg)
-	if err != nil {
-		assert.Error(t, err)
-	}
-
-	msg.Arguments = "year"
-	commander.EXPECT().CommandGetStatistic(&msg).Return("Statistic for the week: \nfood: 245.12\nschool: 85.01", nil)
-	sender.EXPECT().SendMessage("Statistic for the week: \nfood: 245.12\nschool: 85.01", int64(123))
-
-	err = model.IncomingMessage(msg)
-	if err != nil {
-		assert.Error(t, err)
-	}
-
-	assert.NoError(t, err)
+	rightCurr("USD")
+	rightCurr("RUB")
+	notCurr("RND")
 }

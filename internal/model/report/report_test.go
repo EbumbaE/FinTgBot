@@ -56,12 +56,12 @@ var yearTestsPair = []Testpair{
 	},
 }
 
-func Test_GetWeekPeriod(t *testing.T) {
+func TestGetWeekPeriod(t *testing.T) {
 
 	for _, pair := range weekTestsPair {
 		for _, value := range pair.values {
 			testNowTime := time.Date(value.year, time.Month(value.month), value.day, 0, 0, 0, 0, time.Now().Location())
-			beginPeriod, endPeriod := getWeekPeriod(testNowTime)
+			beginPeriod, endPeriod := GetWeekPeriod(testNowTime)
 
 			assert.Equal(t, beginPeriod, pair.average.begin, "expected: %s, but get %s\n", beginPeriod, pair.average.end)
 			assert.Equal(t, endPeriod, pair.average.end, "expected: %s, but get %s\n", endPeriod, pair.average.end)
@@ -69,11 +69,11 @@ func Test_GetWeekPeriod(t *testing.T) {
 	}
 }
 
-func Test_GetMonthPeriod(t *testing.T) {
+func TestGetMonthPeriod(t *testing.T) {
 	for _, pair := range monthTestsPair {
 		for _, value := range pair.values {
 			testNowTime := time.Date(value.year, time.Month(value.month), value.day, 0, 0, 0, 0, time.Now().Location())
-			beginPeriod, endPeriod := getMonthPeriod(testNowTime)
+			beginPeriod, endPeriod := GetMonthPeriod(testNowTime)
 
 			assert.Equal(t, beginPeriod, pair.average.begin, "expected: %s, but get %s\n", beginPeriod, pair.average.end)
 			assert.Equal(t, endPeriod, pair.average.end, "expected: %s, but get %s\n", endPeriod, pair.average.end)
@@ -81,11 +81,11 @@ func Test_GetMonthPeriod(t *testing.T) {
 	}
 }
 
-func Test_GetYearPeriod(t *testing.T) {
+func TestGetYearPeriod(t *testing.T) {
 	for _, pair := range yearTestsPair {
 		for _, value := range pair.values {
 			testNowTime := time.Date(value.year, time.Month(value.month), value.day, 0, 0, 0, 0, time.Now().Location())
-			beginPeriod, endPeriod := getYearPeriod(testNowTime)
+			beginPeriod, endPeriod := GetYearPeriod(testNowTime)
 
 			assert.Equal(t, beginPeriod, pair.average.begin, "expected: %s, but get %s\n", beginPeriod, pair.average.end)
 			assert.Equal(t, endPeriod, pair.average.end, "expected: %s, but get %s\n", endPeriod, pair.average.end)

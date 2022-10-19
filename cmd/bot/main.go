@@ -1,24 +1,59 @@
 package main
 
 import (
+	"context"
 	"log"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/config"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/ramDB"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
 )
 
 func main() {
+
+	ctx, cancel := context.WithCancel(context.Background())
+	ctx = context.WithValue(ctx, "allDoneWG", &sync.WaitGroup{})
+	go func() {
+		exit := make(chan os.Signal, 1)
+		signal.Notify(exit, os.Interrupt, syscall.SIGTERM)
+		<-exit
+		cancel()
+	}()
+
+	file, err := os.OpenFile("l.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.SetOutput(file)
+
 	config, err := config.New()
 	if err != nil {
-		log.Fatal("config init failed:", err)
+		log.Fatal("config init failed: ", err)
 	}
 
-	db, err := ramDB.New()
+	db, err := psql.New(config.PsqlDatabase)
 	if err != nil {
-		log.Fatal("db err", err)
+		log.Fatal("db init: ", err)
+	}
+	if err := db.CheckHealth(); err != nil {
+		log.Fatal("db check health: ", err)
+	}
+
+	parser, err := currency.New(config.Currency)
+	if err != nil {
+		log.Fatal("parser init failed:", err)
+	}
+	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
+	err = parser.ParseCurrencies(ctx, db)
+	if err != nil {
+		log.Fatal("valute channel return error:", err)
 	}
 
 	tgServer, err := server.New(db, config.TgServer)
@@ -26,12 +61,15 @@ func main() {
 		log.Fatal("tg server init failed:", err)
 	}
 
-	tgClient, err := client.New(config.TgClient)
+	tgClient, err := client.New(config.TgClient, parser)
 	if err != nil {
 		log.Fatal("tg client init failed:", err)
 	}
 
 	msgModel := messages.New(tgClient, tgServer)
+	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
+	tgClient.ListenUpdates(ctx, msgModel)
 
-	tgClient.ListenUpdates(msgModel)
+	ctx.Value("allDoneWG").(*sync.WaitGroup).Wait()
+	log.Println("All is shutdown")
 }
