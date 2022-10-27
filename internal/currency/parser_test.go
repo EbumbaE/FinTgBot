@@ -10,16 +10,16 @@ import (
 	dbmocks "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/mocks/storage"
 )
 
-func TestParseCurrency(t *testing.T) {
+func TestCancelParseCurrency(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	ratesDB := dbmocks.NewMockRatesDB(ctrl)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	ctx = context.WithValue(ctx, "allDoneWG", &sync.WaitGroup{})
+	cancel()
 
-	abbreviations := []string{"USD", "CNY", "EUR"}
-	p, err := New(Config{Abbreviations: abbreviations})
+	p, err := New(Config{Abbreviations: []string{}})
 	assert.NoError(t, err)
 
 	ratesDB.EXPECT().SetDefaultCurrency().Return(nil)
@@ -27,6 +27,5 @@ func TestParseCurrency(t *testing.T) {
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
 	err = p.ParseCurrencies(ctx, ratesDB)
 	assert.NoError(t, err)
-	cancel()
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Wait()
 }

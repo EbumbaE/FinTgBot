@@ -18,6 +18,8 @@ import (
 
 func main() {
 
+	os.Setenv("DEBUG_MODE", "dev")
+
 	ctx, cancel := context.WithCancel(context.Background())
 	ctx = context.WithValue(ctx, "allDoneWG", &sync.WaitGroup{})
 	go func() {
@@ -26,12 +28,6 @@ func main() {
 		<-exit
 		cancel()
 	}()
-
-	file, err := os.OpenFile("l.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.SetOutput(file)
 
 	config, err := config.New()
 	if err != nil {

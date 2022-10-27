@@ -1,4 +1,4 @@
 /bin
 /.vscode
 /data
-*.log
+/logger/data
