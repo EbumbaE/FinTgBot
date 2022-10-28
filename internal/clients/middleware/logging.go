@@ -8,9 +8,9 @@ import (
 	"go.uber.org/zap"
 )
 
-func LoggingMiddleware(wrappedFunc MiddlewareFunc) MiddlewareFunc {
+func (m *Middleware) LoggingMiddleware() MiddlewareFunc {
 	return func(ctx context.Context, msgModel MessageModel, tgMsg *tgbotapi.Message) {
 		logger.Info("incoming request: ", zap.Int64("userid", tgMsg.From.ID), zap.String("text", tgMsg.Text))
-		wrappedFunc(ctx, msgModel, tgMsg)
+		m.wrappedFunc(ctx, msgModel, tgMsg)
 	}
 }

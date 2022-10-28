@@ -9,22 +9,6 @@ import (
 	"go.uber.org/zap"
 )
 
-type MessageModel interface {
-	IncomingCommand(messages.Message) error
-	IncomingMessage(messages.Message) error
-}
-
-type MiddlewareFunc func(ctx context.Context, msgModel MessageModel, tgMsg *tgbotapi.Message)
-
-var wrappedFunc MiddlewareFunc
-
-func init() {
-	wrappedFunc = DetermineRequest()
-	wrappedFunc = LoggingMiddleware(wrappedFunc)
-	wrappedFunc = MetricsMiddleware(wrappedFunc)
-	wrappedFunc = TracingMiddleware(wrappedFunc)
-}
-
 func DetermineRequest() MiddlewareFunc {
 	return func(ctx context.Context, msgModel MessageModel, tgMsg *tgbotapi.Message) {
 		if tgMsg.IsCommand() {
@@ -48,9 +32,6 @@ func DetermineRequest() MiddlewareFunc {
 	}
 }
 
-func IncomingRequest(ctx context.Context, msgModel MessageModel, tgMsg *tgbotapi.Message) {
-
-	wrappedFunc(ctx, msgModel, tgMsg)
-
-	return
+func (m *Middleware) IncomingRequest(ctx context.Context, msgModel MessageModel, tgMsg *tgbotapi.Message) {
+	m.wrappedFunc(ctx, msgModel, tgMsg)
 }

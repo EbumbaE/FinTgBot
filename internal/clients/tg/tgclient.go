@@ -17,8 +17,10 @@ type Parser interface {
 }
 
 type Client struct {
-	client    *tgbotapi.BotAPI
-	Keyboards *Keyboards
+	client     *tgbotapi.BotAPI
+	Keyboards  *Keyboards
+	Metrics    *middleware.Metrics
+	Middleware *middleware.Middleware
 }
 
 func New(tgClient Config, parser Parser) (*Client, error) {
@@ -29,9 +31,13 @@ func New(tgClient Config, parser Parser) (*Client, error) {
 		return nil, errors.Wrap(err, "NewBotAPI")
 	}
 
+	metrics := middleware.NewMetrics()
+
 	return &Client{
-		client:    client,
-		Keyboards: NewKeyboards(currencies),
+		client:     client,
+		Keyboards:  NewKeyboards(currencies),
+		Metrics:    metrics,
+		Middleware: middleware.NewMiddleware(metrics),
 	}, nil
 }
 
@@ -65,7 +71,7 @@ func (c *Client) ListenUpdates(ctx context.Context, msgModel *messages.Model) {
 			select {
 			case update := <-updates:
 				if update.Message != nil {
-					middleware.IncomingRequest(ctx, msgModel, update.Message)
+					c.Middleware.IncomingRequest(ctx, msgModel, update.Message)
 				}
 			case <-ctx.Done():
 				defer ctx.Value("allDoneWG").(*sync.WaitGroup).Done()

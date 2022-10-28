@@ -7,7 +7,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 )
 
-func TracingMiddleware(handleFunc MiddlewareFunc) MiddlewareFunc {
+func (m *Middleware) TracingMiddleware() MiddlewareFunc {
 	return func(ctx context.Context, msgModel MessageModel, tgMsg *tgbotapi.Message) {
 		span := opentracing.SpanFromContext(ctx)
 		if span != nil {
@@ -15,6 +15,6 @@ func TracingMiddleware(handleFunc MiddlewareFunc) MiddlewareFunc {
 		}
 		defer span.Finish()
 
-		wrappedFunc(ctx, msgModel, tgMsg)
+		m.wrappedFunc(ctx, msgModel, tgMsg)
 	}
 }
