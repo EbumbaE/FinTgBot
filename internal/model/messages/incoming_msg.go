@@ -9,11 +9,14 @@ import (
 func (m *Model) IncomingMessage(ctx context.Context, msg Message) (err error) {
 	span, nctx := opentracing.StartSpanFromContext(ctx, "incoming message")
 	if span != nil {
-		span.LogKV("message", msg.Command, "text", msg.Text)
+		span.LogKV("message", msg.Text)
 		defer span.Finish()
 	}
 
 	if isCurrency := m.tgServer.IsCurrency(msg.Text); isCurrency {
+		if span != nil {
+			span.LogKV("set report currency args", msg.Arguments)
+		}
 		msg.Text, err = m.tgServer.MessageSetReportCurrency(nctx, &msg)
 	} else {
 		switch msg.Text {
