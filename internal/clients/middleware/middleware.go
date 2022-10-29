@@ -24,9 +24,9 @@ func NewMiddleware(Metrics *Metrics) (m *Middleware) {
 		Metrics: Metrics,
 	}
 	m.wrappedFunc = DetermineRequest()
-	m.wrappedFunc = m.LoggingMiddleware()
-	m.wrappedFunc = m.MetricsMiddleware()
-	m.wrappedFunc = m.TracingMiddleware()
+	m.wrappedFunc = m.LoggingMiddleware(m.wrappedFunc)
+	m.wrappedFunc = m.MetricsMiddleware(m.wrappedFunc)
+	m.wrappedFunc = m.TracingMiddleware(m.wrappedFunc)
 
 	return
 }

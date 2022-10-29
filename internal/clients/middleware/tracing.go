@@ -7,14 +7,14 @@ import (
 	"github.com/opentracing/opentracing-go"
 )
 
-func (m *Middleware) TracingMiddleware() MiddlewareFunc {
+func (m *Middleware) TracingMiddleware(next MiddlewareFunc) MiddlewareFunc {
 	return func(ctx context.Context, msgModel MessageModel, tgMsg *tgbotapi.Message) {
-		span := opentracing.SpanFromContext(ctx)
+		span, nctx := opentracing.StartSpanFromContext(ctx, "incoming request")
 		if span != nil {
 			span.LogKV("incoming request", "got message", "message", tgMsg.Text)
+			defer span.Finish()
 		}
-		defer span.Finish()
 
-		m.wrappedFunc(ctx, msgModel, tgMsg)
+		next(nctx, msgModel, tgMsg)
 	}
 }

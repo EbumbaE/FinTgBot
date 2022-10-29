@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
@@ -10,6 +9,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
+	"go.uber.org/zap"
 )
 
 type Metrics struct {
@@ -20,7 +21,10 @@ type Metrics struct {
 
 func init() {
 	http.Handle("/metrics", promhttp.Handler())
-	log.Println(http.ListenAndServe(":2112", nil))
+	go func() {
+		err := http.ListenAndServe(":8080", nil)
+		logger.Error("Listen metrics: ", zap.Error(err))
+	}()
 }
 
 func NewMetrics() *Metrics {
@@ -54,13 +58,13 @@ func NewMetrics() *Metrics {
 
 }
 
-func (m *Middleware) MetricsMiddleware() MiddlewareFunc {
+func (m *Middleware) MetricsMiddleware(next MiddlewareFunc) MiddlewareFunc {
 	return func(ctx context.Context, msgModel MessageModel, tgMsg *tgbotapi.Message) {
 		startTime := time.Now()
+		next(ctx, msgModel, tgMsg)
+
 		duration := time.Since(startTime)
 		m.Metrics.SummaryResponseTime.Observe(duration.Seconds())
 		m.Metrics.AmountRequests.Inc()
-
-		m.wrappedFunc(ctx, msgModel, tgMsg)
 	}
 }

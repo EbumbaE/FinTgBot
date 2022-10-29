@@ -30,6 +30,8 @@ func init() {
 	}
 
 	logger = localLogger
+
+	return
 }
 
 func Info(msg string, fields ...zap.Field) {

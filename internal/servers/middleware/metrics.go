@@ -1,12 +1,8 @@
 package middleware
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -38,8 +34,6 @@ var (
 )
 
 func init() {
-	http.Handle("/metrics", promhttp.Handler())
-	log.Println(http.ListenAndServe(":2112", nil))
 }
 
 func MetricsMiddleware() {
