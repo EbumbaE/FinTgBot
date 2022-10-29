@@ -1,4 +1,5 @@
-PKG := "gitlab.ozon.dev/ivan.hom.200/telegram-bot/cmd/bot"
+PKG := gitlab.ozon.dev/ivan.hom.200/telegram-bot/cmd/bot
+PROJECT := gitlab.ozon.dev/ivan.hom.200/telegram-bot
 BIN := "bin/bot"
 
 all: build
@@ -13,7 +14,7 @@ dev:
 	go run workshop5/cmd/fibonacci -devel
 
 prod:
-	go run ${PKG} 2>&1 | tee logger/log.txt
+	go run ${PKG} 2>&1 | tee ${PROJECT}/logger/log.txt
 
 logs:
 	cd logger && docker compose up

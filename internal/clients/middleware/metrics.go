@@ -2,29 +2,17 @@ package middleware
 
 import (
 	"context"
-	"net/http"
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
-	"go.uber.org/zap"
 )
 
 type Metrics struct {
 	AmountRequests        prometheus.Counter
 	SummaryResponseTime   prometheus.Summary
 	HistogramResponseTime *prometheus.HistogramVec
-}
-
-func init() {
-	http.Handle("/metrics", promhttp.Handler())
-	go func() {
-		err := http.ListenAndServe(":8080", nil)
-		logger.Error("Listen metrics: ", zap.Error(err))
-	}()
 }
 
 func NewMetrics() *Metrics {

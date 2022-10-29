@@ -64,7 +64,7 @@ func (c *Client) ListenUpdates(ctx context.Context, msgModel *messages.Model) {
 
 	updates := c.client.GetUpdatesChan(u)
 
-	logger.Info("Listening messages begin")
+	logger.Info("listening messages begin")
 
 	go func() {
 		for {

@@ -1,8 +1,14 @@
 package tgServer
 
-import "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
+import (
+	"context"
 
-func (t *TgServer) MessageSetReportCurrency(msg *messages.Message) (answer string, err error) {
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
+)
+
+func (t *TgServer) MessageSetReportCurrency(ctx context.Context, msg *messages.Message) (answer string, err error) {
+	t.Metrics.AmountActionWithCurrency.Inc()
+	t.Metrics.AmountMessage.Inc()
 
 	valute, err := t.storage.GetRate(msg.Text)
 	if err != nil {
@@ -25,6 +31,8 @@ func (t *TgServer) IsCurrency(text string) bool {
 	return true
 }
 
-func (t *TgServer) MessageDefault(msg *messages.Message) (answer string, err error) {
+func (t *TgServer) MessageDefault(ctx context.Context, msg *messages.Message) (answer string, err error) {
+	t.Metrics.AmountMessage.Inc()
+	t.Metrics.AmountDefaultMsgAndComm.Inc()
 	return "What you mean?", nil
 }

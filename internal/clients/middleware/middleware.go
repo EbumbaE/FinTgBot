@@ -13,8 +13,8 @@ type Middleware struct {
 }
 
 type MessageModel interface {
-	IncomingCommand(messages.Message) error
-	IncomingMessage(messages.Message) error
+	IncomingCommand(context.Context, messages.Message) error
+	IncomingMessage(context.Context, messages.Message) error
 }
 
 type MiddlewareFunc func(ctx context.Context, msgModel MessageModel, tgMsg *tgbotapi.Message)

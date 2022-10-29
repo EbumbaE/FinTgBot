@@ -2,7 +2,6 @@ package logger
 
 import (
 	"log"
-	"os"
 
 	"go.uber.org/zap"
 )
@@ -11,19 +10,19 @@ var logger *zap.Logger
 
 func init() {
 
-	debugMode := os.Getenv("DEBUG_MODE")
+	debugMode := "dev"
 
 	var localLogger *zap.Logger
 	var err error
 
 	switch debugMode {
 	case "prod":
-		localLogger, err = zap.NewProduction()
-	default:
-		cfg := zap.NewDevelopmentConfig()
+		cfg := zap.NewProductionConfig()
 		cfg.DisableCaller = true
 		cfg.DisableStacktrace = true
 		localLogger, err = cfg.Build()
+	default:
+		localLogger, err = zap.NewDevelopment()
 	}
 	if err != nil {
 		log.Fatal("logger init: ", err)
@@ -40,4 +39,8 @@ func Info(msg string, fields ...zap.Field) {
 
 func Error(msg string, fields ...zap.Field) {
 	logger.Error(msg, fields...)
+}
+
+func Fatal(msg string, fields ...zap.Field) {
+	logger.Fatal(msg, fields...)
 }

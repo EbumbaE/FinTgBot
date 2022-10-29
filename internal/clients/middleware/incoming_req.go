@@ -12,7 +12,7 @@ import (
 func DetermineRequest() MiddlewareFunc {
 	return func(ctx context.Context, msgModel MessageModel, tgMsg *tgbotapi.Message) {
 		if tgMsg.IsCommand() {
-			err := msgModel.IncomingCommand(messages.Message{
+			err := msgModel.IncomingCommand(ctx, messages.Message{
 				UserID:    tgMsg.From.ID,
 				Command:   tgMsg.Command(),
 				Arguments: tgMsg.CommandArguments(),
@@ -21,7 +21,7 @@ func DetermineRequest() MiddlewareFunc {
 				logger.Error("incoming command: ", zap.Error(err))
 			}
 		} else {
-			err := msgModel.IncomingMessage(messages.Message{
+			err := msgModel.IncomingMessage(ctx, messages.Message{
 				UserID: tgMsg.From.ID,
 				Text:   tgMsg.Text,
 			})

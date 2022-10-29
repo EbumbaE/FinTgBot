@@ -5,37 +5,54 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-var (
-	InFlightRequests = promauto.NewGauge(prometheus.GaugeOpts{
-		Namespace: "ozon",
-		Subsystem: "http",
-		Name:      "in_flight_requests_total",
-	})
-	SummaryResponseTime = promauto.NewSummary(prometheus.SummaryOpts{
-		Namespace: "ozon",
-		Subsystem: "http",
-		Name:      "summary_response_time_seconds",
-		Objectives: map[float64]float64{
-			0.5:  0.1,
-			0.9:  0.01,
-			0.99: 0.001,
-		},
-	})
-	HistogramResponseTime = promauto.NewHistogramVec(
-		prometheus.HistogramOpts{
-			Namespace: "ozon",
-			Subsystem: "http",
-			Name:      "histogram_response_time_seconds",
-			Buckets:   []float64{0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2},
-			// Buckets: prometheus.ExponentialBucketsRange(0.0001, 2, 16),
-		},
-		[]string{"code"},
-	)
-)
-
-func init() {
+type Metrics struct {
+	AmountCommand             prometheus.Counter
+	AmountMessage             prometheus.Counter
+	AmountActionWithNotes     prometheus.Counter
+	AmountActionWithBudgets   prometheus.Counter
+	AmountActionWithCurrency  prometheus.Counter
+	AmountActionWithStatistic prometheus.Counter
+	AmountDefaultMsgAndComm   prometheus.Counter
 }
 
-func MetricsMiddleware() {
+func NewMetrics() *Metrics {
+	amountCommand := promauto.NewCounter(prometheus.CounterOpts{
+		Namespace: "ozon",
+		Name:      "amount_command_total",
+	})
+	amountMessage := promauto.NewCounter(prometheus.CounterOpts{
+		Namespace: "ozon",
+		Name:      "amount_messages_total",
+	})
+	amountActionWithNotes := promauto.NewCounter(prometheus.CounterOpts{
+		Namespace: "ozon",
+		Name:      "amount_add_get_notes_total",
+	})
+	amountActionWithBudgets := promauto.NewCounter(prometheus.CounterOpts{
+		Namespace: "ozon",
+		Name:      "amount_add_get_budget_total",
+	})
+	amountActionWithCurrency := promauto.NewCounter(prometheus.CounterOpts{
+		Namespace: "ozon",
+		Name:      "amount_set_report_currency_total",
+	})
+	amountActionWithStatistic := promauto.NewCounter(prometheus.CounterOpts{
+		Namespace: "ozon",
+		Name:      "amount_get_statistic_total",
+	})
+	amountDefaultMsgAndComm := promauto.NewCounter(prometheus.CounterOpts{
+		Namespace: "ozon",
+		Name:      "amount_unknown_msg_command_total",
+	})
+
+	return &Metrics{
+		AmountCommand:             amountCommand,
+		AmountMessage:             amountMessage,
+		AmountActionWithNotes:     amountActionWithNotes,
+		AmountActionWithBudgets:   amountActionWithBudgets,
+		AmountActionWithCurrency:  amountActionWithCurrency,
+		AmountActionWithStatistic: amountActionWithStatistic,
+		AmountDefaultMsgAndComm:   amountDefaultMsgAndComm,
+	}
 
 }

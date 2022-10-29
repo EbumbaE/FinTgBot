@@ -3,12 +3,14 @@ package tgServer
 import (
 	"time"
 
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/middleware"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 )
 
 type TgServer struct {
 	storage       storage.Storage
 	dateFormatter DateFormatter
+	Metrics       *middleware.Metrics
 }
 
 type DateFormatter struct {
@@ -23,6 +25,7 @@ func New(storage storage.Storage, config Config) (*TgServer, error) {
 			format:       config.FormatDate,
 			budgetFormat: config.BudgetFormatDate,
 		},
+		Metrics: middleware.NewMetrics(),
 	}, nil
 }
 

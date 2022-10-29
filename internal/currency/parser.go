@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"sync"
 	"time"
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
+	"go.uber.org/zap"
 )
 
 const parserTimeOut = time.Second * 10
@@ -98,6 +99,7 @@ func (p *Parser) ParseCurrencies(ctx context.Context, storage rateDB) error {
 
 	storage.SetDefaultCurrency()
 
+	logger.Info("currency parser begin")
 	go func() {
 
 		timeTicker := time.NewTicker(time.Microsecond)
@@ -110,13 +112,13 @@ func (p *Parser) ParseCurrencies(ctx context.Context, storage rateDB) error {
 				timeTicker = time.NewTicker(parserTimer)
 
 				if err := p.parseAndSendRates(storage); err != nil {
-					log.Println("parse and send rates: ", err)
+					logger.Error("parse and send rates: ", zap.Error(err))
 					return
 				}
 
 			case <-ctx.Done():
 				defer ctx.Value("allDoneWG").(*sync.WaitGroup).Done()
-				log.Println("parser is off")
+				logger.Info("currency parser end")
 				return
 			}
 		}
