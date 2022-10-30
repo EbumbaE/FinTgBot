@@ -302,7 +302,7 @@ func TestGetStatic(t *testing.T) {
 	answer, err = tg.CommandGetStatistic(ctx, &msg)
 	assert.NoError(t, err)
 	if answer != "Statistic for the year in USD:\nfood: 182.50\nschool: 121.67\n" &&
-		answer != "Statistic for the month in USD:\nschool: 121.67\nfood: 182.50\n" {
+		answer != "Statistic for the year in USD:\nschool: 121.67\nfood: 182.50\n" {
 		t.Fatalf("unexpected answer: %s", answer)
 	}
 }

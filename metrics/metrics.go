@@ -22,7 +22,7 @@ func InitServer(ctx context.Context) {
 
 		go func() {
 			if err := server.ListenAndServe(); err != nil {
-				logger.Error("Listen and serve: ", zap.Error(err))
+				logger.Error("metrics server listen and serve: ", zap.Error(err))
 			}
 		}()
 

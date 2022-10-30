@@ -11,13 +11,13 @@ test:
 	go test ./...
 
 dev:
-	go run workshop5/cmd/fibonacci -devel
+	go run cmd/bot -devel
 
 prod:
-	go run ${PKG} 2>&1 | tee ${PROJECT}/logger/log.txt
+	go run ${PKG} 2>&1 | tee logger/logs/log.txt
 
 logs:
-	cd logger && docker compose up
+	cd logger/logs && docker compose up
 
 tracing:
 	cd tracing && docker compose up

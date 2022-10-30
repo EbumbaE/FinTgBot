@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/opentracing/opentracing-go"
 	"github.com/stretchr/testify/assert"
 
 	msgmocks "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/mocks/messages"
@@ -17,7 +18,9 @@ func TestOnStartCommand(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	client := msgmocks.NewMockClient(ctrl)
 	server := msgmocks.NewMockServer(ctrl)
+
 	ctx := context.Background()
+	_, nctx := opentracing.StartSpanFromContext(ctx, "incoming command")
 
 	msg := messages.Message{
 		Command: "start",
@@ -28,7 +31,7 @@ func TestOnStartCommand(t *testing.T) {
 		Command: "start",
 		UserID:  123,
 	}
-	server.EXPECT().CommandStart(ctx, &msg).Return("Hello", nil)
+	server.EXPECT().CommandStart(nctx, &msg).Return("Hello", nil)
 	client.EXPECT().SendMessage(sendMsg)
 
 	model := messages.New(client, server)
@@ -44,6 +47,7 @@ func TestOnSetNoteCommand(t *testing.T) {
 	server := msgmocks.NewMockServer(ctrl)
 	storage := dbmocks.NewMockStorage(ctrl)
 	ctx := context.Background()
+	_, nctx := opentracing.StartSpanFromContext(ctx, "incoming command")
 
 	msg := messages.Message{
 		Command:   "setNote",
@@ -60,7 +64,7 @@ func TestOnSetNoteCommand(t *testing.T) {
 	storage.EXPECT().SetUserAbbValute(msg.UserID, "RUB").Return(nil)
 	storage.SetUserAbbValute(msg.UserID, "RUB")
 
-	server.EXPECT().CommandSetNote(ctx, &msg).Return("Done", nil)
+	server.EXPECT().CommandSetNote(nctx, &msg).Return("Done", nil)
 	client.EXPECT().SendMessage(sendMsg)
 
 	model := messages.New(client, server)
@@ -75,6 +79,7 @@ func TestOnOverBudgetSetNoteCommand(t *testing.T) {
 	server := msgmocks.NewMockServer(ctrl)
 	storage := dbmocks.NewMockStorage(ctrl)
 	ctx := context.Background()
+	_, nctx := opentracing.StartSpanFromContext(ctx, "incoming command")
 
 	msg := messages.Message{
 		Command:   "setNote",
@@ -97,7 +102,7 @@ func TestOnOverBudgetSetNoteCommand(t *testing.T) {
 	storage.EXPECT().AddMonthlyBudget(msg.UserID, monthlyBudget).Return(nil)
 	storage.AddMonthlyBudget(msg.UserID, monthlyBudget)
 
-	server.EXPECT().CommandSetNote(ctx, &msg).Return(sendMsg.Text, nil)
+	server.EXPECT().CommandSetNote(nctx, &msg).Return(sendMsg.Text, nil)
 	client.EXPECT().SendMessage(sendMsg)
 
 	model := messages.New(client, server)
@@ -112,6 +117,7 @@ func TestOnGetStatisticCommand(t *testing.T) {
 	server := msgmocks.NewMockServer(ctrl)
 	storage := dbmocks.NewMockStorage(ctrl)
 	ctx := context.Background()
+	_, nctx := opentracing.StartSpanFromContext(ctx, "incoming command")
 
 	msg := messages.Message{
 		Command:   "getStatistic",
@@ -129,7 +135,7 @@ func TestOnGetStatisticCommand(t *testing.T) {
 	err := storage.SetUserAbbValute(msg.UserID, "RUB")
 	assert.NoError(t, err)
 
-	server.EXPECT().CommandGetStatistic(ctx, &msg).Return("Statistic for the week in RUB:", nil)
+	server.EXPECT().CommandGetStatistic(nctx, &msg).Return("Statistic for the week in RUB:", nil)
 	client.EXPECT().SendMessage(sendMsg)
 	model := messages.New(client, server)
 
@@ -142,6 +148,7 @@ func TestOnUnknownCommand(t *testing.T) {
 	client := msgmocks.NewMockClient(ctrl)
 	server := msgmocks.NewMockServer(ctrl)
 	ctx := context.Background()
+	_, nctx := opentracing.StartSpanFromContext(ctx, "incoming command")
 
 	msg := messages.Message{
 		Command: "abc",
@@ -154,7 +161,7 @@ func TestOnUnknownCommand(t *testing.T) {
 		UserID:  123,
 	}
 
-	server.EXPECT().CommandDefault(ctx, &msg).Return("Unknown command", nil)
+	server.EXPECT().CommandDefault(nctx, &msg).Return("Unknown command", nil)
 	client.EXPECT().SendMessage(sendMsg)
 
 	model := messages.New(client, server)

@@ -80,8 +80,10 @@ func (t *TgServer) CheckBudget(userID int64, date string, sum, delta float64) (a
 }
 
 func (t *TgServer) CommandSetNote(ctx context.Context, msg *messages.Message) (answer string, err error) {
-	t.Metrics.AmountActionWithNotes.Inc()
-	t.Metrics.AmountCommand.Inc()
+	if t.Metrics != nil {
+		t.Metrics.AmountActionWithNotes.Inc()
+		t.Metrics.AmountCommand.Inc()
+	}
 
 	args, err := parseArguments(msg.Arguments, 3)
 	if err != nil {
@@ -127,8 +129,10 @@ func (t *TgServer) CommandSetNote(ctx context.Context, msg *messages.Message) (a
 }
 
 func (t *TgServer) CommandGetStatistic(ctx context.Context, msg *messages.Message) (answer string, err error) {
-	t.Metrics.AmountActionWithStatistic.Inc()
-	t.Metrics.AmountCommand.Inc()
+	if t.Metrics != nil {
+		t.Metrics.AmountActionWithStatistic.Inc()
+		t.Metrics.AmountCommand.Inc()
+	}
 
 	args, err := parseArguments(msg.Arguments, 1)
 	if err != nil {
@@ -159,8 +163,10 @@ func (t *TgServer) CommandGetStatistic(ctx context.Context, msg *messages.Messag
 }
 
 func (t *TgServer) CommandSetBudget(ctx context.Context, msg *messages.Message) (answer string, err error) {
-	t.Metrics.AmountActionWithBudgets.Inc()
-	t.Metrics.AmountCommand.Inc()
+	if t.Metrics != nil {
+		t.Metrics.AmountActionWithBudgets.Inc()
+		t.Metrics.AmountCommand.Inc()
+	}
 
 	args, err := parseArguments(msg.Arguments, 3)
 	if err != nil {
@@ -196,8 +202,10 @@ func (t *TgServer) CommandSetBudget(ctx context.Context, msg *messages.Message) 
 }
 
 func (t *TgServer) CommandGetBudget(ctx context.Context, msg *messages.Message) (answer string, err error) {
-	t.Metrics.AmountActionWithBudgets.Inc()
-	t.Metrics.AmountCommand.Inc()
+	if t.Metrics != nil {
+		t.Metrics.AmountActionWithBudgets.Inc()
+		t.Metrics.AmountCommand.Inc()
+	}
 
 	args, err := parseArguments(msg.Arguments, 1)
 	if err != nil {
@@ -236,12 +244,17 @@ func (t *TgServer) CommandGetBudget(ctx context.Context, msg *messages.Message) 
 }
 
 func (t *TgServer) CommandStart(ctx context.Context, msg *messages.Message) (answer string, err error) {
-	t.Metrics.AmountCommand.Inc()
+	if t.Metrics != nil {
+		t.Metrics.AmountCommand.Inc()
+	}
+
 	return "Hello", nil
 }
 
 func (t *TgServer) CommandHelp(ctx context.Context, msg *messages.Message) (answer string, err error) {
-	t.Metrics.AmountCommand.Inc()
+	if t.Metrics != nil {
+		t.Metrics.AmountCommand.Inc()
+	}
 
 	answer =
 		`hello, some commands:
@@ -263,7 +276,10 @@ func (t *TgServer) CommandHelp(ctx context.Context, msg *messages.Message) (answ
 }
 
 func (t *TgServer) CommandDefault(ctx context.Context, msg *messages.Message) (answer string, err error) {
-	t.Metrics.AmountCommand.Inc()
-	t.Metrics.AmountDefaultMsgAndComm.Inc()
+	if t.Metrics != nil {
+		t.Metrics.AmountCommand.Inc()
+		t.Metrics.AmountDefaultMsgAndComm.Inc()
+	}
+
 	return "Unknown command", nil
 }

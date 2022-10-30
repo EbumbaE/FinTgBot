@@ -7,8 +7,10 @@ import (
 )
 
 func (t *TgServer) MessageSetReportCurrency(ctx context.Context, msg *messages.Message) (answer string, err error) {
-	t.Metrics.AmountActionWithCurrency.Inc()
-	t.Metrics.AmountMessage.Inc()
+	if t.Metrics != nil {
+		t.Metrics.AmountActionWithCurrency.Inc()
+		t.Metrics.AmountMessage.Inc()
+	}
 
 	valute, err := t.storage.GetRate(msg.Text)
 	if err != nil {
@@ -32,7 +34,10 @@ func (t *TgServer) IsCurrency(text string) bool {
 }
 
 func (t *TgServer) MessageDefault(ctx context.Context, msg *messages.Message) (answer string, err error) {
-	t.Metrics.AmountMessage.Inc()
-	t.Metrics.AmountDefaultMsgAndComm.Inc()
+	if t.Metrics != nil {
+		t.Metrics.AmountMessage.Inc()
+		t.Metrics.AmountDefaultMsgAndComm.Inc()
+	}
+
 	return "What you mean?", nil
 }

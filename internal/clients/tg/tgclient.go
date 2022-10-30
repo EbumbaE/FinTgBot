@@ -23,6 +23,12 @@ type Client struct {
 	Middleware *middleware.Middleware
 }
 
+func (c *Client) InitMiddleware() {
+	metrics := middleware.NewMetrics()
+	c.Metrics = metrics
+	c.Middleware = middleware.NewMiddleware(metrics)
+}
+
 func New(tgClient Config, parser Parser) (*Client, error) {
 	currencies := parser.GetAbbreviations()
 
@@ -31,13 +37,9 @@ func New(tgClient Config, parser Parser) (*Client, error) {
 		return nil, errors.Wrap(err, "NewBotAPI")
 	}
 
-	metrics := middleware.NewMetrics()
-
 	return &Client{
-		client:     client,
-		Keyboards:  NewKeyboards(currencies),
-		Metrics:    metrics,
-		Middleware: middleware.NewMiddleware(metrics),
+		client:    client,
+		Keyboards: NewKeyboards(currencies),
 	}, nil
 }
 

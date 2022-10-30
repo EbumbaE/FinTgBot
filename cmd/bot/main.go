@@ -60,11 +60,13 @@ func main() {
 	if err != nil {
 		logger.Fatal("tg server init failed:", zap.Error(err))
 	}
+	tgServer.InitMiddleware()
 
 	tgClient, err := client.New(config.TgClient, parser)
 	if err != nil {
 		logger.Fatal("tg client init failed:", zap.Error(err))
 	}
+	tgClient.InitMiddleware()
 
 	msgModel := messages.New(tgClient, tgServer)
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)

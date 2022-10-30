@@ -25,8 +25,11 @@ func New(storage storage.Storage, config Config) (*TgServer, error) {
 			format:       config.FormatDate,
 			budgetFormat: config.BudgetFormatDate,
 		},
-		Metrics: middleware.NewMetrics(),
 	}, nil
+}
+
+func (s *TgServer) InitMiddleware() {
+	s.Metrics = middleware.NewMetrics()
 }
 
 func (d *DateFormatter) FormatDateTimeToString(date time.Time) string {

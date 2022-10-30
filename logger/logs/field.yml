@@ -3,16 +3,14 @@ pipelines:
     input:
       type: file
       persistence_mode: async
-      watching_dir: /tmp/logger
+      watching_dir: /tmp/logs
       filename_pattern: log.txt
       offsets_file: /tmp/offsets.yaml
       offsets_op: reset
-
     actions:
       - type: rename
         msg: message
         ts: time
-
     output:
       type: gelf
       endpoint: "graylog:12201"
