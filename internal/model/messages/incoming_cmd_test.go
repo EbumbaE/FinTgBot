@@ -14,33 +14,6 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 )
 
-func TestOnStartCommand(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	client := msgmocks.NewMockClient(ctrl)
-	server := msgmocks.NewMockServer(ctrl)
-
-	ctx := context.Background()
-	_, nctx := opentracing.StartSpanFromContext(ctx, "incoming command")
-
-	msg := messages.Message{
-		Command: "start",
-		UserID:  123,
-	}
-	sendMsg := messages.Message{
-		Text:    "Hello",
-		Command: "start",
-		UserID:  123,
-	}
-	server.EXPECT().CommandStart(nctx, &msg).Return("Hello", nil)
-	client.EXPECT().SendMessage(sendMsg)
-
-	model := messages.New(client, server)
-
-	err := model.IncomingCommand(ctx, msg)
-
-	assert.NoError(t, err)
-}
-
 func TestOnSetNoteCommand(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	client := msgmocks.NewMockClient(ctrl)

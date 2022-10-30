@@ -10,7 +10,7 @@ var logger *zap.Logger
 
 func init() {
 
-	debugMode := "prod"
+	debugMode := "dev"
 
 	var localLogger *zap.Logger
 	var err error

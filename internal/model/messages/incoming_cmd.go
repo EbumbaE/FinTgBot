@@ -16,8 +16,6 @@ func (m *Model) IncomingCommand(ctx context.Context, msg Message) (err error) {
 	switch msg.Command {
 	case "start":
 		msg.Text, err = m.tgServer.CommandStart(nctx, &msg)
-	case "help":
-		msg.Text, err = m.tgServer.CommandHelp(nctx, &msg)
 	case "setNote":
 		if span != nil {
 			span.LogKV("set note", msg.Command, "args", msg.Arguments)

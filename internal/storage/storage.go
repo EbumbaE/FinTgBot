@@ -18,6 +18,7 @@ type RatesDB interface {
 type UsersDB interface {
 	GetUserAbbValute(userID int64) (string, error)
 	SetUserAbbValute(userID int64, abbreviation string) error
+	CheckUser(userID int64) error
 }
 
 type BudgetsDB interface {

@@ -247,31 +247,37 @@ func (t *TgServer) CommandStart(ctx context.Context, msg *messages.Message) (ans
 	if t.Metrics != nil {
 		t.Metrics.AmountCommand.Inc()
 	}
-
-	return "Hello", nil
-}
-
-func (t *TgServer) CommandHelp(ctx context.Context, msg *messages.Message) (answer string, err error) {
-	if t.Metrics != nil {
-		t.Metrics.AmountCommand.Inc()
+	if err := t.storage.CheckUser(msg.UserID); err == nil {
+		t.Metrics.AmountNewUsers.Inc()
 	}
 
 	answer =
 		`hello, some commands:
-	/setNote date category sum
-	example: /setNote 27.09.2022 food 453.12 
-	
-	/getStatistic period (week, month or year)
-	example: /getStatistic week
-	
-	/setMonthlyBudget sum currency
-	example: /setMonthlyBudget 245 USD
-	
-	/getMonthlyBudget month.year
-	example: /getMonthlyBudget 09.2022
-	
-	/selectReportCurrency
-	`
+/setNote дата категория сумма
+пример: /setNote 27.09.2022 food 453.12
+добавляет трату в заданный день по заданной категории, отвечает Done в случае успешной записи
+
+/getStatistic период (week, month или year)
+example: /getStatistic week
+выводит статистику за заданный период, ответа на команду:
+Statistic for the week:
+food: 245.12
+school: 85.01
+
+/selectReportCurrency
+дает выбор валюты для команд getStatistic, setNote, getMonthlyBudget
+
+/setBudget дата сумма валюта
+example: /setBudget 10.2022 254 USD
+устанавливает бюджет на месяц
+
+/getBudget дата
+example: /getBudget 10.2022
+выводит расход за месяц рабочей валюте
+
+/start
+выводит информацию о командах`
+
 	return
 }
 

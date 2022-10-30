@@ -27,9 +27,6 @@ example: **/getBudget 10.2022**\
 выводит расход за месяц рабочей валюте
 
 **/start**\
-просто выводит *hellow*
-
-**/help**\
 выводит информацию о командах
 
 ## Logs
@@ -39,7 +36,7 @@ Graylog: http://127.0.0.1:7555/ (admin/admin)
 ## Metrics
 
 Prometheus: http://127.0.0.1:9090/
-Grafana: http://127.0.0.1:3000/ (admin/11235813)
+Grafana: http://127.0.0.1:3000/ (admin/admin)
 
 ## Tracing
 

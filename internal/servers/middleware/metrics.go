@@ -6,6 +6,7 @@ import (
 )
 
 type Metrics struct {
+	AmountNewUsers            prometheus.Counter
 	AmountCommand             prometheus.Counter
 	AmountMessage             prometheus.Counter
 	AmountActionWithNotes     prometheus.Counter
@@ -16,6 +17,10 @@ type Metrics struct {
 }
 
 func NewMetrics() *Metrics {
+	amountNewUsers := promauto.NewCounter(prometheus.CounterOpts{
+		Namespace: "ozon",
+		Name:      "amount_new_users",
+	})
 	amountCommand := promauto.NewCounter(prometheus.CounterOpts{
 		Namespace: "ozon",
 		Name:      "amount_command_total",
@@ -46,6 +51,7 @@ func NewMetrics() *Metrics {
 	})
 
 	return &Metrics{
+		AmountNewUsers:            amountNewUsers,
 		AmountCommand:             amountCommand,
 		AmountMessage:             amountMessage,
 		AmountActionWithNotes:     amountActionWithNotes,
