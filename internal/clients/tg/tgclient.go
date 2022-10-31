@@ -44,7 +44,7 @@ func New(tgClient Config, parser Parser) (*Client, error) {
 }
 
 func (c *Client) SendMessage(msg messages.Message) error {
-	logger.Info("response: ", zap.Int64("userid", msg.UserID), zap.String("text", msg.Text))
+	logger.Info("response", zap.Int64("userid", msg.UserID), zap.String("text", msg.Text))
 
 	tgMsg := tgbotapi.NewMessage(msg.UserID, msg.Text)
 	tgMsg.ReplyMarkup = msg.Keyboard

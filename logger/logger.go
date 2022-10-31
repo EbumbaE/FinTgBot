@@ -20,6 +20,7 @@ func init() {
 		cfg := zap.NewProductionConfig()
 		cfg.DisableCaller = true
 		cfg.DisableStacktrace = true
+		cfg.OutputPaths = []string{"stdout", "../../logger/logs/data/log.txt"}
 		localLogger, err = cfg.Build()
 	default:
 		localLogger, err = zap.NewDevelopment()

@@ -10,9 +10,6 @@ build:
 test:
 	go test ./...
 
-prod:
-	go run ${PKG} 2>&1 | tee logger/logs/data/log.txt
-
 logs:
 	cd logger/logs && docker compose up
 
