@@ -152,6 +152,20 @@ func (m *MockUsersDB) EXPECT() *MockUsersDBMockRecorder {
 	return m.recorder
 }
 
+// CheckUser mocks base method.
+func (m *MockUsersDB) CheckUser(userID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckUser", userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CheckUser indicates an expected call of CheckUser.
+func (mr *MockUsersDBMockRecorder) CheckUser(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckUser", reflect.TypeOf((*MockUsersDB)(nil).CheckUser), userID)
+}
+
 // GetUserAbbValute mocks base method.
 func (m *MockUsersDB) GetUserAbbValute(userID int64) (string, error) {
 	m.ctrl.T.Helper()
@@ -296,6 +310,20 @@ func (m *MockStorage) AddRate(valute diary.Valute) error {
 func (mr *MockStorageMockRecorder) AddRate(valute interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRate", reflect.TypeOf((*MockStorage)(nil).AddRate), valute)
+}
+
+// CheckUser mocks base method.
+func (m *MockStorage) CheckUser(userID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckUser", userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CheckUser indicates an expected call of CheckUser.
+func (mr *MockStorageMockRecorder) CheckUser(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckUser", reflect.TypeOf((*MockStorage)(nil).CheckUser), userID)
 }
 
 // GetMonthlyBudget mocks base method.

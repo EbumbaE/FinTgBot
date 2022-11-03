@@ -1,9 +1,11 @@
 package messages_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/opentracing/opentracing-go"
 	"github.com/stretchr/testify/assert"
 
 	mocks "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/mocks/messages"
@@ -15,6 +17,8 @@ func TestMessageDefault(t *testing.T) {
 	client := mocks.NewMockClient(ctrl)
 	server := mocks.NewMockServer(ctrl)
 	model := messages.New(client, server)
+	ctx := context.Background()
+	_, nctx := opentracing.StartSpanFromContext(ctx, "incoming command")
 
 	msg := messages.Message{
 		Text:   "Random text",
@@ -27,10 +31,10 @@ func TestMessageDefault(t *testing.T) {
 	}
 
 	server.EXPECT().IsCurrency(msg.Text).Return(false)
-	server.EXPECT().MessageDefault(&msg).Return("What you mean?", nil)
+	server.EXPECT().MessageDefault(nctx, &msg).Return("What you mean?", nil)
 	client.EXPECT().SendMessage(sendMsg)
 
-	err := model.IncomingMessage(msg)
+	err := model.IncomingMessage(ctx, msg)
 	assert.NoError(t, err)
 }
 
@@ -39,6 +43,8 @@ func TestIsCurrencyAndSetCurrency(t *testing.T) {
 	client := mocks.NewMockClient(ctrl)
 	server := mocks.NewMockServer(ctrl)
 	model := messages.New(client, server)
+	ctx := context.Background()
+	_, nctx := opentracing.StartSpanFromContext(ctx, "incoming command")
 
 	rightCurr := func(currency string) {
 		msg := messages.Message{
@@ -51,10 +57,10 @@ func TestIsCurrencyAndSetCurrency(t *testing.T) {
 		}
 
 		server.EXPECT().IsCurrency(msg.Text).Return(true)
-		server.EXPECT().MessageSetReportCurrency(&msg).Return("Done", nil)
+		server.EXPECT().MessageSetReportCurrency(nctx, &msg).Return("Done", nil)
 		client.EXPECT().SendMessage(sendMsg)
 
-		err := model.IncomingMessage(msg)
+		err := model.IncomingMessage(ctx, msg)
 		assert.NoError(t, err)
 	}
 
@@ -69,10 +75,11 @@ func TestIsCurrencyAndSetCurrency(t *testing.T) {
 		}
 
 		server.EXPECT().IsCurrency(msg.Text).Return(false)
-		server.EXPECT().MessageDefault(&msg).Return(sendMsg.Text, nil)
+		server.EXPECT().MessageDefault(nctx, &msg).Return(sendMsg.Text, nil)
 		client.EXPECT().SendMessage(sendMsg)
 
-		err := model.IncomingMessage(msg)
+		ctx := context.Background()
+		err := model.IncomingMessage(ctx, msg)
 		assert.NoError(t, err)
 	}
 

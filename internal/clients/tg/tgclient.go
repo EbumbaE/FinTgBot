@@ -2,12 +2,14 @@ package tg
 
 import (
 	"context"
-	"log"
 	"sync"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/middleware"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
+	"go.uber.org/zap"
 )
 
 type Parser interface {
@@ -15,8 +17,16 @@ type Parser interface {
 }
 
 type Client struct {
-	client    *tgbotapi.BotAPI
-	Keyboards *Keyboards
+	client     *tgbotapi.BotAPI
+	Keyboards  *Keyboards
+	Metrics    *middleware.Metrics
+	Middleware *middleware.Middleware
+}
+
+func (c *Client) InitMiddleware() {
+	metrics := middleware.NewMetrics()
+	c.Metrics = metrics
+	c.Middleware = middleware.NewMiddleware(metrics)
 }
 
 func New(tgClient Config, parser Parser) (*Client, error) {
@@ -34,6 +44,8 @@ func New(tgClient Config, parser Parser) (*Client, error) {
 }
 
 func (c *Client) SendMessage(msg messages.Message) error {
+	logger.Info("response", zap.Int64("userid", msg.UserID), zap.String("text", msg.Text))
+
 	tgMsg := tgbotapi.NewMessage(msg.UserID, msg.Text)
 	tgMsg.ReplyMarkup = msg.Keyboard
 
@@ -54,38 +66,18 @@ func (c *Client) ListenUpdates(ctx context.Context, msgModel *messages.Model) {
 
 	updates := c.client.GetUpdatesChan(u)
 
-	log.Println("listening for messages")
+	logger.Info("listening messages begin")
 
 	go func() {
 		for {
 			select {
 			case update := <-updates:
 				if update.Message != nil {
-
-					log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-
-					if update.Message.IsCommand() {
-						err := msgModel.IncomingCommand(messages.Message{
-							UserID:    update.Message.From.ID,
-							Command:   update.Message.Command(),
-							Arguments: update.Message.CommandArguments(),
-						})
-						if err != nil {
-							log.Println("error in incoming command:", err)
-						}
-					} else {
-						err := msgModel.IncomingMessage(messages.Message{
-							UserID: update.Message.From.ID,
-							Text:   update.Message.Text,
-						})
-						if err != nil {
-							log.Println("error in incoming message:", err)
-						}
-					}
+					c.Middleware.IncomingRequest(ctx, msgModel, update.Message)
 				}
 			case <-ctx.Done():
 				defer ctx.Value("allDoneWG").(*sync.WaitGroup).Done()
-				log.Println("listening messages is off")
+				logger.Info("Listening messages end")
 				return
 			}
 		}

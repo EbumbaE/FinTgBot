@@ -1,6 +1,7 @@
 package tgServer_test
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -163,7 +164,8 @@ func TestSetNote(t *testing.T) {
 
 	storage.EXPECT().AddNote(msg.UserID, date, note).Return(nil)
 
-	answer, err := tg.CommandSetNote(&msg)
+	ctx := context.Background()
+	answer, err := tg.CommandSetNote(ctx, &msg)
 	assert.Equal(t, answer, "Done")
 	assert.NoError(t, err)
 }
@@ -216,7 +218,8 @@ func TestCommandGetBudget(t *testing.T) {
 		storage.EXPECT().GetNote(msg.UserID, date.Format("02.01.2006")).Return(notes, nil)
 	}
 
-	answer, err := tg.CommandGetBudget(&msg)
+	ctx := context.Background()
+	answer, err := tg.CommandGetBudget(ctx, &msg)
 	assert.Equal(t, "Budget for the month in USD:\n12.40/40.00 USD", answer)
 	assert.NoError(t, err)
 
@@ -253,6 +256,7 @@ func TestGetStatic(t *testing.T) {
 			Currency: "RUB",
 		},
 	}
+	ctx := context.Background()
 
 	storage.EXPECT().GetUserAbbValute(msg.UserID).Return(userRate.Abbreviation, nil)
 	storage.EXPECT().GetRate(userRate.Abbreviation).Return(&userRate, nil)
@@ -263,7 +267,7 @@ func TestGetStatic(t *testing.T) {
 		storage.EXPECT().GetNote(msg.UserID, date.Format("02.01.2006")).Return(notes, nil)
 	}
 
-	answer, err := tg.CommandGetStatistic(&msg)
+	answer, err := tg.CommandGetStatistic(ctx, &msg)
 	assert.NoError(t, err)
 	if answer != "Statistic for the week in USD:\nfood: 3.50\nschool: 2.33\n" &&
 		answer != "Statistic for the week in USD:\nschool: 2.33\nfood: 3.50\n" {
@@ -279,7 +283,7 @@ func TestGetStatic(t *testing.T) {
 		storage.EXPECT().GetNote(msg.UserID, date.Format("02.01.2006")).Return(notes, nil)
 	}
 
-	answer, err = tg.CommandGetStatistic(&msg)
+	answer, err = tg.CommandGetStatistic(ctx, &msg)
 	assert.NoError(t, err)
 	if answer != "Statistic for the month in USD:\nfood: 15.50\nschool: 10.33\n" &&
 		answer != "Statistic for the month in USD:\nschool: 10.33\nfood: 15.50\n" {
@@ -295,10 +299,10 @@ func TestGetStatic(t *testing.T) {
 		storage.EXPECT().GetNote(msg.UserID, date.Format("02.01.2006")).Return(notes, nil)
 	}
 
-	answer, err = tg.CommandGetStatistic(&msg)
+	answer, err = tg.CommandGetStatistic(ctx, &msg)
 	assert.NoError(t, err)
 	if answer != "Statistic for the year in USD:\nfood: 182.50\nschool: 121.67\n" &&
-		answer != "Statistic for the month in USD:\nschool: 121.67\nfood: 182.50\n" {
+		answer != "Statistic for the year in USD:\nschool: 121.67\nfood: 182.50\n" {
 		t.Fatalf("unexpected answer: %s", answer)
 	}
 }

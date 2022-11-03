@@ -14,6 +14,9 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/metrics"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -27,44 +30,43 @@ func main() {
 		cancel()
 	}()
 
-	file, err := os.OpenFile("l.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.SetOutput(file)
+	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
+	metrics.InitServer(ctx)
 
 	config, err := config.New()
 	if err != nil {
-		log.Fatal("config init failed: ", err)
+		logger.Fatal("config init failed: ", zap.Error(err))
 	}
 
 	db, err := psql.New(config.PsqlDatabase)
 	if err != nil {
-		log.Fatal("db init: ", err)
+		logger.Fatal("db init: ", zap.Error(err))
 	}
 	if err := db.CheckHealth(); err != nil {
-		log.Fatal("db check health: ", err)
+		logger.Fatal("db check health: ", zap.Error(err))
 	}
 
 	parser, err := currency.New(config.Currency)
 	if err != nil {
-		log.Fatal("parser init failed:", err)
+		logger.Fatal("parser init failed:", zap.Error(err))
 	}
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
 	err = parser.ParseCurrencies(ctx, db)
 	if err != nil {
-		log.Fatal("valute channel return error:", err)
+		logger.Fatal("valute channel return error:", zap.Error(err))
 	}
 
 	tgServer, err := server.New(db, config.TgServer)
 	if err != nil {
-		log.Fatal("tg server init failed:", err)
+		logger.Fatal("tg server init failed:", zap.Error(err))
 	}
+	tgServer.InitMiddleware()
 
 	tgClient, err := client.New(config.TgClient, parser)
 	if err != nil {
-		log.Fatal("tg client init failed:", err)
+		logger.Fatal("tg client init failed:", zap.Error(err))
 	}
+	tgClient.InitMiddleware()
 
 	msgModel := messages.New(tgClient, tgServer)
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)

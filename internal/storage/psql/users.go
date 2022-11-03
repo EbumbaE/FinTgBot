@@ -19,10 +19,10 @@ func NewUsersDB(driverName, dataSourceName string) (*UsersDB, error) {
 	return &UsersDB{usersDB}, nil
 }
 
-func (d *Database) SetUserAbbValute(userID int64, abbreviation string) error {
+func (d *Database) SetUserAbbValute(userID int64, abbreviation string) (err error) {
 	const query = `
 		INSERT INTO users (
-			updated_at,
+			created_at,
 			id,
 			report_abbreviation
 		) VALUES (
@@ -33,11 +33,11 @@ func (d *Database) SetUserAbbValute(userID int64, abbreviation string) error {
 			report_abbreviation = $2;
 	`
 
-	_, err := d.Users.db.Exec(query,
+	_, err = d.Users.db.Exec(query,
 		userID,
 		abbreviation,
 	)
-	return err
+	return
 }
 
 func (d *Database) GetUserAbbValute(userID int64) (abbreviation string, err error) {
@@ -47,5 +47,18 @@ func (d *Database) GetUserAbbValute(userID int64) (abbreviation string, err erro
 		WHERE id = $1
 	`
 	err = d.Users.db.QueryRow(query, userID).Scan(&abbreviation)
+	return
+}
+
+func (d *Database) CheckUser(userID int64) (err error) {
+	const query = `
+		INSERT INTO users (
+			created_at,
+			id
+		) VALUES (
+			now(), $1
+		)	
+	`
+	_, err = d.Users.db.Exec(query, userID)
 	return
 }

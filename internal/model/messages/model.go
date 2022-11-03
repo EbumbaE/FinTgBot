@@ -1,24 +1,25 @@
 package messages
 
+import "context"
+
 type Client interface {
 	SendMessage(msg Message) error
 	SetupCurrencyKeyboard(msg *Message)
 }
 
 type Messanger interface {
-	IsCurrency(text string) bool
-	MessageDefault(msg *Message) (answer string, err error)
-	MessageSetReportCurrency(msg *Message) (answer string, err error)
+	IsCurrency(string) bool
+	MessageDefault(context.Context, *Message) (string, error)
+	MessageSetReportCurrency(context.Context, *Message) (string, error)
 }
 
 type Commander interface {
-	CommandStart(msg *Message) (answer string, err error)
-	CommandHelp(msg *Message) (answer string, err error)
-	CommandSetNote(msg *Message) (answer string, err error)
-	CommandGetStatistic(msg *Message) (answer string, err error)
-	CommandDefault(msg *Message) (answer string, err error)
-	CommandSetBudget(msg *Message) (answer string, err error)
-	CommandGetBudget(msg *Message) (answer string, err error)
+	CommandStart(context.Context, *Message) (string, error)
+	CommandSetNote(context.Context, *Message) (string, error)
+	CommandGetStatistic(context.Context, *Message) (string, error)
+	CommandDefault(context.Context, *Message) (string, error)
+	CommandSetBudget(context.Context, *Message) (string, error)
+	CommandGetBudget(context.Context, *Message) (string, error)
 }
 
 type Server interface {

@@ -5,6 +5,7 @@
 package mock_messages
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -84,47 +85,47 @@ func (m *MockMessanger) EXPECT() *MockMessangerMockRecorder {
 }
 
 // IsCurrency mocks base method.
-func (m *MockMessanger) IsCurrency(text string) bool {
+func (m *MockMessanger) IsCurrency(arg0 string) bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsCurrency", text)
+	ret := m.ctrl.Call(m, "IsCurrency", arg0)
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
 // IsCurrency indicates an expected call of IsCurrency.
-func (mr *MockMessangerMockRecorder) IsCurrency(text interface{}) *gomock.Call {
+func (mr *MockMessangerMockRecorder) IsCurrency(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsCurrency", reflect.TypeOf((*MockMessanger)(nil).IsCurrency), text)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsCurrency", reflect.TypeOf((*MockMessanger)(nil).IsCurrency), arg0)
 }
 
 // MessageDefault mocks base method.
-func (m *MockMessanger) MessageDefault(msg *messages.Message) (string, error) {
+func (m *MockMessanger) MessageDefault(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MessageDefault", msg)
+	ret := m.ctrl.Call(m, "MessageDefault", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // MessageDefault indicates an expected call of MessageDefault.
-func (mr *MockMessangerMockRecorder) MessageDefault(msg interface{}) *gomock.Call {
+func (mr *MockMessangerMockRecorder) MessageDefault(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageDefault", reflect.TypeOf((*MockMessanger)(nil).MessageDefault), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageDefault", reflect.TypeOf((*MockMessanger)(nil).MessageDefault), arg0, arg1)
 }
 
 // MessageSetReportCurrency mocks base method.
-func (m *MockMessanger) MessageSetReportCurrency(msg *messages.Message) (string, error) {
+func (m *MockMessanger) MessageSetReportCurrency(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MessageSetReportCurrency", msg)
+	ret := m.ctrl.Call(m, "MessageSetReportCurrency", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // MessageSetReportCurrency indicates an expected call of MessageSetReportCurrency.
-func (mr *MockMessangerMockRecorder) MessageSetReportCurrency(msg interface{}) *gomock.Call {
+func (mr *MockMessangerMockRecorder) MessageSetReportCurrency(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageSetReportCurrency", reflect.TypeOf((*MockMessanger)(nil).MessageSetReportCurrency), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageSetReportCurrency", reflect.TypeOf((*MockMessanger)(nil).MessageSetReportCurrency), arg0, arg1)
 }
 
 // MockCommander is a mock of Commander interface.
@@ -151,108 +152,108 @@ func (m *MockCommander) EXPECT() *MockCommanderMockRecorder {
 }
 
 // CommandDefault mocks base method.
-func (m *MockCommander) CommandDefault(msg *messages.Message) (string, error) {
+func (m *MockCommander) CommandDefault(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandDefault", msg)
+	ret := m.ctrl.Call(m, "CommandDefault", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandDefault indicates an expected call of CommandDefault.
-func (mr *MockCommanderMockRecorder) CommandDefault(msg interface{}) *gomock.Call {
+func (mr *MockCommanderMockRecorder) CommandDefault(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandDefault", reflect.TypeOf((*MockCommander)(nil).CommandDefault), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandDefault", reflect.TypeOf((*MockCommander)(nil).CommandDefault), arg0, arg1)
 }
 
 // CommandGetBudget mocks base method.
-func (m *MockCommander) CommandGetBudget(msg *messages.Message) (string, error) {
+func (m *MockCommander) CommandGetBudget(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandGetBudget", msg)
+	ret := m.ctrl.Call(m, "CommandGetBudget", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandGetBudget indicates an expected call of CommandGetBudget.
-func (mr *MockCommanderMockRecorder) CommandGetBudget(msg interface{}) *gomock.Call {
+func (mr *MockCommanderMockRecorder) CommandGetBudget(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetBudget", reflect.TypeOf((*MockCommander)(nil).CommandGetBudget), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetBudget", reflect.TypeOf((*MockCommander)(nil).CommandGetBudget), arg0, arg1)
 }
 
 // CommandGetStatistic mocks base method.
-func (m *MockCommander) CommandGetStatistic(msg *messages.Message) (string, error) {
+func (m *MockCommander) CommandGetStatistic(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandGetStatistic", msg)
+	ret := m.ctrl.Call(m, "CommandGetStatistic", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandGetStatistic indicates an expected call of CommandGetStatistic.
-func (mr *MockCommanderMockRecorder) CommandGetStatistic(msg interface{}) *gomock.Call {
+func (mr *MockCommanderMockRecorder) CommandGetStatistic(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetStatistic", reflect.TypeOf((*MockCommander)(nil).CommandGetStatistic), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetStatistic", reflect.TypeOf((*MockCommander)(nil).CommandGetStatistic), arg0, arg1)
 }
 
 // CommandHelp mocks base method.
-func (m *MockCommander) CommandHelp(msg *messages.Message) (string, error) {
+func (m *MockCommander) CommandHelp(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandHelp", msg)
+	ret := m.ctrl.Call(m, "CommandHelp", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandHelp indicates an expected call of CommandHelp.
-func (mr *MockCommanderMockRecorder) CommandHelp(msg interface{}) *gomock.Call {
+func (mr *MockCommanderMockRecorder) CommandHelp(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandHelp", reflect.TypeOf((*MockCommander)(nil).CommandHelp), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandHelp", reflect.TypeOf((*MockCommander)(nil).CommandHelp), arg0, arg1)
 }
 
 // CommandSetBudget mocks base method.
-func (m *MockCommander) CommandSetBudget(msg *messages.Message) (string, error) {
+func (m *MockCommander) CommandSetBudget(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandSetBudget", msg)
+	ret := m.ctrl.Call(m, "CommandSetBudget", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandSetBudget indicates an expected call of CommandSetBudget.
-func (mr *MockCommanderMockRecorder) CommandSetBudget(msg interface{}) *gomock.Call {
+func (mr *MockCommanderMockRecorder) CommandSetBudget(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetBudget", reflect.TypeOf((*MockCommander)(nil).CommandSetBudget), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetBudget", reflect.TypeOf((*MockCommander)(nil).CommandSetBudget), arg0, arg1)
 }
 
 // CommandSetNote mocks base method.
-func (m *MockCommander) CommandSetNote(msg *messages.Message) (string, error) {
+func (m *MockCommander) CommandSetNote(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandSetNote", msg)
+	ret := m.ctrl.Call(m, "CommandSetNote", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandSetNote indicates an expected call of CommandSetNote.
-func (mr *MockCommanderMockRecorder) CommandSetNote(msg interface{}) *gomock.Call {
+func (mr *MockCommanderMockRecorder) CommandSetNote(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetNote", reflect.TypeOf((*MockCommander)(nil).CommandSetNote), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetNote", reflect.TypeOf((*MockCommander)(nil).CommandSetNote), arg0, arg1)
 }
 
 // CommandStart mocks base method.
-func (m *MockCommander) CommandStart(msg *messages.Message) (string, error) {
+func (m *MockCommander) CommandStart(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandStart", msg)
+	ret := m.ctrl.Call(m, "CommandStart", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandStart indicates an expected call of CommandStart.
-func (mr *MockCommanderMockRecorder) CommandStart(msg interface{}) *gomock.Call {
+func (mr *MockCommanderMockRecorder) CommandStart(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandStart", reflect.TypeOf((*MockCommander)(nil).CommandStart), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandStart", reflect.TypeOf((*MockCommander)(nil).CommandStart), arg0, arg1)
 }
 
 // MockServer is a mock of Server interface.
@@ -279,150 +280,150 @@ func (m *MockServer) EXPECT() *MockServerMockRecorder {
 }
 
 // CommandDefault mocks base method.
-func (m *MockServer) CommandDefault(msg *messages.Message) (string, error) {
+func (m *MockServer) CommandDefault(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandDefault", msg)
+	ret := m.ctrl.Call(m, "CommandDefault", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandDefault indicates an expected call of CommandDefault.
-func (mr *MockServerMockRecorder) CommandDefault(msg interface{}) *gomock.Call {
+func (mr *MockServerMockRecorder) CommandDefault(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandDefault", reflect.TypeOf((*MockServer)(nil).CommandDefault), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandDefault", reflect.TypeOf((*MockServer)(nil).CommandDefault), arg0, arg1)
 }
 
 // CommandGetBudget mocks base method.
-func (m *MockServer) CommandGetBudget(msg *messages.Message) (string, error) {
+func (m *MockServer) CommandGetBudget(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandGetBudget", msg)
+	ret := m.ctrl.Call(m, "CommandGetBudget", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandGetBudget indicates an expected call of CommandGetBudget.
-func (mr *MockServerMockRecorder) CommandGetBudget(msg interface{}) *gomock.Call {
+func (mr *MockServerMockRecorder) CommandGetBudget(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetBudget", reflect.TypeOf((*MockServer)(nil).CommandGetBudget), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetBudget", reflect.TypeOf((*MockServer)(nil).CommandGetBudget), arg0, arg1)
 }
 
 // CommandGetStatistic mocks base method.
-func (m *MockServer) CommandGetStatistic(msg *messages.Message) (string, error) {
+func (m *MockServer) CommandGetStatistic(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandGetStatistic", msg)
+	ret := m.ctrl.Call(m, "CommandGetStatistic", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandGetStatistic indicates an expected call of CommandGetStatistic.
-func (mr *MockServerMockRecorder) CommandGetStatistic(msg interface{}) *gomock.Call {
+func (mr *MockServerMockRecorder) CommandGetStatistic(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetStatistic", reflect.TypeOf((*MockServer)(nil).CommandGetStatistic), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetStatistic", reflect.TypeOf((*MockServer)(nil).CommandGetStatistic), arg0, arg1)
 }
 
 // CommandHelp mocks base method.
-func (m *MockServer) CommandHelp(msg *messages.Message) (string, error) {
+func (m *MockServer) CommandHelp(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandHelp", msg)
+	ret := m.ctrl.Call(m, "CommandHelp", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandHelp indicates an expected call of CommandHelp.
-func (mr *MockServerMockRecorder) CommandHelp(msg interface{}) *gomock.Call {
+func (mr *MockServerMockRecorder) CommandHelp(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandHelp", reflect.TypeOf((*MockServer)(nil).CommandHelp), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandHelp", reflect.TypeOf((*MockServer)(nil).CommandHelp), arg0, arg1)
 }
 
 // CommandSetBudget mocks base method.
-func (m *MockServer) CommandSetBudget(msg *messages.Message) (string, error) {
+func (m *MockServer) CommandSetBudget(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandSetBudget", msg)
+	ret := m.ctrl.Call(m, "CommandSetBudget", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandSetBudget indicates an expected call of CommandSetBudget.
-func (mr *MockServerMockRecorder) CommandSetBudget(msg interface{}) *gomock.Call {
+func (mr *MockServerMockRecorder) CommandSetBudget(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetBudget", reflect.TypeOf((*MockServer)(nil).CommandSetBudget), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetBudget", reflect.TypeOf((*MockServer)(nil).CommandSetBudget), arg0, arg1)
 }
 
 // CommandSetNote mocks base method.
-func (m *MockServer) CommandSetNote(msg *messages.Message) (string, error) {
+func (m *MockServer) CommandSetNote(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandSetNote", msg)
+	ret := m.ctrl.Call(m, "CommandSetNote", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandSetNote indicates an expected call of CommandSetNote.
-func (mr *MockServerMockRecorder) CommandSetNote(msg interface{}) *gomock.Call {
+func (mr *MockServerMockRecorder) CommandSetNote(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetNote", reflect.TypeOf((*MockServer)(nil).CommandSetNote), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandSetNote", reflect.TypeOf((*MockServer)(nil).CommandSetNote), arg0, arg1)
 }
 
 // CommandStart mocks base method.
-func (m *MockServer) CommandStart(msg *messages.Message) (string, error) {
+func (m *MockServer) CommandStart(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandStart", msg)
+	ret := m.ctrl.Call(m, "CommandStart", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CommandStart indicates an expected call of CommandStart.
-func (mr *MockServerMockRecorder) CommandStart(msg interface{}) *gomock.Call {
+func (mr *MockServerMockRecorder) CommandStart(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandStart", reflect.TypeOf((*MockServer)(nil).CommandStart), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandStart", reflect.TypeOf((*MockServer)(nil).CommandStart), arg0, arg1)
 }
 
 // IsCurrency mocks base method.
-func (m *MockServer) IsCurrency(text string) bool {
+func (m *MockServer) IsCurrency(arg0 string) bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsCurrency", text)
+	ret := m.ctrl.Call(m, "IsCurrency", arg0)
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
 // IsCurrency indicates an expected call of IsCurrency.
-func (mr *MockServerMockRecorder) IsCurrency(text interface{}) *gomock.Call {
+func (mr *MockServerMockRecorder) IsCurrency(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsCurrency", reflect.TypeOf((*MockServer)(nil).IsCurrency), text)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsCurrency", reflect.TypeOf((*MockServer)(nil).IsCurrency), arg0)
 }
 
 // MessageDefault mocks base method.
-func (m *MockServer) MessageDefault(msg *messages.Message) (string, error) {
+func (m *MockServer) MessageDefault(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MessageDefault", msg)
+	ret := m.ctrl.Call(m, "MessageDefault", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // MessageDefault indicates an expected call of MessageDefault.
-func (mr *MockServerMockRecorder) MessageDefault(msg interface{}) *gomock.Call {
+func (mr *MockServerMockRecorder) MessageDefault(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageDefault", reflect.TypeOf((*MockServer)(nil).MessageDefault), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageDefault", reflect.TypeOf((*MockServer)(nil).MessageDefault), arg0, arg1)
 }
 
 // MessageSetReportCurrency mocks base method.
-func (m *MockServer) MessageSetReportCurrency(msg *messages.Message) (string, error) {
+func (m *MockServer) MessageSetReportCurrency(arg0 context.Context, arg1 *messages.Message) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MessageSetReportCurrency", msg)
+	ret := m.ctrl.Call(m, "MessageSetReportCurrency", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // MessageSetReportCurrency indicates an expected call of MessageSetReportCurrency.
-func (mr *MockServerMockRecorder) MessageSetReportCurrency(msg interface{}) *gomock.Call {
+func (mr *MockServerMockRecorder) MessageSetReportCurrency(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageSetReportCurrency", reflect.TypeOf((*MockServer)(nil).MessageSetReportCurrency), msg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MessageSetReportCurrency", reflect.TypeOf((*MockServer)(nil).MessageSetReportCurrency), arg0, arg1)
 }

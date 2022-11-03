@@ -1,6 +1,7 @@
 package tgServer
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
@@ -9,6 +10,8 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
+	"go.uber.org/zap"
 )
 
 func parseArguments(lineArgs string, amount int) ([]string, error) {
@@ -76,7 +79,11 @@ func (t *TgServer) CheckBudget(userID int64, date string, sum, delta float64) (a
 	return "Done", nil
 }
 
-func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err error) {
+func (t *TgServer) CommandSetNote(ctx context.Context, msg *messages.Message) (answer string, err error) {
+	if t.Metrics != nil {
+		t.Metrics.AmountActionWithNotes.Inc()
+		t.Metrics.AmountCommand.Inc()
+	}
 
 	args, err := parseArguments(msg.Arguments, 3)
 	if err != nil {
@@ -115,12 +122,18 @@ func (t *TgServer) CommandSetNote(msg *messages.Message) (answer string, err err
 	}
 	err = t.storage.AddNote(msg.UserID, date, note)
 	if err != nil {
-		answer = "error in storage: set note"
+		answer = err.Error()
+		logger.Error("add note: ", zap.Error(err))
 	}
 	return
 }
 
-func (t *TgServer) CommandGetStatistic(msg *messages.Message) (answer string, err error) {
+func (t *TgServer) CommandGetStatistic(ctx context.Context, msg *messages.Message) (answer string, err error) {
+	if t.Metrics != nil {
+		t.Metrics.AmountActionWithStatistic.Inc()
+		t.Metrics.AmountCommand.Inc()
+	}
+
 	args, err := parseArguments(msg.Arguments, 1)
 	if err != nil {
 		answer = err.Error()
@@ -142,14 +155,19 @@ func (t *TgServer) CommandGetStatistic(msg *messages.Message) (answer string, er
 	answer, err = report.CountStatistic(msg.UserID, period, t.storage, &t.dateFormatter, userRateCurrency)
 	if err != nil {
 		answer = "not done"
-		fmt.Printf("[%d] %s", msg.UserID, err)
+		logger.Error("count statistic: ", zap.Error(err))
 		return
 	}
 
 	return
 }
 
-func (t *TgServer) CommandSetBudget(msg *messages.Message) (answer string, err error) {
+func (t *TgServer) CommandSetBudget(ctx context.Context, msg *messages.Message) (answer string, err error) {
+	if t.Metrics != nil {
+		t.Metrics.AmountActionWithBudgets.Inc()
+		t.Metrics.AmountCommand.Inc()
+	}
+
 	args, err := parseArguments(msg.Arguments, 3)
 	if err != nil {
 		answer = "error in arguments"
@@ -177,12 +195,18 @@ func (t *TgServer) CommandSetBudget(msg *messages.Message) (answer string, err e
 	}
 	err = t.storage.AddMonthlyBudget(msg.UserID, budget)
 	if err != nil {
+		logger.Error("add monthly budget: ", zap.Error(err))
 		answer = "error in storage: set budget"
 	}
 	return
 }
 
-func (t *TgServer) CommandGetBudget(msg *messages.Message) (answer string, err error) {
+func (t *TgServer) CommandGetBudget(ctx context.Context, msg *messages.Message) (answer string, err error) {
+	if t.Metrics != nil {
+		t.Metrics.AmountActionWithBudgets.Inc()
+		t.Metrics.AmountCommand.Inc()
+	}
+
 	args, err := parseArguments(msg.Arguments, 1)
 	if err != nil {
 		answer = "error in arguments"
@@ -199,48 +223,69 @@ func (t *TgServer) CommandGetBudget(msg *messages.Message) (answer string, err e
 	userAbbCurrency, err := t.storage.GetUserAbbValute(msg.UserID)
 	if err != nil {
 		answer = err.Error()
+		logger.Error("get user currency abbreviation: ", zap.Error(err))
 		return
 	}
 	userRate, err := t.storage.GetRate(userAbbCurrency)
 	if err != nil {
 		answer = err.Error()
+		logger.Error("get rate error: ", zap.Error(err))
 		return
 	}
 
 	answer, err = report.GetBudgetReport(msg.UserID, t.storage, &t.dateFormatter, userRate, monthYear)
 	if err != nil {
-		answer = "not done"
-		fmt.Printf("[%d] %s", msg.UserID, err)
+		answer = err.Error()
+		logger.Error("get budget report: ", zap.Error(err))
 		return
 	}
 
 	return
 }
 
-func (t *TgServer) CommandStart(msg *messages.Message) (answer string, err error) {
-	return "Hello", nil
-}
+func (t *TgServer) CommandStart(ctx context.Context, msg *messages.Message) (answer string, err error) {
+	if t.Metrics != nil {
+		t.Metrics.AmountCommand.Inc()
+	}
+	if err := t.storage.CheckUser(msg.UserID); err == nil {
+		t.Metrics.AmountNewUsers.Inc()
+	}
 
-func (t *TgServer) CommandHelp(msg *messages.Message) (answer string, err error) {
 	answer =
 		`hello, some commands:
-	/setNote date category sum
-	example: /setNote 27.09.2022 food 453.12 
-	
-	/getStatistic period (week, month or year)
-	example: /getStatistic week
-	
-	/setMonthlyBudget sum currency
-	example: /setMonthlyBudget 245 USD
-	
-	/getMonthlyBudget month.year
-	example: /getMonthlyBudget 09.2022
-	
-	/selectReportCurrency
-	`
+/setNote дата категория сумма
+пример: /setNote 27.09.2022 food 453.12
+добавляет трату в заданный день по заданной категории, отвечает Done в случае успешной записи
+
+/getStatistic период (week, month или year)
+example: /getStatistic week
+выводит статистику за заданный период, ответа на команду:
+Statistic for the week:
+food: 245.12
+school: 85.01
+
+/selectReportCurrency
+дает выбор валюты для команд getStatistic, setNote, getMonthlyBudget
+
+/setBudget дата сумма валюта
+example: /setBudget 10.2022 254 USD
+устанавливает бюджет на месяц
+
+/getBudget дата
+example: /getBudget 10.2022
+выводит расход за месяц рабочей валюте
+
+/start
+выводит информацию о командах`
+
 	return
 }
 
-func (t *TgServer) CommandDefault(msg *messages.Message) (answer string, err error) {
+func (t *TgServer) CommandDefault(ctx context.Context, msg *messages.Message) (answer string, err error) {
+	if t.Metrics != nil {
+		t.Metrics.AmountCommand.Inc()
+		t.Metrics.AmountDefaultMsgAndComm.Inc()
+	}
+
 	return "Unknown command", nil
 }
