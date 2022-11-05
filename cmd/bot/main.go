@@ -47,7 +47,7 @@ func main() {
 		logger.Fatal("db check health: ", zap.Error(err))
 	}
 
-	cache := cache.New("")
+	cache := cache.New("127.0.0.1:11211")
 	if err := cache.Ping(); err != nil {
 		logger.Error("cache ping: ", zap.Error(err))
 	}

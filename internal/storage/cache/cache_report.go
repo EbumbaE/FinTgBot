@@ -54,6 +54,11 @@ func (c *Cache) GetReportFromCache(userID int64, period string) (getReport repor
 	return
 }
 
+func (c *Cache) DeleteReportFromCache(userID int64, period string) error {
+	key := concatKey(userID, period)
+	return c.client.Delete(key)
+}
+
 func (c *Cache) AddNoteInCacheReports(userID int64, timeNote time.Time, note diary.Note) error {
 	periods, err := report.DeterminePeriod(timeNote, time.Now())
 	if err != nil {
@@ -66,6 +71,10 @@ func (c *Cache) AddNoteInCacheReports(userID int64, timeNote time.Time, note dia
 			continue
 		}
 		report[note.Category] += note.Sum
+		if err := c.DeleteReportFromCache(userID, period); err != nil {
+			logger.Error("delete report from cache", zap.Error(err))
+			return err
+		}
 		if err := c.AddReportInCache(userID, period, report); err != nil {
 			logger.Error("add report in cache", zap.Error(err))
 			return err

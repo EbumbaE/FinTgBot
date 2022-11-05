@@ -53,18 +53,18 @@ func compareAGreaterOrEqualB(a, b time.Time) bool {
 
 func DeterminePeriod(date time.Time, now time.Time) (period []string, err error) {
 
-	begin, _ := GetWeekPeriod(now)
-	if compareAGreaterOrEqualB(date, begin) {
+	begin, end := GetWeekPeriod(now)
+	if compareAGreaterOrEqualB(date, begin) && compareAGreaterOrEqualB(end, date) {
 		period = append(period, "week")
 	}
 
 	begin, _ = GetMonthPeriod(now)
-	if compareAGreaterOrEqualB(date, begin) {
+	if compareAGreaterOrEqualB(date, begin) && compareAGreaterOrEqualB(end, date) {
 		period = append(period, "month")
 	}
 
 	begin, _ = GetYearPeriod(now)
-	if compareAGreaterOrEqualB(date, begin) {
+	if compareAGreaterOrEqualB(date, begin) && compareAGreaterOrEqualB(end, date) {
 		period = append(period, "year")
 	}
 

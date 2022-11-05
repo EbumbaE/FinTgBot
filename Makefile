@@ -19,6 +19,9 @@ tracing:
 metrics:
 	cd metrics && docker compose up
 
+cache:
+	cd 
+
 pull:
 	docker pull prom/prometheus
 	docker pull grafana/grafana-oss
@@ -26,3 +29,4 @@ pull:
 	docker pull elasticsearch:7.17.6
 	docker pull graylog/graylog:4.3
 	docker pull jaegertracing/all-in-one:1.18
+	docker pull memcached
