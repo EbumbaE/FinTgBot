@@ -18,11 +18,12 @@ import (
 func TestOverCheckBudget(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	var userID int64 = 123
@@ -63,11 +64,12 @@ func TestOverCheckBudget(t *testing.T) {
 func TestNullCheckBudget(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	var userID int64 = 123
@@ -87,11 +89,13 @@ func TestNullCheckBudget(t *testing.T) {
 func TestDoneCheckBudget(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
+
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	var userID int64 = 123
@@ -130,11 +134,13 @@ func TestDoneCheckBudget(t *testing.T) {
 func TestSetNote(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
+
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	date := "15.10.2022"
@@ -173,11 +179,13 @@ func TestSetNote(t *testing.T) {
 func TestCommandGetBudget(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
+
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	msg := messages.Message{
@@ -228,11 +236,13 @@ func TestCommandGetBudget(t *testing.T) {
 func TestGetStatic(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
+
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	msg := messages.Message{

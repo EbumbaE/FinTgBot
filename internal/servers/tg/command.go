@@ -120,11 +120,20 @@ func (t *TgServer) CommandSetNote(ctx context.Context, msg *messages.Message) (a
 		Sum:      sum * delta,
 		Currency: "RUB",
 	}
-	err = t.storage.AddNote(msg.UserID, date, note)
-	if err != nil {
+	if err := t.storage.AddNote(msg.UserID, date, note); err != nil {
 		answer = err.Error()
 		logger.Error("add note: ", zap.Error(err))
 	}
+
+	timeNote, err := t.dateFormatter.FormatDateStringToTime(date)
+	if err != nil {
+		logger.Error("format date string to time in set note", zap.Error(err))
+		return
+	}
+	if err := t.cache.AddNoteInCacheReports(msg.UserID, timeNote, note); err != nil {
+		logger.Error("delete report from cache: ", zap.Error(err))
+	}
+
 	return
 }
 
@@ -152,11 +161,29 @@ func (t *TgServer) CommandGetStatistic(ctx context.Context, msg *messages.Messag
 		return
 	}
 
-	answer, err = report.CountStatistic(msg.UserID, period, t.storage, &t.dateFormatter, userRateCurrency)
+	cacheReport, err := t.cache.GetReportFromCache(msg.UserID, period)
+	if err != nil {
+		logger.Info("get cache report", zap.Error(err))
+	} else {
+		strReport, err := report.FormatReportToString(&cacheReport, period, userRateCurrency)
+		return strReport, err
+	}
+
+	countReport, err := report.CountStatistic(msg.UserID, period, t.storage, &t.dateFormatter)
 	if err != nil {
 		answer = "not done"
-		logger.Error("count statistic: ", zap.Error(err))
+		logger.Error("count statistic", zap.Error(err))
 		return
+	}
+	answer, err = report.FormatReportToString(&countReport, period, userRateCurrency)
+	if err != nil {
+		answer = "not done"
+		logger.Error("format statistic to string", zap.Error(err))
+		return
+	}
+
+	if err := t.cache.AddReportInCache(msg.UserID, period, countReport); err != nil {
+		logger.Error("add report in cache", zap.Error(err))
 	}
 
 	return
