@@ -15,8 +15,8 @@ import (
 	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/cache"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/metrics"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/metrics"
 	"go.uber.org/zap"
 )
 

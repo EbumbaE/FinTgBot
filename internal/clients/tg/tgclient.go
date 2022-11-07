@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/middleware"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

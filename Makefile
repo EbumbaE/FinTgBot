@@ -11,16 +11,16 @@ test:
 	go test ./...
 
 logs:
-	cd logger/logs && docker compose up
+	cd pkg/logger/logs && docker compose up
 
 tracing:
-	cd tracing && docker compose up
+	cd pkg/tracing && docker compose up
 
 metrics:
-	cd metrics && docker compose up
+	cd pkg/metrics && docker compose up
 
 cache:
-	cd 
+	cd pkg/cache && docker compose up
 
 pull:
 	docker pull prom/prometheus
@@ -30,3 +30,4 @@ pull:
 	docker pull graylog/graylog:4.3
 	docker pull jaegertracing/all-in-one:1.18
 	docker pull memcached
+	docker pull wurstmeister/kafka

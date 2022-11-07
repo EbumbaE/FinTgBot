@@ -8,7 +8,7 @@ import (
 	"github.com/bradfitz/gomemcache/memcache"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

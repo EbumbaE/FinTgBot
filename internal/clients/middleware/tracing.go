@@ -6,7 +6,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go/config"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

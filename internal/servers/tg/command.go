@@ -10,7 +10,7 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

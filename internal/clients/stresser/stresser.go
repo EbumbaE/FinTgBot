@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/logger"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 )
 
 type Command struct {
