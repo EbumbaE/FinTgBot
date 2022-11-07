@@ -29,47 +29,7 @@ type Budget interface {
 	GetSum() float64
 }
 
-func GetWeekPeriod(now time.Time) (beginPeriod, endPeriod time.Time) {
-	nowWeekday := now.Weekday()
-	if nowWeekday == 0 {
-		nowWeekday = 7
-	}
-	beginPeriod = now.AddDate(0, 0, -int(nowWeekday)+1)
-	endPeriod = beginPeriod.AddDate(0, 0, 6)
-	return
-}
-
-func GetMonthPeriod(now time.Time) (beginPeriod, endPeriod time.Time) {
-	currYear, currMonth, _ := now.Date()
-	beginPeriod = time.Date(currYear, currMonth, 1, 0, 0, 0, 0, now.Location())
-	endPeriod = beginPeriod.AddDate(0, 1, -1)
-	return
-}
-
-func GetYearPeriod(now time.Time) (beginPeriod, endPeriod time.Time) {
-	currYear, _, _ := now.Date()
-	beginPeriod = time.Date(currYear, 1, 1, 0, 0, 0, 0, now.Location())
-	endPeriod = beginPeriod.AddDate(1, 0, -1)
-	return
-}
-
-func getPeriod(period string) (beginPeriod, endPeriod time.Time, err error) {
-
-	err = nil
-	tn := time.Now()
-	switch period {
-	case "week":
-		beginPeriod, endPeriod = GetWeekPeriod(tn)
-		return
-	case "month":
-		beginPeriod, endPeriod = GetMonthPeriod(tn)
-		return
-	case "year":
-		beginPeriod, endPeriod = GetYearPeriod(tn)
-		return
-	}
-	return tn, tn, fmt.Errorf("Error in period")
-}
+type ReportFormat map[string]float64
 
 func addReportHeader(period, currencyAbb string) string {
 	return fmt.Sprintf("Statistic for the %s in %s:\n", period, currencyAbb)
@@ -79,34 +39,38 @@ func addCategory(category string, sum float64) string {
 	return fmt.Sprintf("%s: %.2f\n", category, sum)
 }
 
-func CountStatistic(userID int64, period string, db Storage, formatter Formatter, currency Valute) (answer string, err error) {
-
-	currencyAbb := currency.GetAbbreviation()
+func FormatReportToString(report *ReportFormat, period string, convertCurrency Valute) (answer string, err error) {
+	currencyAbb := convertCurrency.GetAbbreviation()
 	answer = addReportHeader(period, currencyAbb)
 
-	delta := 1.0 / currency.GetValue()
+	delta := 1.0 / convertCurrency.GetValue()
 
-	beginPeriod, endPeriod, err := getPeriod(period)
-	if err != nil {
-		return "", err
-	}
-
-	totalCategorySum := map[string]float64{}
-	for date := beginPeriod; date != endPeriod.AddDate(0, 0, 1); date = date.AddDate(0, 0, 1) {
-		notes, err := db.GetNote(userID, formatter.FormatDateTimeToString(date))
-		if err != nil {
-			return "Error in storage: get note", err
-		}
-		for _, note := range notes {
-			totalCategorySum[note.Category] += note.Sum
-		}
-	}
-
-	for category, sum := range totalCategorySum {
+	for category, sum := range *report {
 		answer += addCategory(category, sum*delta)
 	}
 
-	return answer, nil
+	return
+}
+
+func CountStatistic(userID int64, period string, db Storage, formatter Formatter) (report ReportFormat, err error) {
+
+	beginPeriod, endPeriod, err := GetPeriod(period)
+	if err != nil {
+		return nil, err
+	}
+
+	report = map[string]float64{} //check
+	for date := beginPeriod; date != endPeriod.AddDate(0, 0, 1); date = date.AddDate(0, 0, 1) {
+		notes, err := db.GetNote(userID, formatter.FormatDateTimeToString(date))
+		if err != nil {
+			return nil, err
+		}
+		for _, note := range notes {
+			report[note.Category] += note.Sum
+		}
+	}
+
+	return
 }
 
 func addBudgetHeader(period, currencyAbb string) string {

@@ -18,11 +18,12 @@ import (
 func TestOverCheckBudget(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	var userID int64 = 123
@@ -63,11 +64,12 @@ func TestOverCheckBudget(t *testing.T) {
 func TestNullCheckBudget(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	var userID int64 = 123
@@ -87,11 +89,13 @@ func TestNullCheckBudget(t *testing.T) {
 func TestDoneCheckBudget(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
+
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	var userID int64 = 123
@@ -130,14 +134,19 @@ func TestDoneCheckBudget(t *testing.T) {
 func TestSetNote(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
+
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	date := "15.10.2022"
+	timeNote, err := time.Parse("02.01.2006", date)
+	assert.NoError(t, err)
+
 	msg := messages.Message{
 		UserID:    123,
 		Arguments: "15.10.2022 food 112",
@@ -163,6 +172,7 @@ func TestSetNote(t *testing.T) {
 	storage.EXPECT().GetMonthlyBudget(msg.UserID, budget.Date).Return(nil, fmt.Errorf("this user haven't budgets"))
 
 	storage.EXPECT().AddNote(msg.UserID, date, note).Return(nil)
+	cache.EXPECT().AddNoteInCacheReports(msg.UserID, timeNote, note).Return(nil)
 
 	ctx := context.Background()
 	answer, err := tg.CommandSetNote(ctx, &msg)
@@ -173,11 +183,13 @@ func TestSetNote(t *testing.T) {
 func TestCommandGetBudget(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
+
 	tgConfig := tgServer.Config{
 		FormatDate:       "02.01.2006",
 		BudgetFormatDate: "01.2006",
 	}
-	tg, err := tgServer.New(storage, tgConfig)
+	tg, err := tgServer.New(storage, cache, tgConfig)
 	assert.NoError(t, err)
 
 	msg := messages.Message{
@@ -225,26 +237,8 @@ func TestCommandGetBudget(t *testing.T) {
 
 }
 
-func TestGetStatic(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	storage := dbmocks.NewMockStorage(ctrl)
-	tgConfig := tgServer.Config{
-		FormatDate:       "02.01.2006",
-		BudgetFormatDate: "01.2006",
-	}
-	tg, err := tgServer.New(storage, tgConfig)
-	assert.NoError(t, err)
-
-	msg := messages.Message{
-		Command:   "getStatistic",
-		Arguments: "week",
-		UserID:    123,
-	}
-	userRate := diary.Valute{
-		Abbreviation: "USD",
-		Value:        30,
-	}
-	notes := []diary.Note{
+var (
+	notes = []diary.Note{
 		{
 			Category: "food",
 			Sum:      15,
@@ -256,53 +250,147 @@ func TestGetStatic(t *testing.T) {
 			Currency: "RUB",
 		},
 	}
+	tgConfig = tgServer.Config{
+		FormatDate:       "02.01.2006",
+		BudgetFormatDate: "01.2006",
+	}
+	userRate = diary.Valute{
+		Abbreviation: "USD",
+		Value:        30,
+	}
+)
+
+func TestGetWeekStatic(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
+
+	tg, err := tgServer.New(storage, cache, tgConfig)
+	assert.NoError(t, err)
+
+	msg := messages.Message{
+		Command:   "getStatistic",
+		Arguments: "week",
+		UserID:    123,
+	}
+	fReport1 := "Statistic for the week in USD:\nfood: %0.2f\nschool: %0.2f\n"
+	fReport2 := "Statistic for the week in USD:\nschool: %0.2f\nfood: %0.2f\n"
+
+	var foodSum, schoolSum float64 = 0, 0
+	mapReport := report.ReportFormat{}
 	ctx := context.Background()
 
 	storage.EXPECT().GetUserAbbValute(msg.UserID).Return(userRate.Abbreviation, nil)
 	storage.EXPECT().GetRate(userRate.Abbreviation).Return(&userRate, nil)
 
-	tn := time.Now()
-	beginPeriod, endPeriod := report.GetWeekPeriod(tn)
+	beginPeriod, endPeriod := report.GetWeekPeriod(time.Now())
 	for date := beginPeriod; date != endPeriod.AddDate(0, 0, 1); date = date.AddDate(0, 0, 1) {
+		foodSum += notes[0].Sum
+		schoolSum += notes[1].Sum
+		mapReport[notes[0].Category] += notes[0].Sum
+		mapReport[notes[1].Category] += notes[1].Sum
 		storage.EXPECT().GetNote(msg.UserID, date.Format("02.01.2006")).Return(notes, nil)
 	}
+	cache.EXPECT().GetReportFromCache(msg.UserID, msg.Arguments).Return(nil, fmt.Errorf("error for mock"))
+	cache.EXPECT().AddReportInCache(msg.UserID, msg.Arguments, mapReport).Return(nil)
 
 	answer, err := tg.CommandGetStatistic(ctx, &msg)
 	assert.NoError(t, err)
-	if answer != "Statistic for the week in USD:\nfood: 3.50\nschool: 2.33\n" &&
-		answer != "Statistic for the week in USD:\nschool: 2.33\nfood: 3.50\n" {
+
+	foodSum /= userRate.Value
+	schoolSum /= userRate.Value
+	if answer != fmt.Sprintf(fReport1, foodSum, schoolSum) &&
+		answer != fmt.Sprintf(fReport2, schoolSum, foodSum) {
 		t.Fatalf("unexpected answer: %s", answer)
 	}
+}
 
-	msg.Arguments = "month"
+func TestGetMonthStatic(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
+
+	tg, err := tgServer.New(storage, cache, tgConfig)
+	assert.NoError(t, err)
+
+	msg := messages.Message{
+		Command:   "getStatistic",
+		Arguments: "month",
+		UserID:    123,
+	}
+	fReport1 := "Statistic for the month in USD:\nfood: %0.2f\nschool: %0.2f\n"
+	fReport2 := "Statistic for the month in USD:\nschool: %0.2f\nfood: %0.2f\n"
+
+	var foodSum, schoolSum float64 = 0, 0
+	mapReport := report.ReportFormat{}
+	ctx := context.Background()
+
 	storage.EXPECT().GetUserAbbValute(msg.UserID).Return(userRate.Abbreviation, nil)
 	storage.EXPECT().GetRate(userRate.Abbreviation).Return(&userRate, nil)
 
-	beginPeriod, endPeriod = report.GetMonthPeriod(tn)
+	beginPeriod, endPeriod := report.GetMonthPeriod(time.Now())
 	for date := beginPeriod; date != endPeriod.AddDate(0, 0, 1); date = date.AddDate(0, 0, 1) {
+		foodSum += notes[0].Sum
+		schoolSum += notes[1].Sum
+		mapReport[notes[0].Category] += notes[0].Sum
+		mapReport[notes[1].Category] += notes[1].Sum
 		storage.EXPECT().GetNote(msg.UserID, date.Format("02.01.2006")).Return(notes, nil)
 	}
+	cache.EXPECT().GetReportFromCache(msg.UserID, msg.Arguments).Return(nil, fmt.Errorf("error for mock"))
+	cache.EXPECT().AddReportInCache(msg.UserID, msg.Arguments, mapReport).Return(nil)
 
-	answer, err = tg.CommandGetStatistic(ctx, &msg)
+	answer, err := tg.CommandGetStatistic(ctx, &msg)
 	assert.NoError(t, err)
-	if answer != "Statistic for the month in USD:\nfood: 15.50\nschool: 10.33\n" &&
-		answer != "Statistic for the month in USD:\nschool: 10.33\nfood: 15.50\n" {
+
+	foodSum /= userRate.Value
+	schoolSum /= userRate.Value
+	if answer != fmt.Sprintf(fReport1, foodSum, schoolSum) &&
+		answer != fmt.Sprintf(fReport2, schoolSum, foodSum) {
 		t.Fatalf("unexpected answer: %s", answer)
 	}
+}
 
-	msg.Arguments = "year"
+func TestGetYearStatic(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	storage := dbmocks.NewMockStorage(ctrl)
+	cache := dbmocks.NewMockCache(ctrl)
+
+	tg, err := tgServer.New(storage, cache, tgConfig)
+	assert.NoError(t, err)
+
+	msg := messages.Message{
+		Command:   "getStatistic",
+		Arguments: "year",
+		UserID:    123,
+	}
+	fReport1 := "Statistic for the year in USD:\nfood: %0.2f\nschool: %0.2f\n"
+	fReport2 := "Statistic for the year in USD:\nschool: %0.2f\nfood: %0.2f\n"
+
+	var foodSum, schoolSum float64 = 0, 0
+	mapReport := report.ReportFormat{}
+	ctx := context.Background()
+
 	storage.EXPECT().GetUserAbbValute(msg.UserID).Return(userRate.Abbreviation, nil)
 	storage.EXPECT().GetRate(userRate.Abbreviation).Return(&userRate, nil)
 
-	beginPeriod, endPeriod = report.GetYearPeriod(tn)
+	beginPeriod, endPeriod := report.GetYearPeriod(time.Now())
 	for date := beginPeriod; date != endPeriod.AddDate(0, 0, 1); date = date.AddDate(0, 0, 1) {
+		foodSum += notes[0].Sum
+		schoolSum += notes[1].Sum
+		mapReport[notes[0].Category] += notes[0].Sum
+		mapReport[notes[1].Category] += notes[1].Sum
 		storage.EXPECT().GetNote(msg.UserID, date.Format("02.01.2006")).Return(notes, nil)
 	}
+	cache.EXPECT().GetReportFromCache(msg.UserID, msg.Arguments).Return(nil, fmt.Errorf("error for mock"))
+	cache.EXPECT().AddReportInCache(msg.UserID, msg.Arguments, mapReport).Return(nil)
 
-	answer, err = tg.CommandGetStatistic(ctx, &msg)
+	answer, err := tg.CommandGetStatistic(ctx, &msg)
+
+	foodSum /= userRate.Value
+	schoolSum /= userRate.Value
 	assert.NoError(t, err)
-	if answer != "Statistic for the year in USD:\nfood: 182.50\nschool: 121.67\n" &&
-		answer != "Statistic for the year in USD:\nschool: 121.67\nfood: 182.50\n" {
+	if answer != fmt.Sprintf(fReport1, foodSum, schoolSum) &&
+		answer != fmt.Sprintf(fReport2, schoolSum, foodSum) {
 		t.Fatalf("unexpected answer: %s", answer)
 	}
 }
