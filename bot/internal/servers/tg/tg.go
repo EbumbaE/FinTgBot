@@ -3,21 +3,12 @@ package tgServer
 import (
 	"time"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/middleware"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 )
 
-type ReportCache interface {
-	AddReportInCache(userID int64, period string, addedReport report.ReportFormat) (err error)
-	GetReportFromCache(userID int64, period string) (getReport report.ReportFormat, err error)
-	AddNoteInCacheReports(userID int64, date time.Time, note diary.Note) error
-}
-
 type TgServer struct {
 	storage       storage.Storage
-	cache         ReportCache
 	dateFormatter DateFormatter
 	Metrics       *middleware.Metrics
 }
@@ -27,10 +18,9 @@ type DateFormatter struct {
 	budgetFormat string
 }
 
-func New(storage storage.Storage, cache ReportCache, config Config) (*TgServer, error) {
+func New(storage storage.Storage, config Config) (*TgServer, error) {
 	return &TgServer{
 		storage: storage,
-		cache:   cache,
 		dateFormatter: DateFormatter{
 			format:       config.FormatDate,
 			budgetFormat: config.BudgetFormatDate,
