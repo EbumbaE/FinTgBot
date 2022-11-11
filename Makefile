@@ -1,11 +1,14 @@
-PKG := gitlab.ozon.dev/ivan.hom.200/telegram-bot/cmd/bot
 PROJECT := gitlab.ozon.dev/ivan.hom.200/telegram-bot
-BIN := "bin/bot"
+PKG_BOT := ${PROJECT}/bot/cmd/bot
+PKG_REPORT := ${PROJECT}/report/cmd/report
+MOD_BOT := ${PROJECT}/bot/go.mod
+MOD_REPORT := ${PROJECT}/report/go.mod
 
 all: build
 
 build: 
-	go build -o ${BIN}/bot.exe ${PKG}
+	go build -o bot/bin/bot/bot.exe -modfile ${MOD_BOT} ${PKG_BOT}	
+	go build -o report/bin/report/report.exe -modfile ${MOD_REPORT} ${PKG_REPORT}
 
 test:
 	go test ./...

@@ -27,7 +27,7 @@ func main() {
 
 	config, err := config.New()
 	if err != nil {
-		logger.Fatal("config init failed: ", zap.Error(err))
+		logger.Fatal("config init failed", zap.Error(err))
 	}
 
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
