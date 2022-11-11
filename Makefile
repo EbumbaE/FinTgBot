@@ -22,6 +22,9 @@ metrics:
 cache:
 	cd pkg/cache && docker compose up
 
+kafka: 
+	cd pkg/kafka && docker compose up
+
 pull:
 	docker pull prom/prometheus
 	docker pull grafana/grafana-oss
