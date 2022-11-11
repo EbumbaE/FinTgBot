@@ -33,7 +33,7 @@ func (c *Consumer) InitConsumerGroup(ctx context.Context) (err error) {
 
 	c.consumerGroup, err = sarama.NewConsumerGroup(c.brokersList, c.kafkaConsumerGroup, config)
 	if err != nil {
-		return fmt.Errorf("starting consumer group: %w", err)
+		return fmt.Errorf("new consumer group: %w", err)
 	}
 
 	return nil
@@ -44,6 +44,8 @@ func (c *Consumer) StartConsumerGroup(ctx context.Context) {
 	//TODO обернуть в спан и логгер
 
 	go func() {
+		// TODO graceful
+		logger.Info("consumer begin")
 		err := c.consumerGroup.Consume(ctx, []string{c.kafkaTopic}, ch)
 		if err != nil {
 			logger.Error("consuming via handler", zap.Error(err))

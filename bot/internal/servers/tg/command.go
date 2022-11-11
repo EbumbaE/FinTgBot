@@ -9,6 +9,7 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/request"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
@@ -155,36 +156,23 @@ func (t *TgServer) CommandGetStatistic(ctx context.Context, msg *messages.Messag
 		answer = err.Error()
 		return
 	}
-	userRateCurrency, err := t.storage.GetRate(userAbbCurrency)
+	userCurrency, err := t.storage.GetRate(userAbbCurrency)
 	if err != nil {
 		answer = err.Error()
 		return
 	}
 
-	cacheReport, err := t.cache.GetReportFromCache(msg.UserID, period)
-	if err != nil {
-		logger.Info("get cache report", zap.Error(err))
-	} else {
-		strReport, err := report.FormatReportToString(&cacheReport, period, userRateCurrency)
-		return strReport, err
+	r := request.ReportRequest{
+		UserID:       msg.UserID,
+		Period:       period,
+		UserCurrency: *userCurrency,
 	}
 
-	countReport, err := report.CountStatistic(msg.UserID, period, t.storage, &t.dateFormatter)
-	if err != nil {
-		answer = "not done"
-		logger.Error("count statistic", zap.Error(err))
-		return
-	}
-	answer, err = report.FormatReportToString(&countReport, period, userRateCurrency)
-	if err != nil {
-		answer = "not done"
-		logger.Error("format statistic to string", zap.Error(err))
-		return
+	if err := t.producer.SendReportRequest(ctx, r); err != nil {
+		return err.Error(), err
 	}
 
-	if err := t.cache.AddReportInCache(msg.UserID, period, countReport); err != nil {
-		logger.Error("add report in cache", zap.Error(err))
-	}
+	answer = "todo: grpc answer"
 
 	return
 }

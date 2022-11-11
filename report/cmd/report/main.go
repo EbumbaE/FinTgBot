@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/config"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/consumer"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/cache"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
@@ -45,6 +46,13 @@ func main() {
 	if err := cache.Ping(); err != nil {
 		logger.Error("cache ping: ", zap.Error(err))
 	}
+
+	reportConsumer := consumer.New(config.Consumer)
+	if err := reportConsumer.InitConsumerGroup(ctx); err != nil {
+		logger.Fatal("Init Consume group", zap.Error(err))
+	}
+	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
+	reportConsumer.StartConsumerGroup(ctx)
 
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Wait()
 	logger.Info("All is shutdown")

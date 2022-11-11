@@ -51,7 +51,30 @@ func (c *ConsumeHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim
 			logger.Error("unmarshal report request", zap.Error(err))
 		}
 
-		//
+		// cacheReport, err := t.cache.GetReportFromCache(msg.UserID, period)
+		// if err != nil {
+		// 	logger.Info("get cache report", zap.Error(err))
+		// } else {
+		// 	strReport, err := report.FormatReportToString(&cacheReport, period, userRateCurrency)
+		// 	return strReport, err
+		// }
+
+		// countReport, err := report.CountStatistic(msg.UserID, period, t.storage, &t.dateFormatter)
+		// if err != nil {
+		// 	answer = "not done"
+		// 	logger.Error("count statistic", zap.Error(err))
+		// 	return
+		// }
+		// answer, err = report.FormatReportToString(&countReport, period, userRateCurrency)
+		// if err != nil {
+		// 	answer = "not done"
+		// 	logger.Error("format statistic to string", zap.Error(err))
+		// 	return
+		// }
+
+		// if err := t.cache.AddReportInCache(msg.UserID, period, countReport); err != nil {
+		// 	logger.Error("add report in cache", zap.Error(err))
+		// }
 
 		session.MarkMessage(msg, "")
 	}

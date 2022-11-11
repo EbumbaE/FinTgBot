@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/viper"
 	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/producer"
 	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
 )
@@ -15,6 +16,7 @@ type Config struct {
 	TgServer     server.Config   `mapstructure:"TgServer"`
 	Currency     currency.Config `mapstructure:"Currency"`
 	PsqlDatabase psql.Config     `mapstructure:"Psql"`
+	Producer     producer.Config `mapstructure:"Producer"`
 }
 
 func New() (cfg *Config, err error) {

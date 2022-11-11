@@ -11,7 +11,9 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/config"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/producer"
 	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/cache"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/metrics"
@@ -45,6 +47,11 @@ func main() {
 		logger.Fatal("db check health: ", zap.Error(err))
 	}
 
+	cache := cache.New("127.0.0.1:11211")
+	if err := cache.Ping(); err != nil {
+		logger.Error("cache ping: ", zap.Error(err))
+	}
+
 	parser, err := currency.New(config.Currency)
 	if err != nil {
 		logger.Fatal("parser init failed:", zap.Error(err))
@@ -55,7 +62,14 @@ func main() {
 		logger.Fatal("valute channel return error:", zap.Error(err))
 	}
 
-	tgServer, err := server.New(db, config.TgServer)
+	producer := producer.New(config.Producer)
+	if err := producer.InitProducer(ctx); err != nil {
+		logger.Fatal("init producer", zap.Error(err))
+	}
+	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
+	producer.StartConsumeError()
+
+	tgServer, err := server.New(db, cache, producer, config.TgServer)
 	if err != nil {
 		logger.Fatal("tg server init failed:", zap.Error(err))
 	}
