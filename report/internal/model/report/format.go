@@ -1,6 +1,8 @@
 package report
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func addReportHeader(period, currencyAbb string) string {
 	return fmt.Sprintf("Statistic for the %s in %s:\n", period, currencyAbb)

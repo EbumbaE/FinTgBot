@@ -29,50 +29,6 @@ type Budget interface {
 	GetSum() float64
 }
 
-type ReportFormat map[string]float64
-
-func addReportHeader(period, currencyAbb string) string {
-	return fmt.Sprintf("Statistic for the %s in %s:\n", period, currencyAbb)
-}
-
-func addCategory(category string, sum float64) string {
-	return fmt.Sprintf("%s: %.2f\n", category, sum)
-}
-
-func FormatReportToString(report *ReportFormat, period string, convertCurrency Valute) (answer string, err error) {
-	currencyAbb := convertCurrency.GetAbbreviation()
-	answer = addReportHeader(period, currencyAbb)
-
-	delta := 1.0 / convertCurrency.GetValue()
-
-	for category, sum := range *report {
-		answer += addCategory(category, sum*delta)
-	}
-
-	return
-}
-
-func CountStatistic(userID int64, period string, db Storage, formatter Formatter) (report ReportFormat, err error) {
-
-	beginPeriod, endPeriod, err := GetPeriod(period)
-	if err != nil {
-		return nil, err
-	}
-
-	report = map[string]float64{} //check
-	for date := beginPeriod; date != endPeriod.AddDate(0, 0, 1); date = date.AddDate(0, 0, 1) {
-		notes, err := db.GetNote(userID, formatter.FormatDateTimeToString(date))
-		if err != nil {
-			return nil, err
-		}
-		for _, note := range notes {
-			report[note.Category] += note.Sum
-		}
-	}
-
-	return
-}
-
 func addBudgetHeader(period, currencyAbb string) string {
 	return fmt.Sprintf("Budget for the %s in %s:\n", period, currencyAbb)
 }

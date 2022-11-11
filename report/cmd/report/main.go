@@ -55,6 +55,8 @@ func main() {
 	reportConsumer.StartConsumerGroup(ctx)
 
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Wait()
+	if err := db.Close(); err != nil {
+		logger.Error("Close database", zap.Error(err))
+	}
 	logger.Info("All is shutdown")
-
 }

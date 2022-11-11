@@ -1,6 +1,7 @@
 package psql
 
 import (
+	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
@@ -50,10 +51,16 @@ func (d *Database) CheckHealth() error {
 	return nil
 }
 
-func (d *Database) Close() {
-	d.Diary.db.Close()
-	d.Rates.db.Close()
-	d.Users.db.Close()
-	d.Budgets.db.Close()
+func (d *Database) Close() error {
+	err1 := d.Diary.db.Close()
+	err2 := d.Rates.db.Close()
+	err3 := d.Users.db.Close()
+	err4 := d.Budgets.db.Close()
+
+	if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
+		return fmt.Errorf("Error in close db: %w %w %w %w", err1, err2, err3, err4)
+	}
+
 	log.Println("All db is closed")
+	return nil
 }

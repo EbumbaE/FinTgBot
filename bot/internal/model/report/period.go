@@ -50,26 +50,3 @@ func GetPeriod(period string) (beginPeriod, endPeriod time.Time, err error) {
 func compareAGreaterOrEqualB(a, b time.Time) bool {
 	return a.Unix()-b.Unix() >= 0
 }
-
-func DeterminePeriod(date time.Time, now time.Time) (period []string, err error) {
-
-	begin, end := GetWeekPeriod(now)
-	if compareAGreaterOrEqualB(date, begin) && compareAGreaterOrEqualB(end, date) {
-		period = append(period, "week")
-	}
-
-	begin, _ = GetMonthPeriod(now)
-	if compareAGreaterOrEqualB(date, begin) && compareAGreaterOrEqualB(end, date) {
-		period = append(period, "month")
-	}
-
-	begin, _ = GetYearPeriod(now)
-	if compareAGreaterOrEqualB(date, begin) && compareAGreaterOrEqualB(end, date) {
-		period = append(period, "year")
-	}
-
-	if period == nil {
-		return nil, fmt.Errorf("Error in determine period date %s", date.Format("02.01.2006"))
-	}
-	return
-}

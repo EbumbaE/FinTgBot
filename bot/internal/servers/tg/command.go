@@ -131,8 +131,16 @@ func (t *TgServer) CommandSetNote(ctx context.Context, msg *messages.Message) (a
 		logger.Error("format date string to time in set note", zap.Error(err))
 		return
 	}
-	if err := t.cache.AddNoteInCacheReports(msg.UserID, timeNote, note); err != nil {
-		logger.Error("delete report from cache: ", zap.Error(err))
+
+	r := request.AddNoteInCacheRequest{
+		UserID:   msg.UserID,
+		TimeNote: timeNote,
+		Note:     note,
+	}
+
+	if err = t.producer.SendAddNoteInCache(ctx, r); err != nil {
+		logger.Error("send to add note in cache", zap.Error(err))
+		return
 	}
 
 	return

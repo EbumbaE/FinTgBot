@@ -62,7 +62,28 @@ func (p *Producer) SendReportRequest(ctx context.Context, r request.ReportReques
 
 	p.asyncProducer.Input() <- &msg
 	successMsg := <-p.asyncProducer.Successes()
-	logger.Info("Successful to write message", zap.Int64("offset", successMsg.Offset))
+	logger.Info("successful to write message", zap.Int64("offset", successMsg.Offset))
+
+	return
+}
+
+func (p *Producer) SendAddNoteInCache(ctx context.Context, r request.AddNoteInCacheRequest) (err error) {
+
+	value, err := json.Marshal(r)
+	if err != nil {
+		return
+	}
+
+	msg := sarama.ProducerMessage{
+		Topic:   p.kafkaTopic,
+		Key:     sarama.StringEncoder("add_note_in_cache"),
+		Value:   sarama.StringEncoder(value),
+		Headers: []sarama.RecordHeader{{Key: []byte("add_note_in_cache"), Value: []byte(value)}},
+	}
+
+	p.asyncProducer.Input() <- &msg
+	successMsg := <-p.asyncProducer.Successes()
+	logger.Info("successful to write message", zap.Int64("offset", successMsg.Offset))
 
 	return
 }
