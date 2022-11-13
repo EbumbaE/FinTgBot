@@ -7,6 +7,7 @@ import (
 	"sync"
 	"syscall"
 
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/sender"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/config"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/consumer"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/cache"
@@ -41,13 +42,28 @@ func main() {
 	if err := db.CheckHealth(); err != nil {
 		logger.Fatal("db check health: ", zap.Error(err))
 	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			logger.Error("close database", zap.Error(err))
+		}
+	}()
 
 	cache := cache.New("127.0.0.1:11211")
 	if err := cache.Ping(); err != nil {
 		logger.Error("cache ping: ", zap.Error(err))
 	}
 
-	reportConsumer := consumer.New(config.Consumer)
+	senderClient := sender.New(config.SenderClient)
+	if err := senderClient.StartConnection(); err != nil {
+		logger.Error("start connection in sender client", zap.Error(err))
+	}
+	defer func() {
+		if err := senderClient.Close(); err != nil {
+			logger.Error("close connection in sender client", zap.Error(err))
+		}
+	}()
+
+	reportConsumer := consumer.New(config.Consumer, db, cache, senderClient)
 	if err := reportConsumer.InitConsumerGroup(ctx); err != nil {
 		logger.Fatal("Init Consume group", zap.Error(err))
 	}
@@ -55,8 +71,5 @@ func main() {
 	reportConsumer.StartConsumerGroup(ctx)
 
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Wait()
-	if err := db.Close(); err != nil {
-		logger.Error("Close database", zap.Error(err))
-	}
 	logger.Info("All is shutdown")
 }

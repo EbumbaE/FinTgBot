@@ -5,11 +5,14 @@ go 1.18
 require (
 	github.com/Shopify/sarama v1.37.2
 	github.com/bradfitz/gomemcache v0.0.0-20221031212613-62deef7fc822
+	github.com/golang/mock v1.6.0
 	github.com/lib/pq v1.10.7
 	github.com/prometheus/client_golang v1.14.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
 	go.uber.org/zap v1.23.0
+	google.golang.org/grpc v1.50.1
+	google.golang.org/protobuf v1.28.1
 )
 
 require (
@@ -20,7 +23,6 @@ require (
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
@@ -55,7 +57,7 @@ require (
 	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b // indirect
 	golang.org/x/sys v0.0.0-20220908164124-27713097b956 // indirect
 	golang.org/x/text v0.4.0 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
+	google.golang.org/genproto v0.0.0-20221024183307-1bc688fe9f3e // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

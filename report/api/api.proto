@@ -1,18 +1,31 @@
 syntax = "proto3";
 
-option go_package = "gitlab.ozon.dev/ivan.hom.200/telegram-bot/api;apiv1";
+package api;
+
+option go_package = "gitlab.ozon.dev/ivan.hom.200/telegram-bot";
 
 import "google/protobuf/wrappers.proto";
 
+enum Status {
+    SUCCESS = 0;
+    FAIL = 1;
+}
+
 message SendMessageRequest {
-    google.protobuf.StringValue message = 1;
+    google.protobuf.Int64Value id = 1;
+    Status status = 2;
+    string text = 3;
+    int64  userID = 4;
 }
 
 message SendMessageResponse {
-    google.protobuf.StringValue message = 1;
+    google.protobuf.Int64Value id = 1;
+    Status status = 2;
+    string text = 3;
+    int64  userID = 4;
 }
 
-service Echo {
+service Sender {
     rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {}
 }
   

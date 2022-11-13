@@ -3,8 +3,8 @@ package sender
 import (
 	"context"
 	"fmt"
-	"log"
 	"net"
+	"sync"
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/api"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
@@ -18,7 +18,7 @@ type TgSender interface {
 }
 
 type SenderServer struct {
-	target string
+	port   string
 	sender TgSender
 	api.UnimplementedSenderServer
 }
@@ -26,31 +26,40 @@ type SenderServer struct {
 func New(cfg Config, sender TgSender) *SenderServer {
 	return &SenderServer{
 		sender: sender,
-		target: cfg.Target,
+		port:   cfg.Port,
 	}
 }
 
-func (s *SenderServer) Init() (err error) {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.target))
+func (s *SenderServer) StartServe(ctx context.Context) (err error) {
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", s.port))
 	if err != nil {
 		logger.Error("failed to listen in sender server", zap.Error(err))
 	}
 	server := grpc.NewServer()
 	api.RegisterSenderServer(server, &SenderServer{})
 
-	logger.Info("sender server is begin")
+	go func() {
+		logger.Info("sender server is begin")
+		defer ctx.Value("allDoneWG").(*sync.WaitGroup).Done()
 
-	if err := server.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+		go func() {
+			if err := server.Serve(listener); err != nil {
+				logger.Error("failed to serve in sender server", zap.Error(err))
+			}
+		}()
 
+		<-ctx.Done()
+		server.GracefulStop()
+
+		logger.Info("sender server is end")
+	}()
 	return
 }
 
 func (s *SenderServer) SendMessage(ctx context.Context, r *api.SendMessageRequest) (*api.SendMessageResponse, error) {
 	msg := messages.Message{}
 	if err := s.sender.SendMessage(msg); err != nil {
-		return &api.SendMessageResponse{}, err
+		return &api.SendMessageResponse{Status: api.Status_FAIL}, err
 	}
-	return &api.SendMessageResponse{}, nil
+	return &api.SendMessageResponse{Status: api.Status_SUCCESS}, nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sync"
 
 	"github.com/Shopify/sarama"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/request"
@@ -37,13 +38,23 @@ func (p *Producer) InitProducer(ctx context.Context) (err error) {
 	return nil
 }
 
-func (p *Producer) StartConsumeError() {
+func (p *Producer) StartConsumeError(ctx context.Context) {
 	go func() {
-		// TODO graceful
-		for err := range p.asyncProducer.Errors() {
-			logger.Error("failed to write message", zap.Error(err))
+		logger.Info("consumer async producer's errors is start")
+
+		for {
+			select {
+			case err := <-p.asyncProducer.Errors():
+				logger.Error("failed to send request", zap.Error(err))
+			case <-ctx.Done():
+				defer ctx.Value("allDoneWG").(*sync.WaitGroup).Done()
+				logger.Info("consumer async producer's errors is end")
+				return
+			}
 		}
 	}()
+
+	return
 }
 
 func (p *Producer) SendReportRequest(ctx context.Context, r request.ReportRequest) (err error) {
@@ -62,8 +73,8 @@ func (p *Producer) SendReportRequest(ctx context.Context, r request.ReportReques
 
 	p.asyncProducer.Input() <- &msg
 	successMsg := <-p.asyncProducer.Successes()
-	logger.Info("successful to write message", zap.Int64("offset", successMsg.Offset))
 
+	logger.Info("producer: successful to send report request", zap.Int64("offset", successMsg.Offset))
 	return
 }
 
@@ -83,8 +94,8 @@ func (p *Producer) SendAddNoteInCache(ctx context.Context, r request.AddNoteInCa
 
 	p.asyncProducer.Input() <- &msg
 	successMsg := <-p.asyncProducer.Successes()
-	logger.Info("successful to write message", zap.Int64("offset", successMsg.Offset))
 
+	logger.Info("producer: successful to send add note in cache request", zap.Int64("offset", successMsg.Offset))
 	return
 }
 
