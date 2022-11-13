@@ -1,5 +1,5 @@
 package sender
 
 type Config struct {
-	Port string `mapstruct:"Port"`
+	Port int64 `mapstruct:"Port"`
 }

@@ -9,6 +9,7 @@ import (
 type ReportRequest struct {
 	UserID       int64
 	Period       string
+	DateFormat   string
 	UserCurrency diary.Valute
 }
 

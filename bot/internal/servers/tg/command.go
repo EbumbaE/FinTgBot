@@ -173,6 +173,7 @@ func (t *TgServer) CommandGetStatistic(ctx context.Context, msg *messages.Messag
 	r := request.ReportRequest{
 		UserID:       msg.UserID,
 		Period:       period,
+		DateFormat:   t.dateFormatter.format,
 		UserCurrency: *userCurrency,
 	}
 

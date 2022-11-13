@@ -125,6 +125,7 @@ func (ch *ConsumeHandler) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 		}
 
 		if err != nil {
+			logger.Error("incoming request in consume claim", zap.Error(err))
 			return
 		}
 

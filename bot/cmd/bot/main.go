@@ -7,12 +7,12 @@ import (
 	"sync"
 	"syscall"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/sender"
 	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/config"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/producer"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/sender"
 	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
@@ -64,7 +64,7 @@ func main() {
 
 	producer := producer.New(config.Producer)
 	if err := producer.InitProducer(ctx); err != nil {
-		logger.Fatal("init producer", zap.Error(err))
+		logger.Error("init producer", zap.Error(err))
 	}
 	ctx.Value("allDoneWG").(*sync.WaitGroup).Add(1)
 	producer.StartConsumeError(ctx)

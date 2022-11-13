@@ -18,7 +18,7 @@ type TgSender interface {
 }
 
 type SenderServer struct {
-	port   string
+	port   int64
 	sender TgSender
 	api.UnimplementedSenderServer
 }
@@ -57,7 +57,10 @@ func (s *SenderServer) StartServe(ctx context.Context) (err error) {
 }
 
 func (s *SenderServer) SendMessage(ctx context.Context, r *api.SendMessageRequest) (*api.SendMessageResponse, error) {
-	msg := messages.Message{}
+	msg := messages.Message{
+		UserID: r.UserID,
+		Text:   r.Text,
+	}
 	if err := s.sender.SendMessage(msg); err != nil {
 		return &api.SendMessageResponse{Status: api.Status_FAIL}, err
 	}
