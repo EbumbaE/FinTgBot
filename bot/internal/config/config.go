@@ -2,9 +2,9 @@ package config
 
 import (
 	"github.com/spf13/viper"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/producer"
 	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/producer"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/sender"
 	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"

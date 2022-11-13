@@ -17,7 +17,7 @@ type Producer interface {
 type TgServer struct {
 	storage       storage.Storage
 	dateFormatter DateFormatter
-	Metrics       *middleware.Metrics
+	Metrics       *middleware.TgMetrics
 	producer      Producer
 }
 
@@ -38,7 +38,7 @@ func New(storage storage.Storage, producer Producer, config Config) (*TgServer, 
 }
 
 func (s *TgServer) InitMiddleware() {
-	s.Metrics = middleware.NewMetrics()
+	s.Metrics = middleware.NewTgMetrics()
 }
 
 func (d *DateFormatter) FormatDateTimeToString(date time.Time) string {

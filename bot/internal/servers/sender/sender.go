@@ -8,6 +8,7 @@ import (
 
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/api"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/middleware"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -18,15 +19,18 @@ type TgSender interface {
 }
 
 type SenderServer struct {
-	port   int64
-	sender TgSender
+	port    int64
+	sender  TgSender
+	metrics *middleware.SenderMetrics
+
 	api.UnimplementedSenderServer
 }
 
 func New(cfg Config, sender TgSender) *SenderServer {
 	return &SenderServer{
-		sender: sender,
-		port:   cfg.Port,
+		sender:  sender,
+		port:    cfg.Port,
+		metrics: middleware.NewSenderMetrics(),
 	}
 }
 
@@ -57,6 +61,8 @@ func (s *SenderServer) StartServe(ctx context.Context) (err error) {
 }
 
 func (s *SenderServer) SendMessage(ctx context.Context, r *api.SendMessageRequest) (*api.SendMessageResponse, error) {
+	s.metrics.AmountSendMessage.Inc()
+
 	msg := messages.Message{
 		UserID: r.UserID,
 		Text:   r.Text,

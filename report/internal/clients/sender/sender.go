@@ -49,7 +49,7 @@ func (s *SenderClient) SendMessage(ctx context.Context, msg Message) (err error)
 		s.metrics.HistogramSendMessage.Observe(duration.Seconds())
 	}(startTime)
 
-	span, nctx := opentracing.StartSpanFromContext(ctx, "incoming request")
+	span, nctx := opentracing.StartSpanFromContext(ctx, "send message")
 	if span != nil {
 		span.LogKV("send message request", "send message", "user_id", msg.UserID, "text", msg.Text)
 		defer span.Finish()

@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/Shopify/sarama"
+	"github.com/opentracing/opentracing-go"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/request"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
@@ -16,12 +18,14 @@ type Producer struct {
 	asyncProducer sarama.AsyncProducer
 	kafkaTopic    string
 	brokersList   []string
+	metrics       *Metrics
 }
 
 func New(cfg Config) *Producer {
 	return &Producer{
 		kafkaTopic:  cfg.KafkaTopic,
 		brokersList: cfg.BrokersList,
+		metrics:     NewMetrics(),
 	}
 }
 
@@ -46,6 +50,7 @@ func (p *Producer) StartConsumeError(ctx context.Context) {
 			select {
 			case err := <-p.asyncProducer.Errors():
 				logger.Error("failed to send request", zap.Error(err))
+				p.metrics.AmountProducerErrors.Inc()
 			case <-ctx.Done():
 				defer ctx.Value("allDoneWG").(*sync.WaitGroup).Done()
 				logger.Info("consumer async producer's errors is end")
@@ -58,6 +63,18 @@ func (p *Producer) StartConsumeError(ctx context.Context) {
 }
 
 func (p *Producer) SendReportRequest(ctx context.Context, r request.ReportRequest) (err error) {
+	p.metrics.AmountReportRequest.Inc()
+	startTime := time.Now()
+	defer func(startTime time.Time) {
+		duration := time.Since(startTime)
+		p.metrics.SummaryReportRequestTime.Observe(duration.Seconds())
+		p.metrics.HistogramReportRequestTime.Observe(duration.Seconds())
+	}(startTime)
+	span, _ := opentracing.StartSpanFromContext(ctx, "send addNoteInCache request")
+	if span != nil {
+		span.LogKV("snd addNoteInCache request", "send request", "user_id", r.UserID, "period", r.Period, "currency", r.UserCurrency.Abbreviation)
+		defer span.Finish()
+	}
 
 	value, err := json.Marshal(r)
 	if err != nil {
@@ -79,6 +96,13 @@ func (p *Producer) SendReportRequest(ctx context.Context, r request.ReportReques
 }
 
 func (p *Producer) SendAddNoteInCache(ctx context.Context, r request.AddNoteInCacheRequest) (err error) {
+	p.metrics.AmountAddNoteInCacheRequest.Inc()
+	startTime := time.Now()
+	defer func(startTime time.Time) {
+		duration := time.Since(startTime)
+		p.metrics.SummaryAddNoteInCacheRequestTime.Observe(duration.Seconds())
+		p.metrics.HistogramAddNoteInCacheRequestTime.Observe(duration.Seconds())
+	}(startTime)
 
 	value, err := json.Marshal(r)
 	if err != nil {

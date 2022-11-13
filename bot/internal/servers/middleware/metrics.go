@@ -5,7 +5,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-type Metrics struct {
+type TgMetrics struct {
 	AmountNewUsers            prometheus.Counter
 	AmountCommand             prometheus.Counter
 	AmountMessage             prometheus.Counter
@@ -16,7 +16,7 @@ type Metrics struct {
 	AmountDefaultMsgAndComm   prometheus.Counter
 }
 
-func NewMetrics() *Metrics {
+func NewTgMetrics() *TgMetrics {
 	amountNewUsers := promauto.NewCounter(prometheus.CounterOpts{
 		Namespace: "ozon",
 		Name:      "amount_new_users",
@@ -50,7 +50,7 @@ func NewMetrics() *Metrics {
 		Name:      "amount_unknown_msg_command_total",
 	})
 
-	return &Metrics{
+	return &TgMetrics{
 		AmountNewUsers:            amountNewUsers,
 		AmountCommand:             amountCommand,
 		AmountMessage:             amountMessage,
@@ -61,4 +61,18 @@ func NewMetrics() *Metrics {
 		AmountDefaultMsgAndComm:   amountDefaultMsgAndComm,
 	}
 
+}
+
+type SenderMetrics struct {
+	AmountSendMessage prometheus.Counter
+}
+
+func NewSenderMetrics() *SenderMetrics {
+	amountSendMessage := promauto.NewCounter(prometheus.CounterOpts{
+		Namespace: "ozon",
+		Name:      "amount_senderServer_send_message",
+	})
+	return &SenderMetrics{
+		AmountSendMessage: amountSendMessage,
+	}
 }
