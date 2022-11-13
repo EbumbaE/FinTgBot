@@ -44,6 +44,11 @@ func New(tgClient Config, parser Parser) (*Client, error) {
 }
 
 func (c *Client) SendMessage(msg messages.Message) error {
+	if msg.Text == "" {
+		logger.Info("try to send empty message")
+		return nil
+	}
+
 	logger.Info("tgclient: send message", zap.Int64("userid", msg.UserID), zap.String("text", msg.Text))
 
 	tgMsg := tgbotapi.NewMessage(msg.UserID, msg.Text)

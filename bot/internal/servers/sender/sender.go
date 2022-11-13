@@ -36,7 +36,7 @@ func (s *SenderServer) StartServe(ctx context.Context) (err error) {
 		logger.Error("failed to listen in sender server", zap.Error(err))
 	}
 	server := grpc.NewServer()
-	api.RegisterSenderServer(server, &SenderServer{})
+	api.RegisterSenderServer(server, s)
 
 	go func() {
 		logger.Info("sender server is begin")

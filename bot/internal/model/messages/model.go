@@ -16,7 +16,7 @@ type Messanger interface {
 type Commander interface {
 	CommandStart(context.Context, *Message) (string, error)
 	CommandSetNote(context.Context, *Message) (string, error)
-	CommandGetStatistic(context.Context, *Message) (string, error)
+	CommandGetStatistic(context.Context, *Message) error
 	CommandDefault(context.Context, *Message) (string, error)
 	CommandSetBudget(context.Context, *Message) (string, error)
 	CommandGetBudget(context.Context, *Message) (string, error)

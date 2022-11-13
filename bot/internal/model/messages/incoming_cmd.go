@@ -25,7 +25,7 @@ func (m *Model) IncomingCommand(ctx context.Context, msg Message) (err error) {
 		if span != nil {
 			span.LogKV("get statistic", msg.Command, "args", msg.Arguments)
 		}
-		msg.Text, err = m.tgServer.CommandGetStatistic(nctx, &msg)
+		err = m.tgServer.CommandGetStatistic(nctx, &msg)
 	case "setBudget":
 		if span != nil {
 			span.LogKV("set budget", msg.Command, "args", msg.Arguments)

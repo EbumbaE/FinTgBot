@@ -182,33 +182,17 @@ func (mr *MockCommanderMockRecorder) CommandGetBudget(arg0, arg1 interface{}) *g
 }
 
 // CommandGetStatistic mocks base method.
-func (m *MockCommander) CommandGetStatistic(arg0 context.Context, arg1 *messages.Message) (string, error) {
+func (m *MockCommander) CommandGetStatistic(arg0 context.Context, arg1 *messages.Message) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CommandGetStatistic", arg0, arg1)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // CommandGetStatistic indicates an expected call of CommandGetStatistic.
 func (mr *MockCommanderMockRecorder) CommandGetStatistic(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetStatistic", reflect.TypeOf((*MockCommander)(nil).CommandGetStatistic), arg0, arg1)
-}
-
-// CommandHelp mocks base method.
-func (m *MockCommander) CommandHelp(arg0 context.Context, arg1 *messages.Message) (string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandHelp", arg0, arg1)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CommandHelp indicates an expected call of CommandHelp.
-func (mr *MockCommanderMockRecorder) CommandHelp(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandHelp", reflect.TypeOf((*MockCommander)(nil).CommandHelp), arg0, arg1)
 }
 
 // CommandSetBudget mocks base method.
@@ -310,33 +294,17 @@ func (mr *MockServerMockRecorder) CommandGetBudget(arg0, arg1 interface{}) *gomo
 }
 
 // CommandGetStatistic mocks base method.
-func (m *MockServer) CommandGetStatistic(arg0 context.Context, arg1 *messages.Message) (string, error) {
+func (m *MockServer) CommandGetStatistic(arg0 context.Context, arg1 *messages.Message) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CommandGetStatistic", arg0, arg1)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // CommandGetStatistic indicates an expected call of CommandGetStatistic.
 func (mr *MockServerMockRecorder) CommandGetStatistic(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandGetStatistic", reflect.TypeOf((*MockServer)(nil).CommandGetStatistic), arg0, arg1)
-}
-
-// CommandHelp mocks base method.
-func (m *MockServer) CommandHelp(arg0 context.Context, arg1 *messages.Message) (string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CommandHelp", arg0, arg1)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CommandHelp indicates an expected call of CommandHelp.
-func (mr *MockServerMockRecorder) CommandHelp(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CommandHelp", reflect.TypeOf((*MockServer)(nil).CommandHelp), arg0, arg1)
 }
 
 // CommandSetBudget mocks base method.

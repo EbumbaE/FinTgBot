@@ -58,12 +58,12 @@ func DeterminePeriod(date time.Time, now time.Time) (period []string, err error)
 		period = append(period, "week")
 	}
 
-	begin, _ = GetMonthPeriod(now)
+	begin, end = GetMonthPeriod(now)
 	if compareAGreaterOrEqualB(date, begin) && compareAGreaterOrEqualB(end, date) {
 		period = append(period, "month")
 	}
 
-	begin, _ = GetYearPeriod(now)
+	begin, end = GetYearPeriod(now)
 	if compareAGreaterOrEqualB(date, begin) && compareAGreaterOrEqualB(end, date) {
 		period = append(period, "year")
 	}

@@ -146,7 +146,7 @@ func (t *TgServer) CommandSetNote(ctx context.Context, msg *messages.Message) (a
 	return
 }
 
-func (t *TgServer) CommandGetStatistic(ctx context.Context, msg *messages.Message) (answer string, err error) {
+func (t *TgServer) CommandGetStatistic(ctx context.Context, msg *messages.Message) error {
 	if t.Metrics != nil {
 		t.Metrics.AmountActionWithStatistic.Inc()
 		t.Metrics.AmountCommand.Inc()
@@ -154,20 +154,17 @@ func (t *TgServer) CommandGetStatistic(ctx context.Context, msg *messages.Messag
 
 	args, err := parseArguments(msg.Arguments, 1)
 	if err != nil {
-		answer = err.Error()
-		return
+		return err
 	}
 	period := args[0]
 
 	userAbbCurrency, err := t.storage.GetUserAbbValute(msg.UserID)
 	if err != nil {
-		answer = err.Error()
-		return
+		return err
 	}
 	userCurrency, err := t.storage.GetRate(userAbbCurrency)
 	if err != nil {
-		answer = err.Error()
-		return
+		return err
 	}
 
 	r := request.ReportRequest{
@@ -178,12 +175,10 @@ func (t *TgServer) CommandGetStatistic(ctx context.Context, msg *messages.Messag
 	}
 
 	if err := t.producer.SendReportRequest(ctx, r); err != nil {
-		return err.Error(), err
+		return err
 	}
 
-	answer = "todo: grpc answer"
-
-	return
+	return nil
 }
 
 func (t *TgServer) CommandSetBudget(ctx context.Context, msg *messages.Message) (answer string, err error) {
