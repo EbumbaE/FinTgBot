@@ -10,6 +10,7 @@ import (
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/sender"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/middleware"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
@@ -71,6 +72,7 @@ func (c *Consumer) StartConsumerGroup(ctx context.Context) {
 				cache:   c.cache,
 				sender:  c.sender,
 				ctx:     ctx,
+				metrics: middleware.NewMetrics(),
 			}
 			logger.Info("consumer is begin")
 

@@ -3,16 +3,20 @@ package sender
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/opentracing/opentracing-go"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/api"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/middleware"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type SenderClient struct {
-	target string
-	client api.SenderClient
-	conn   *grpc.ClientConn
+	target  string
+	client  api.SenderClient
+	conn    *grpc.ClientConn
+	metrics *middleware.Metrics
 }
 
 type Message struct {
@@ -22,7 +26,8 @@ type Message struct {
 
 func New(cfg Config) *SenderClient {
 	return &SenderClient{
-		target: cfg.Target,
+		target:  cfg.Target,
+		metrics: middleware.NewMetrics(),
 	}
 }
 
@@ -37,11 +42,24 @@ func (s *SenderClient) StartConnection() (err error) {
 }
 
 func (s *SenderClient) SendMessage(ctx context.Context, msg Message) (err error) {
+	startTime := time.Now()
+	defer func(startTime time.Time) {
+		duration := time.Since(startTime)
+		s.metrics.SummarySendMessage.Observe(duration.Seconds())
+		s.metrics.HistogramSendMessage.Observe(duration.Seconds())
+	}(startTime)
+
+	span, nctx := opentracing.StartSpanFromContext(ctx, "incoming request")
+	if span != nil {
+		span.LogKV("send message request", "send message", "user_id", msg.UserID, "text", msg.Text)
+		defer span.Finish()
+	}
+
 	request := &api.SendMessageRequest{
 		UserID: msg.UserID,
 		Text:   msg.Text,
 	}
-	response, err := s.client.SendMessage(ctx, request)
+	response, err := s.client.SendMessage(nctx, request)
 	if err != nil {
 		return err
 	}

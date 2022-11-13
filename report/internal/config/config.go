@@ -3,7 +3,7 @@ package config
 import (
 	"github.com/spf13/viper"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/sender"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/consumer"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/consumer"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
 )
 

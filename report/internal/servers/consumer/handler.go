@@ -3,11 +3,14 @@ package consumer
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/Shopify/sarama"
+	"github.com/opentracing/opentracing-go"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/sender"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/request"
+	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/middleware"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
 	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
@@ -19,6 +22,7 @@ type Valute interface {
 }
 
 type ConsumeHandler struct {
+	metrics *middleware.Metrics
 	storage storage.Storage
 	cache   ReportCache
 	sender  MessageSender
@@ -74,6 +78,13 @@ func (ch *ConsumeHandler) sendReport(ctx context.Context, r *report.ReportFormat
 }
 
 func (ch *ConsumeHandler) incomingReportRequest(ctx context.Context, msgValue []byte) error {
+	startTime := time.Now()
+	defer func(startTime time.Time) {
+		duration := time.Since(startTime)
+		ch.metrics.SummaryCountStatisticTime.Observe(duration.Seconds())
+		ch.metrics.HistogramCountStatisticTime.Observe(duration.Seconds())
+	}(startTime)
+
 	var reportRequest request.ReportRequest
 	if err := json.Unmarshal(msgValue, &reportRequest); err != nil {
 		logger.Error("unmarshal report request", zap.Error(err))
@@ -95,7 +106,14 @@ func (ch *ConsumeHandler) addNoteInCache(addNoteRequest request.AddNoteInCacheRe
 	return ch.cache.AddNoteInCacheReports(addNoteRequest.UserID, addNoteRequest.TimeNote, addNoteRequest.Note)
 }
 
-func (ch *ConsumeHandler) incomingAddNoteInCacheRequest(msgValue []byte) error {
+func (ch *ConsumeHandler) incomingAddNoteInCacheRequest(ctx context.Context, msgValue []byte) error {
+	startTime := time.Now()
+	defer func(startTime time.Time) {
+		duration := time.Since(startTime)
+		ch.metrics.SummaryAddNoteInCacheTime.Observe(duration.Seconds())
+		ch.metrics.HistogramAddNoteInCacheTime.Observe(duration.Seconds())
+	}(startTime)
+
 	var addNoteRequest request.AddNoteInCacheRequest
 	if err := json.Unmarshal(msgValue, &addNoteRequest); err != nil {
 		logger.Error("unmarshal request in addNoteInCache", zap.Error(err))
@@ -116,12 +134,23 @@ func (ch *ConsumeHandler) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 			zap.ByteString("Key", msg.Key),
 			zap.ByteString("Value", msg.Value),
 		)
+		ch.metrics.AmountCommands.Inc()
 
 		switch string(msg.Key) {
 		case "report":
-			err = ch.incomingReportRequest(ctx, msg.Value)
+			span, nctx := opentracing.StartSpanFromContext(ctx, "incoming request")
+			if span != nil {
+				span.LogKV("incoming report request", "got message", "value", msg.Value)
+				defer span.Finish()
+			}
+			err = ch.incomingReportRequest(nctx, msg.Value)
 		case "add_note_in_cache":
-			err = ch.incomingAddNoteInCacheRequest(msg.Value)
+			span, nctx := opentracing.StartSpanFromContext(ctx, "incoming request")
+			if span != nil {
+				span.LogKV("incoming add note in cache request", "got message", "value", msg.Value)
+				defer span.Finish()
+			}
+			err = ch.incomingAddNoteInCacheRequest(nctx, msg.Value)
 		}
 
 		if err != nil {
