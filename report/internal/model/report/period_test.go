@@ -109,7 +109,7 @@ var determineWeekPeriodTestPair = TestPairDeterminePeriod{
 		dates: []Date{{1, 11, 2022}, {2, 11, 2022}, {3, 11, 2022}, {4, 11, 2022}, {5, 11, 2022}, {6, 11, 2022}},
 		now:   []Date{{31, 10, 2022}},
 	},
-	average: []string{"week", "month", "year"},
+	average: []string{"week", "year"},
 }
 
 var determineMonthPeriodTestPair = TestPairDeterminePeriod{

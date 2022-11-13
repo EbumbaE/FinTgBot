@@ -1,17 +1,16 @@
 PROJECT := gitlab.ozon.dev/ivan.hom.200/telegram-bot
-PKG_BOT := ${PROJECT}/bot/cmd/bot
-PKG_REPORT := ${PROJECT}/report/cmd/report
-MOD_BOT := ${PROJECT}/bot/go.mod
-MOD_REPORT := ${PROJECT}/report/go.mod
+PKG_BOT := ${PROJECT}/cmd/bot
+PKG_REPORT := ${PROJECT}/cmd/report
 
 all: build
 
 build: 
-	go build -o bot/bin/bot/bot.exe -modfile ${MOD_BOT} ${PKG_BOT}	
-	go build -o report/bin/report/report.exe -modfile ${MOD_REPORT} ${PKG_REPORT}
+	cd bot && go build -o bin/bot/bot.exe ${PKG_BOT}	
+	cd report && go build -o bin/report/report.exe ${PKG_REPORT}
 
 test:
-	go test ./...
+	cd bot && go test ./...
+	cd report && go test ./...
 
 logs:
 	cd pkg/logger/logs && docker compose up

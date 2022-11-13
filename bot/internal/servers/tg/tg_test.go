@@ -168,6 +168,11 @@ func TestSetNote(t *testing.T) {
 		Sum:      112 * userRate.Value,
 		Currency: "RUB",
 	}
+	r := request.AddNoteInCacheRequest{
+		UserID:   msg.UserID,
+		TimeNote: timeNote,
+		Note:     note,
+	}
 
 	storage.EXPECT().GetUserAbbValute(msg.UserID).Return(userRate.Abbreviation, nil)
 	storage.EXPECT().GetRate(userRate.Abbreviation).Return(&userRate, nil)
@@ -177,6 +182,8 @@ func TestSetNote(t *testing.T) {
 	storage.EXPECT().AddNote(msg.UserID, date, note).Return(nil)
 
 	ctx := context.Background()
+	producer.EXPECT().SendAddNoteInCache(ctx, r).Return(nil)
+
 	answer, err := tg.CommandSetNote(ctx, &msg)
 	assert.Equal(t, answer, "Done")
 	assert.NoError(t, err)
@@ -282,6 +289,7 @@ func TestGetStatic(t *testing.T) {
 	r := request.ReportRequest{
 		UserID:       msg.UserID,
 		Period:       "week",
+		DateFormat:   "02.01.2006",
 		UserCurrency: userRate,
 	}
 
@@ -289,9 +297,10 @@ func TestGetStatic(t *testing.T) {
 
 	storage.EXPECT().GetUserAbbValute(msg.UserID).Return(userRate.Abbreviation, nil)
 	storage.EXPECT().GetRate(userRate.Abbreviation).Return(&userRate, nil)
+
 	producer.EXPECT().SendReportRequest(ctx, r).Return(nil)
 
-	answer, err := tg.CommandGetStatistic(ctx, &msg)
+	err = tg.CommandGetStatistic(ctx, &msg)
 	assert.NoError(t, err)
 
 }

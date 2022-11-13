@@ -98,7 +98,7 @@ func TestOnGetStatisticCommand(t *testing.T) {
 		UserID:    123,
 	}
 	sendMsg := messages.Message{
-		Text:      "Statistic for the week in RUB:",
+		Text:      "",
 		Command:   "getStatistic",
 		Arguments: "week",
 		UserID:    123,
@@ -108,7 +108,7 @@ func TestOnGetStatisticCommand(t *testing.T) {
 	err := storage.SetUserAbbValute(msg.UserID, "RUB")
 	assert.NoError(t, err)
 
-	server.EXPECT().CommandGetStatistic(nctx, &msg).Return("Statistic for the week in RUB:", nil)
+	server.EXPECT().CommandGetStatistic(nctx, &msg).Return(nil)
 	client.EXPECT().SendMessage(sendMsg)
 	model := messages.New(client, server)
 
