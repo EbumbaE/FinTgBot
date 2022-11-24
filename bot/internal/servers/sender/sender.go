@@ -6,10 +6,10 @@ import (
 	"net"
 	"sync"
 
-	"github.com/EbumbaE/FinTgBot/bot/api"
 	"github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
 	"github.com/EbumbaE/FinTgBot/bot/internal/servers/middleware"
 	"github.com/EbumbaE/FinTgBot/bot/pkg/logger"
+	"github.com/EbumbaE/FinTgBot/libs/api"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )

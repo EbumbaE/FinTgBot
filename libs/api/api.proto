@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package api;
 
-option go_package = "github.com/EbumbaE/FinTgBot/bot/api";
+option go_package = "github.com/EbumbaE/FinTgBot/libs/api";
 
 import "google/protobuf/wrappers.proto";
 

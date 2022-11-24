@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/EbumbaE/FinTgBot/report/api"
+	"github.com/EbumbaE/FinTgBot/libs/api"
 	"github.com/EbumbaE/FinTgBot/report/internal/clients/middleware"
 	"github.com/opentracing/opentracing-go"
 	"google.golang.org/grpc"
