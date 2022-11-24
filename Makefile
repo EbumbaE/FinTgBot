@@ -1,6 +1,6 @@
-PROJECT := gitlab.ozon.dev/ivan.hom.200/telegram-bot
-PKG_BOT := ${PROJECT}/cmd/bot
-PKG_REPORT := ${PROJECT}/cmd/report
+PROJECT := github.com/EbumbaE/FinTgBot
+PKG_BOT := ${PROJECT}/bot/cmd/bot
+PKG_REPORT := ${PROJECT}/report/cmd/report
 
 all: build
 

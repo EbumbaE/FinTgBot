@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/request"
+	"github.com/EbumbaE/FinTgBot/bot/pkg/logger"
 	"github.com/Shopify/sarama"
 	"github.com/opentracing/opentracing-go"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/request"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/diary"
+	"github.com/EbumbaE/FinTgBot/bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

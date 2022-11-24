@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package api;
 
-option go_package = "gitlab.ozon.dev/ivan.hom.200/telegram-bot";
+option go_package = "github.com/EbumbaE/FinTgBot/bot/api";
 
 import "google/protobuf/wrappers.proto";
 

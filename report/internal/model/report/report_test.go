@@ -5,11 +5,11 @@ import (
 	"testing"
 	"time"
 
+	dbmocks "github.com/EbumbaE/FinTgBot/report/internal/mocks/storage"
+	"github.com/EbumbaE/FinTgBot/report/internal/model/diary"
+	"github.com/EbumbaE/FinTgBot/report/internal/model/report"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	dbmocks "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/mocks/storage"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
 )
 
 var (

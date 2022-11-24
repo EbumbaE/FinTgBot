@@ -1,9 +1,10 @@
-module gitlab.ozon.dev/ivan.hom.200/telegram-bot
+module github.com/EbumbaE/FinTgBot
 
 go 1.18
 
 require (
 	github.com/Shopify/sarama v1.37.2
+	github.com/bradfitz/gomemcache v0.0.0-20221031212613-62deef7fc822
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/golang/mock v1.6.0
 	github.com/lib/pq v1.10.7
@@ -14,7 +15,7 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	go.uber.org/zap v1.23.0
-	google.golang.org/grpc v1.50.1
+	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.1
 )
 

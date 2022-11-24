@@ -1,10 +1,10 @@
 package config
 
 import (
+	"github.com/EbumbaE/FinTgBot/report/internal/clients/sender"
+	"github.com/EbumbaE/FinTgBot/report/internal/servers/consumer"
+	"github.com/EbumbaE/FinTgBot/report/internal/storage/psql"
 	"github.com/spf13/viper"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/sender"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/consumer"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
 )
 
 const configFile = "../../data"

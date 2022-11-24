@@ -5,9 +5,9 @@ import (
 	"sync"
 	"testing"
 
+	dbmocks "github.com/EbumbaE/FinTgBot/bot/internal/mocks/storage"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	dbmocks "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/mocks/storage"
 )
 
 func TestCancelParseCurrency(t *testing.T) {

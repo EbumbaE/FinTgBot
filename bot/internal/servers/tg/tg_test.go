@@ -6,15 +6,15 @@ import (
 	"testing"
 	"time"
 
+	pmocks "github.com/EbumbaE/FinTgBot/bot/internal/mocks/producer"
+	dbmocks "github.com/EbumbaE/FinTgBot/bot/internal/mocks/storage"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/diary"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/report"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/request"
+	tgServer "github.com/EbumbaE/FinTgBot/bot/internal/servers/tg"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	pmocks "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/mocks/producer"
-	dbmocks "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/mocks/storage"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/request"
-	tgServer "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
 )
 
 func TestOverCheckBudget(t *testing.T) {

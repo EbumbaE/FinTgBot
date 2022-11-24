@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/EbumbaE/FinTgBot/report/internal/model/diary"
+	"github.com/EbumbaE/FinTgBot/report/internal/model/report"
+	"github.com/EbumbaE/FinTgBot/report/pkg/logger"
 	"github.com/bradfitz/gomemcache/memcache"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

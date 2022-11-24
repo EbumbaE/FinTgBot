@@ -3,7 +3,7 @@ package tgServer
 import (
 	"context"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
 )
 
 func (t *TgServer) MessageSetReportCurrency(ctx context.Context, msg *messages.Message) (answer string, err error) {

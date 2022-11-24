@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/EbumbaE/FinTgBot/report/internal/clients/sender"
+	"github.com/EbumbaE/FinTgBot/report/internal/model/report"
+	"github.com/EbumbaE/FinTgBot/report/internal/model/request"
+	"github.com/EbumbaE/FinTgBot/report/internal/servers/middleware"
+	"github.com/EbumbaE/FinTgBot/report/internal/storage"
+	"github.com/EbumbaE/FinTgBot/report/pkg/logger"
 	"github.com/Shopify/sarama"
 	"github.com/opentracing/opentracing-go"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/sender"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/request"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/middleware"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

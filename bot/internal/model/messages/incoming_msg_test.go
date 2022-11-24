@@ -8,8 +8,8 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/stretchr/testify/assert"
 
-	mocks "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/mocks/messages"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
+	mocks "github.com/EbumbaE/FinTgBot/bot/internal/mocks/messages"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
 )
 
 func TestMessageDefault(t *testing.T) {

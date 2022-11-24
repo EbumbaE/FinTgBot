@@ -10,8 +10,8 @@ import (
 
 	memcache "github.com/bradfitz/gomemcache/memcache"
 	gomock "github.com/golang/mock/gomock"
-	diary "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
-	report "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
+	diary "github.com/EbumbaE/FinTgBot/report/internal/model/diary"
+	report "github.com/EbumbaE/FinTgBot/report/internal/model/report"
 )
 
 // MockNotesDB is a mock of NotesDB interface.

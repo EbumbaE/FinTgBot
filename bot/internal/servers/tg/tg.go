@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/request"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/middleware"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/request"
+	"github.com/EbumbaE/FinTgBot/bot/internal/servers/middleware"
+	"github.com/EbumbaE/FinTgBot/bot/internal/storage"
 )
 
 type Producer interface {

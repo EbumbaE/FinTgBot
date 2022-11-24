@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
+	"github.com/EbumbaE/FinTgBot/bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

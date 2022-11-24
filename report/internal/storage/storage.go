@@ -3,9 +3,9 @@ package storage
 import (
 	"time"
 
+	"github.com/EbumbaE/FinTgBot/report/internal/model/diary"
+	"github.com/EbumbaE/FinTgBot/report/internal/model/report"
 	"github.com/bradfitz/gomemcache/memcache"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
 )
 
 type NotesDB interface {

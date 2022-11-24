@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	request "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/request"
+	request "github.com/EbumbaE/FinTgBot/bot/internal/model/request"
 )
 
 // MockProducer is a mock of Producer interface.

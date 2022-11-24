@@ -4,7 +4,7 @@ import (
 	"context"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
+	"github.com/EbumbaE/FinTgBot/bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

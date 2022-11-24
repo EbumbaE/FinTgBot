@@ -1,6 +1,6 @@
 package report
 
-import "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
+import "github.com/EbumbaE/FinTgBot/report/internal/model/diary"
 
 type Valute interface {
 	GetAbbreviation() string

@@ -7,13 +7,13 @@ import (
 	"sync"
 	"syscall"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/sender"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/config"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/consumer"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/cache"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/metrics"
+	"github.com/EbumbaE/FinTgBot/report/internal/clients/sender"
+	"github.com/EbumbaE/FinTgBot/report/internal/config"
+	"github.com/EbumbaE/FinTgBot/report/internal/servers/consumer"
+	"github.com/EbumbaE/FinTgBot/report/internal/storage/cache"
+	"github.com/EbumbaE/FinTgBot/report/internal/storage/psql"
+	"github.com/EbumbaE/FinTgBot/report/pkg/logger"
+	"github.com/EbumbaE/FinTgBot/report/pkg/metrics"
 	"go.uber.org/zap"
 )
 

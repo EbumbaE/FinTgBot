@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/EbumbaE/FinTgBot/report/pkg/logger"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

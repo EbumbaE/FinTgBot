@@ -3,7 +3,7 @@ package request
 import (
 	"time"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
+	"github.com/EbumbaE/FinTgBot/report/internal/model/diary"
 )
 
 type ReportRequest struct {

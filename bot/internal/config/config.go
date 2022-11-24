@@ -1,13 +1,13 @@
 package config
 
 import (
+	"github.com/EbumbaE/FinTgBot/bot/internal/clients/producer"
+	client "github.com/EbumbaE/FinTgBot/bot/internal/clients/tg"
+	"github.com/EbumbaE/FinTgBot/bot/internal/currency"
+	"github.com/EbumbaE/FinTgBot/bot/internal/servers/sender"
+	server "github.com/EbumbaE/FinTgBot/bot/internal/servers/tg"
+	"github.com/EbumbaE/FinTgBot/bot/internal/storage/psql"
 	"github.com/spf13/viper"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/producer"
-	client "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/tg"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/currency"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/sender"
-	server "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/tg"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage/psql"
 )
 
 const configFile = "../../data"

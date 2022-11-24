@@ -8,10 +8,10 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/stretchr/testify/assert"
 
-	msgmocks "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/mocks/messages"
-	dbmocks "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/mocks/storage"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
+	msgmocks "github.com/EbumbaE/FinTgBot/bot/internal/mocks/messages"
+	dbmocks "github.com/EbumbaE/FinTgBot/bot/internal/mocks/storage"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/diary"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
 )
 
 func TestOnSetNoteCommand(t *testing.T) {

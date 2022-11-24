@@ -6,10 +6,10 @@ import (
 	"net"
 	"sync"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/api"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/servers/middleware"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
+	"github.com/EbumbaE/FinTgBot/bot/api"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
+	"github.com/EbumbaE/FinTgBot/bot/internal/servers/middleware"
+	"github.com/EbumbaE/FinTgBot/bot/pkg/logger"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )

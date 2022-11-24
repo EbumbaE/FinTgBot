@@ -4,11 +4,11 @@ import (
 	"context"
 	"sync"
 
+	"github.com/EbumbaE/FinTgBot/bot/internal/clients/middleware"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
+	"github.com/EbumbaE/FinTgBot/bot/pkg/logger"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/middleware"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

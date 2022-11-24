@@ -1,8 +1,6 @@
 package storage
 
-import (
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
-)
+import "github.com/EbumbaE/FinTgBot/bot/internal/model/diary"
 
 type NotesDB interface {
 	GetNote(id int64, date string) ([]diary.Note, error)

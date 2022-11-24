@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/diary"
 )
 
 type Storage interface {

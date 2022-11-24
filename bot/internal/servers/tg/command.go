@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"strings"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/report"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/request"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/storage"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/diary"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/report"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/request"
+	"github.com/EbumbaE/FinTgBot/bot/internal/storage"
+	"github.com/EbumbaE/FinTgBot/bot/pkg/logger"
 	"go.uber.org/zap"
 )
 

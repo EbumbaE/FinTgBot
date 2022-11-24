@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	diary "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/diary"
+	diary "github.com/EbumbaE/FinTgBot/bot/internal/model/diary"
 )
 
 // MockNotesDB is a mock of NotesDB interface.

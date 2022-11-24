@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	messages "gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
+	messages "github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
 )
 
 // MockClient is a mock of Client interface.

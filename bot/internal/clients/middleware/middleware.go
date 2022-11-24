@@ -3,8 +3,8 @@ package middleware
 import (
 	"context"
 
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
 )
 
 type Middleware struct {

@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/model/messages"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/pkg/logger"
+	"github.com/EbumbaE/FinTgBot/bot/internal/model/messages"
+	"github.com/EbumbaE/FinTgBot/bot/pkg/logger"
 )
 
 type Command struct {

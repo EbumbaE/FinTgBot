@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/EbumbaE/FinTgBot/report/api"
+	"github.com/EbumbaE/FinTgBot/report/internal/clients/middleware"
 	"github.com/opentracing/opentracing-go"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/api"
-	"gitlab.ozon.dev/ivan.hom.200/telegram-bot/internal/clients/middleware"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
