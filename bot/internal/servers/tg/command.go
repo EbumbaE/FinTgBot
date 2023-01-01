@@ -283,7 +283,7 @@ Statistic for the week:
 food: 245.12
 school: 85.01
 
-/selectReportCurrency
+/selectCurrency
 дает выбор валюты для команд getStatistic, setNote, getMonthlyBudget
 
 /setBudget дата сумма валюта

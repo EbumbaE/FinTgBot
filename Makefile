@@ -13,7 +13,7 @@ test:
 	cd report && go test ./...
 
 logs:
-	cd pkg/logger/logs && docker compose up
+	cd pkg/logs && docker compose up
 
 tracing:
 	cd pkg/tracing && docker compose up
@@ -27,7 +27,12 @@ cache:
 kafka: 
 	cd pkg/kafka && docker compose up
 
+database:
+	cd pkg/database && docker compose up
+	goose postgres "user=postgres password=1234 dbname=postgres sslmode=disable" up
+
 pull:
+	go install github.com/pressly/goose/v3/cmd/goose@latest
 	docker pull prom/prometheus
 	docker pull grafana/grafana-oss
 	docker pull ozonru/file.d:latest-linux-amd64
@@ -36,3 +41,4 @@ pull:
 	docker pull jaegertracing/all-in-one:1.18
 	docker pull memcached
 	docker pull wurstmeister/kafka
+	docker pull postgres
