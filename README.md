@@ -4,19 +4,20 @@
 https://miro.com/app/board/uXjVPLZy6mg=/
 
 ## Функционал
+
+**/start**\
+выводит информацию о командах
+
 **/setNote** дата категория сумма\
 пример: **/setNote 27.09.2022 food 453.12**\
-добавляет трату в заданный день по заданной категории, отвечает **Done** в случае успешной записи
+добавляет трату в заданный день по заданной категории, отвечает в случае успешной записи **Done** или **Over budget by _ RUB**
 
 **/getStatistic** период (week, month или year)\
 example: **/getStatistic week**\
 выводит статистику за заданный период, ответа на команду:\
-**Statistic for the week:\
+**Statistic for the week in RUB::\
 food: 245.12\
 school: 85.01**
-
-**/selectCurrency**\
-дает выбор валюты для команд getStatistic, setNote, getMonthlyBudget
 
 **/setBudget** дата сумма валюта\
 example: **/setBudget 10.2022 254 USD**\
@@ -24,10 +25,10 @@ example: **/setBudget 10.2022 254 USD**\
 
 **/getBudget** дата\
 example: **/getBudget 10.2022**\
-выводит расход за месяц рабочей валюте
+выводит расход за месяц рабочей валюте **Budget for the month: 175.27/71.08 CNY**
 
-**/start**\
-выводит информацию о командах
+**/selectCurrency**\
+дает выбор валюты для команд getStatistic, setNote, getMonthlyBudget, setBudget
 
 ## Logs
 
